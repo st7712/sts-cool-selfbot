@@ -1,4 +1,4 @@
-# This selfbot is semi forked alucard.
+# This selfbot is semi forked alucard. (A ton of added commands.)
 
 # Setup
  - just set it up as a normal selfbot
