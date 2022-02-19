@@ -1,0 +1,18 @@
+{
+    "token": "mfa.yHsmyQ8vv0fFK22ra2Z-WwY7QqtNM3wsTy8dg2ef1ZPrCJRgd9pEHObJWU8rMyRQyEOWNv1j8dj6CCJi5gKu",
+    "password": "password-here",
+    "prefix": ".",   
+    
+    "nitro_sniper": true, 
+    "giveaway_sniper": true,
+    "slotbot_sniper": false,
+    "privnote_sniper": false,
+
+    "stream_url": "https://twitch.tv/imstcool",
+    "tts_language": "en",
+
+    "bitly_key": "d0c2e8601593087ef3b463e62bf35a838711b05b",
+    "cat_key": "e7c418c3-3a05-4961-976a-4d513b7f738e",
+    "weather_key": "cd044d69bfb22744e0f8bace0ee81a93",
+    "cuttly_key": "dc8c1303022c4bbc7cdd3029f98e125b743dd"
+}
