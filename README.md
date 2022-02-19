@@ -1,13 +1,14 @@
-# THIS IS ALUCARD BUT EDITED AND MADE IT LIL BIT BETTER SO CREDIT TO ALUCARD OWNERS!
+# This selfbot is semi forked alucard.
 
 # Setup
  - just set it up as a normal selfbot
+ - https://www.youtube.com/watch?v=xv9etIEAb08 use this video except that you wont be installing the actual alucard selfbot from the github
 
 # Legality
 
 Everything you can see here has been made for educational purposes and proof of concepts. I do not promote the usage of my tools, I do not take responsability on the bad usage of this tool.
 
-**YOU CAN HOST IT ON REPIL ETC AND WHEN YOU TYPE !HELP IT WILL SEND ALL THE COMMANDS IN CMD PANEL INSTEAD OF THE ALUCARD COMMAND WEBSITE ALSO ADDED FEW MORE COMMANDS**
+**YOU CAN CLOUD HOST IT** (with some modifications)
 
 # Q&A
 - Q: **`SSL Certificate Error`**
