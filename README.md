@@ -1,18 +1,13 @@
 # THIS IS ALUCARD BUT EDITED AND MADE IT LIL BIT BETTER SO CREDIT TO ALUCARD OWNERS!
 
 # Setup
-  - Since it's discontinuted and some good guy (trickstr) decided to make a video tutorial about it
-  - There are the steps: https://www.youtube.com/watch?v=Sqwdlvr5xvo
+ - just set it up as a normal selfbot
 
 # Legality
 
 Everything you can see here has been made for educational purposes and proof of concepts. I do not promote the usage of my tools, I do not take responsability on the bad usage of this tool.
 
-
-
 **YOU CAN HOST IT ON REPIL ETC AND WHEN YOU TYPE !HELP IT WILL SEND ALL THE COMMANDS IN CMD PANEL INSTEAD OF THE ALUCARD COMMAND WEBSITE ALSO ADDED FEW MORE COMMANDS**
-
-##### thanks for the yt vid ~ Fweak
 
 # Q&A
 - Q: **`SSL Certificate Error`**
