@@ -1,8 +1,6 @@
 class SELFBOT():
     __linecount__ = 1933
-    __version__ = 1.4
-    
-    # whats up chat so like yea
+    __version__ = 1.4.1
     
 import discord, subprocess, sys, time, os, colorama, base64, codecs, datetime, io, random, numpy, datetime, smtplib, string, ctypes
 import urllib.parse, urllib.request, re, json, requests, webbrowser, aiohttp, dns.name, asyncio, functools, logging
@@ -135,11 +133,11 @@ def startprint():
     
     print(f'''{Fore.RESET}
                                                 
-                             _                     _            _  __ _           _   
-                         ___| |_    ___ ___   ___ | |  ___  ___| |/ _| |__   ___ | |_ 
-                        / __| __|  / __/ _ \ / _ \| | / __|/ _ \ | |_| '_ \ / _ \| __|
-                        \__ \ |_  | (_| (_) | (_) | | \__ \  __/ |  _| |_) | (_) | |_ 
-                        |___/\__|  \___\___/ \___/|_| |___/\___|_|_| |_.__/ \___/ \__|
+                              _   _               _  __ _           _   
+                          ___| |_( )__   ___  ___| |/ _| |__   ___ | |_ 
+                         / __| __|/ __| / __|/ _ \ | |_| '_ \ / _ \| __|
+                         \__ \ |_ \__ \ \__ \  __/ |  _| |_) | (_) | |_ 
+                         |___/\__||___/ |___/\___|_|_| |_.__/ \___/ \__|
                                                               
 
 
@@ -1873,6 +1871,7 @@ async def help(ctx):
 {Fore.BLUE}av {Fore.LIGHTBLACK_EX}- Shows Your or mentioned users Avatar!
 {Fore.BLUE}pfpsteal {Fore.LIGHTBLACK_EX}- Allows you to steal mentioned user profile picture
 {Fore.BLUE}revav {Fore.LIGHTBLACK_EX}- Reverse avatar the mentioned user profile picture  
+{Fore.BLUE}banner {Fore.LIGHTBLACK_EX}- Shows mentioned users banner
 {Fore.BLUE}whois {Fore.LIGHTBLACK_EX}- Displays discord information of the mentioned user 
 {Fore.BLUE}blank {Fore.LIGHTBLACK_EX}- Turns your name and profile picture blank
 {Fore.BLUE}steal-all-pfp {Fore.LIGHTBLACK_EX}- Steal all the pfps in the server
@@ -1883,6 +1882,7 @@ async def help(ctx):
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 {Fore.YELLOW}Fun Stuff
+
 {Fore.BLUE}lmgtfy {Fore.LIGHTBLACK_EX}- Use lmgtfy search engine to look-up something
 {Fore.BLUE}fox {Fore.LIGHTBLACK_EX}- Random fox image
 {Fore.BLUE}dog {Fore.LIGHTBLACK_EX}- Random dog image
@@ -2147,7 +2147,37 @@ async def pack(ctx):
     await ctx.send('What boy you survived a plane crash in south africa and as soon as you got out the plane you just took a 2 hour long shit behind a tree my nigga you ugly as shit')
     await asyncio.sleep(1)
     await ctx.send('nigga but tell me why you the only nigga thats built like a half retarded turanchula boy you got 7 eyes and 4 legs boy')
-  
+    await asyncio.sleep(1)
+    await ctx.send('i saw you throwing it back for mr krabs you got 3 dabloons and a krabby patty to go hell nah you got sexually harrassed by a math workbook hell nah nigga caught yo dumbass doing the electric zoo with that nigga ed from goodburger because yall found a cockroach nope nigga your grandma got backhanded by angry mall cop over a bottle of listerine and mechanical parts from fortnite nasty neck nigga like shit you got sexually seduced by a radioactive shit spitting cow when you overtalked him with the indian scammer headset')
+    await asyncio.sleep(1)
+    await ctx.send('“ratio” took you 4 tries to spell it correctly retarded dyslexic ugly lookin peice of banana flavored cheese dirty ass boy, you got shit stains on your forehead my nigga shutcho dumb ass up boi you shoved a boiled egg up your ass at 4am while playing with hot wheels dirty ass boy you eat your fingers for breakfast my nigga shutcho dumb ass up')
+    await asyncio.sleep(1)
+    await ctx.send('danggg… that shit was ass my nigga shutcho oompa loopa from charlie and the chocolate factory lookin ass boy you started doing fortnite emotes after you got an a on your report card weird ass nigga I hit a 360 on yo grandma in real life and she landed in the gulag dumb ass boy shutcho lame ass up boy they call you “lil inched” at school because your dick is -1 cm long my nigga shut yo dumb ass up boy')
+    await asyncio.sleep(1)
+    await ctx.send('im sorry.. 💔 but that shit was ass my nigga you down bad too knowing what shreks tits look like anyways shut yo dumb ass up boi you stupid as shit your grandma got instant cancer after taking a gaze at your face for more than 10 seconds and she died a week later stupid ass bitch “Say sum” - :nerd: shutcho “Mom, I’m ready for school!” you stuffed 10 pairs of dildos in your backpack to give to your classmates outside behind the slides dirty nigga shutcho dumb ass up “when pinocchio lies his nose grows” he told you, you got no hoes and nothing happened bitch ass nigga shutcho dumb ass misfigured nose  broken upperlip disabled pony ride lookin ass nigga after lookin at your moms titties I caught ebola shutcho dumb ass up')
+    await asyncio.sleep(1)
+    await ctx.send('boy shut yo dumb ass up, with your android with a despicable me phone case dirty ass boy you wipe your ass with a pack of toothpaste bitch ass boy you look like a gangster with extra long toothpicks coming outcha ass they call you “Lil Toothy” bitch ass boy I smacked your grandma into a deep state and she turned into a soundcloud rapper you brush your teeth with a ethernet cable nigga I hit you with a slice of sweaty pizza and you started playing geometry dash dumb ass boy if you don’t get your harry potter gacha life mosquito joycon nipple cosplaying as franklin the turtle but emo 🖤 dumb ass boyy cricket wireless using ass boy toaster strudel wireless zoo electric tomato with potato skin lookin ass boy you arabian seastar shut the fuck up blowing some dude in the back of the alley with a fork and knife for 3 nickels and a strawberry poptart fat ass boy I went up to your grandpa with ptsd showed him the new call of duty and he had world war 2 flash backs bitch ass boy')
+    await asyncio.sleep(1)
+    await ctx.send('you rage when your mom doesn’t let you  eat toaster strudels fat ass boi. you threw a bag of peanut shells at your mom and started rapping cod subtitles stupid ass boi. you got grounded for eating a bag of salt and pepper apple jacks at 3am in the morning outside in the cold listening to lil pump making gacha life music videos bitch ass boi')
+    await asyncio.sleep(1)
+    await ctx.send('tell me why yo ass built built a rocket league car boy')
+    await asyncio.sleep(1)
+    await ctx.send('you weird as fuck boy ole ugly ass nigga tell me why yo gang bangin 93 year grandpa caught yo ass fucking a coconut with a rubix cube in yo mouth and grounded you from painting your nails weird ass boy')
+    await asyncio.sleep(1)
+    await ctx.send('nigga you look like you try to fight tadpoles with yo weird ass boy tell me why i caught yo ugly ass pet frog with a 1737 durag on fucking yo pet snail weird ass boy')
+    await asyncio.sleep(1)
+    await ctx.send('nigga you bout ugly as shit boy yo head built like donkey kongs right nut ugly ass')
+    await asyncio.sleep(1)
+    await ctx.send('you can not be talking to me right now nigga you reading all yo packs off your forehead in the mirror boy')
+    await asyncio.sleep(1)
+    await ctx.send('tell me why yo ass broke yo tv tryna fight squidward weird ass nigga you bout ugly as shit boy with yo un funny ass')
+    await asyncio.sleep(1)
+    await ctx.send('nigga i caught yo ass counting the pixels on yo tv to say you had 4k nigga.. wait.. no thats 4p headass boy you play gacha life HOOD EDITION and try to act gangster')
+    await asyncio.sleep(1)
+    await ctx.send('boy i caught yo ass with a sharpened spongebob butter knife robbing a bass pro shop for fishing poles.')
+    await asyncio.sleep(1)
+    await ctx.send('that shit was ass tell my why i caught you but ass naked solving a rubix cube while fucking a coconut. tell me why i caught you trying to create “super sauce” with your cum combined with sprite')
+
 @stselfbot.command()
 async def backup(ctx):
     await ctx.message.delete()
@@ -2447,6 +2477,19 @@ async def edit(ctx, text):
             pass
 
 @stselfbot.command()
+async def banner(ctx, user:discord.User):
+    await ctx.message.delete()
+    if user == None:
+        user = ctx.author
+    req = await stselfbot.http.request(discord.http.Route("GET", "/users/{uid}", uid=user.id))
+    banner_id = req["banner"]
+    if banner_id:
+        banner_url = f"https://cdn.discordapp.com/banners/{user.id}/{banner_id}?size=1024"
+    else:
+        print("User doesn't have a banner.")
+    await ctx.send(f"{banner_url}")
+
+@stselfbot.command()
 async def stoptextppl(ctx):
     await ctx.message.delete
     stoptextppl.has_been_called = True
@@ -2493,5 +2536,3 @@ async def _gmail_bomb(ctx): # b'\xfc'
 
 if __name__ == '__main__':
     Init()
-
-   
