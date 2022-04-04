@@ -1,3 +1,5 @@
+# NITRO SNIPER IS CURRENTLY BROKEN. DON'T ENABLE IT OR YOU WILL BREAK THE SELFBOT AND IT WON'T WORK. PLEASE BE PATIENT FOR A FIX. THANK YOU.
+
 # This selfbot is semi forked alucard. (A ton of added commands.)
 
 # Setup
