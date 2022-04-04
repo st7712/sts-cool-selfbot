@@ -1,6 +1,6 @@
 class SELFBOT():
     __linecount__ = 1933
-    __version__ = 1.5
+    __version__ = 1.6
     
 import discord, subprocess, sys, time, os, colorama, base64, codecs, datetime, io, random, numpy, datetime, smtplib, string, ctypes
 import urllib.parse, urllib.request, re, json, requests, webbrowser, aiohttp, dns.name, asyncio, functools, logging
@@ -21,6 +21,9 @@ from sys import platform
 from PIL import Image
 import pyPrivnote as pn
 from gtts import gTTS
+from random import randint
+import httpx
+import random
 
 ctypes.windll.kernel32.SetConsoleTitleW(f'[Cool st Selfbot v{SELFBOT.__version__}]')
 
@@ -138,6 +141,7 @@ def startprint():
                          / __| __|/ __| / __|/ _ \ | |_| '_ \ / _ \| __|
                          \__ \ |_ \__ \ \__ \  __/ |  _| |_) | (_) | |_ 
                          |___/\__||___/ |___/\___|_|_| |_.__/ \___/ \__|
+                                               
                                                               
 
 
@@ -334,127 +338,6 @@ async def on_command_error(ctx, error):
 @stselfbot.event
 async def on_message_edit(before, after):
     await stselfbot.process_commands(after)
-
-@stselfbot.event
-async def on_message(message):
-
-    def GiveawayData():
-        print(
-        f"{Fore.WHITE} - CHANNEL: {Fore.YELLOW}[{message.channel}]"
-        f"\n{Fore.WHITE} - SERVER: {Fore.YELLOW}[{message.guild}]"   
-    +Fore.RESET)
-
-    def SlotBotData():
-        print(
-        f"{Fore.WHITE} - CHANNEL: {Fore.YELLOW}[{message.channel}]"
-        f"\n{Fore.WHITE} - SERVER: {Fore.YELLOW}[{message.guild}]"   
-    +Fore.RESET)  
-
-    def NitroData(elapsed, code):
-        print(
-        f"{Fore.WHITE} - CHANNEL: {Fore.YELLOW}[{message.channel}]" 
-        f"\n{Fore.WHITE} - SERVER: {Fore.YELLOW}[{message.guild}]"
-        f"\n{Fore.WHITE} - AUTHOR: {Fore.YELLOW}[{message.author}]"
-        f"\n{Fore.WHITE} - ELAPSED: {Fore.YELLOW}[{elapsed}]"
-        f"\n{Fore.WHITE} - CODE: {Fore.YELLOW}{code}"
-    +Fore.RESET)
-
-    def PrivnoteData(code):
-        print(
-        f"{Fore.WHITE} - CHANNEL: {Fore.YELLOW}[{message.channel}]" 
-        f"\n{Fore.WHITE} - SERVER: {Fore.YELLOW}[{message.guild}]"
-        f"\n{Fore.WHITE} - CONTENT: {Fore.YELLOW}[The content can be found at Privnote/{code}.txt]"
-    +Fore.RESET)        
-
-    time = datetime.datetime.now().strftime("%H:%M %p")  
-    if 'discord.gift/' in message.content:
-        if nitro_sniper == True:
-            start = datetime.datetime.now()
-            code = re.search("discord.gift/(.*)", message.content).group(1)
-            token = config.get('token')
-                
-            headers = {'Authorization': token}
-    
-            r = requests.post(
-                f'https://discordapp.com/api/v6/entitlements/gift-codes/{code}/redeem', 
-                headers=headers,
-            ).text
-        
-            elapsed = datetime.datetime.now() - start
-            elapsed = f'{elapsed.seconds}.{elapsed.microseconds}'
-
-            if 'This gift has been redeemed already.' in r:
-                print(""
-                f"\n{Fore.CYAN}[{time} - Nitro Already Redeemed]"+Fore.RESET)
-                NitroData(elapsed, code)
-
-            elif 'subscription_plan' in r:
-                print(""
-                f"\n{Fore.CYAN}[{time} - Nitro Success]"+Fore.RESET)
-                NitroData(elapsed, code)
-
-            elif 'Unknown Gift Code' in r:
-                print(""
-                f"\n{Fore.CYAN}[{time} - Nitro Unknown Gift Code]"+Fore.RESET)
-                NitroData(elapsed, code)
-        else:
-            return
-            
-    if 'Someone just dropped' in message.content:
-        if slotbot_sniper == True:
-            if message.author.id == 346353957029019648:
-                try:
-                    await message.channel.send('~grab')
-                except discord.errors.Forbidden:
-                    print(""
-                    f"\n{Fore.CYAN}[{time} - SlotBot Couldnt Grab]"+Fore.RESET)
-                    SlotBotData()                     
-                print(""
-                f"\n{Fore.CYAN}[{time} - Slotbot Grabbed]"+Fore.RESET)
-                SlotBotData()
-        else:
-            return
-
-    if 'GIVEAWAY' in message.content:
-        if giveaway_sniper == True:
-            if message.author.id == 294882584201003009:
-                try:    
-                    await message.add_reaction("🎉")
-                except discord.errors.Forbidden:
-                    print(""
-                    f"\n{Fore.CYAN}[{time} - Giveaway Couldnt React]"+Fore.RESET)
-                    GiveawayData()            
-                print(""
-                f"\n{Fore.CYAN}[{time} - Giveaway Sniped]"+Fore.RESET)
-                GiveawayData()
-        else:
-            return
-
-    if f'Congratulations <@{stselfbot.user.id}>' in message.content:
-        if giveaway_sniper == True:
-            if message.author.id == 294882584201003009:    
-                print(""
-                f"\n{Fore.CYAN}[{time} - Giveaway Won]"+Fore.RESET)
-                GiveawayData()
-        else:
-            return
-
-    if 'privnote.com' in message.content:
-        if privnote_sniper == True:
-            code = re.search('privnote.com/(.*)', message.content).group(1)
-            link = 'https://privnote.com/'+code
-            try:
-                note_text = pn.read_note(link)
-            except Exception as e:
-                print(e)    
-            with open(f'Privnote/{code}.txt', 'a+') as f:
-                print(""
-                f"\n{Fore.CYAN}[{time} - Privnote Sniped]"+Fore.RESET)
-                PrivnoteData(code)
-                f.write(note_text)
-        else:
-            return
-    await stselfbot.process_commands(message)
 
 @stselfbot.event
 async def on_connect():
@@ -1639,7 +1522,10 @@ async def tits(ctx): # b'\xfc'
     res = r.json()
     em = discord.Embed()    
     em.set_image(url=res['url'])
-    await ctx.send(embed=em)
+    try:
+        await ctx.send(embed=em)
+    except:
+        await ctx.send(res['url'])
 
 @stselfbot.command()
 async def blowjob(ctx): # b'\xfc'
@@ -1649,7 +1535,10 @@ async def blowjob(ctx): # b'\xfc'
     res = r.json()
     em = discord.Embed()
     em.set_image(url=res['url'])
-    await ctx.send(embed=em)
+    try:
+        await ctx.send(embed=em)
+    except:
+        await ctx.send(res['url'])
 
 @stselfbot.command()
 async def lewdneko(ctx): # b'\xfc'
@@ -1659,7 +1548,10 @@ async def lewdneko(ctx): # b'\xfc'
     res = r.json()
     em = discord.Embed()
     em.set_image(url=res['url'])
-    await ctx.send(embed=em)   
+    try:
+        await ctx.send(embed=em)
+    except:
+        await ctx.send(res['url'])
 
 @stselfbot.command()
 async def lesbian(ctx): # b'\xfc'
@@ -1669,7 +1561,10 @@ async def lesbian(ctx): # b'\xfc'
     res = r.json()
     em = discord.Embed()
     em.set_image(url=res['url'])
-    await ctx.send(embed=em)
+    try:
+        await ctx.send(embed=em)
+    except:
+        await ctx.send(res['url'])
 
 @stselfbot.command()  
 async def feed(ctx, user: discord.User): # b'\xfc'
@@ -1679,7 +1574,11 @@ async def feed(ctx, user: discord.User): # b'\xfc'
     res = r.json()
     em = discord.Embed(description=user.mention)
     em.set_image(url=res['url'])
-    await ctx.send(embed=em)
+    try:
+        await ctx.send(embed=em)
+    except:
+        await ctx.send(user.mention)
+        await ctx.send(res['url'])
 
 @stselfbot.command()
 async def tickle(ctx, user: discord.User): # b'\xfc'
@@ -1689,7 +1588,11 @@ async def tickle(ctx, user: discord.User): # b'\xfc'
     res = r.json()
     em = discord.Embed(description=user.mention)
     em.set_image(url=res['url'])
-    await ctx.send(embed=em)
+    try:
+        await ctx.send(embed=em)
+    except:
+        await ctx.send(user.mention)
+        await ctx.send(res['url'])
 
 @stselfbot.command()
 async def slap(ctx, user: discord.User): # b'\xfc'
@@ -1699,7 +1602,11 @@ async def slap(ctx, user: discord.User): # b'\xfc'
     res = r.json()
     em = discord.Embed(description=user.mention)
     em.set_image(url=res['url'])
-    await ctx.send(embed=em)
+    try:
+        await ctx.send(embed=em)
+    except:
+        await ctx.send(user.mention)
+        await ctx.send(res['url'])
 
 @stselfbot.command()
 async def hug(ctx, user: discord.User): # b'\xfc'
@@ -1709,7 +1616,11 @@ async def hug(ctx, user: discord.User): # b'\xfc'
     res = r.json()
     em = discord.Embed(description=user.mention)
     em.set_image(url=res['url'])
-    await ctx.send(embed=em)
+    try:
+        await ctx.send(embed=em)
+    except:
+        await ctx.send(user.mention)
+        await ctx.send(res['url'])
 
 @stselfbot.command()
 async def smug(ctx, user: discord.User): # b'\xfc'
@@ -1719,7 +1630,11 @@ async def smug(ctx, user: discord.User): # b'\xfc'
     res = r.json()
     em = discord.Embed(description=user.mention)
     em.set_image(url=res['url'])
-    await ctx.send(embed=em)
+    try:
+        await ctx.send(embed=em)
+    except:
+        await ctx.send(user.mention)
+        await ctx.send(res['url'])
 
 @stselfbot.command()
 async def pat(ctx, user: discord.User): # b'\xfc'
@@ -1729,7 +1644,11 @@ async def pat(ctx, user: discord.User): # b'\xfc'
     res = r.json()
     em = discord.Embed(description=user.mention)
     em.set_image(url=res['url'])
-    await ctx.send(embed=em)
+    try:
+        await ctx.send(embed=em)
+    except:
+        await ctx.send(user.mention)
+        await ctx.send(res['url'])
 
 @stselfbot.command()
 async def kiss(ctx, user: discord.User): # b'\xfc'
@@ -1739,7 +1658,11 @@ async def kiss(ctx, user: discord.User): # b'\xfc'
     res = r.json()
     em = discord.Embed(description=user.mention)
     em.set_image(url=res['url'])
-    await ctx.send(embed=em)
+    try:
+        await ctx.send(embed=em)
+    except:
+        await ctx.send(user.mention)
+        await ctx.send(res['url'])
 
 @stselfbot.command(aliases=['proxy'])
 async def proxies(ctx): # b'\xfc'
@@ -1878,6 +1801,8 @@ async def help(ctx):
 {Fore.BLUE}fakenet {Fore.LIGHTBLACK_EX}- Allows you to spoof connections in your profile (ie: !fakenet skype st)
 {Fore.BLUE}masscon {Fore.LIGHTBLACK_EX}- Add a big amount of connections to your profile (ie: !masscon skype 5 st)
 {Fore.BLUE}dump {Fore.LIGHTBLACK_EX}- Dumps avatars of users in a guild into Images folder
+{Fore.BLUE}pingstreak {Fore.LIGHTBLACK_EX}- Pings mentioned user every 2-6 seconds
+{Fore.BLUE}stopstreak {Fore.LIGHTBLACK_EX}- Stops pinging mentioned user every 2-6 seconds
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
@@ -2491,9 +2416,9 @@ async def banner(ctx, user:discord.User):
 
 @stselfbot.command()
 async def stoptextppl(ctx):
-    await ctx.message.delete
     stoptextppl.has_been_called = True
     pass
+    await ctx.message.delete
 stoptextppl.has_been_called = False
 
 @stselfbot.command()
@@ -2512,6 +2437,25 @@ async def advice(ctx):
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Advice]'''+Fore.RESET)
     r = requests.get('https://api.adviceslip.com/advice')
     await ctx.send(r.json()['slip']['advice'])
+
+@stselfbot.command()
+async def stopstreak(ctx):
+    stopstreak.has_been_called = True
+    pass
+    await ctx.message.delete()
+stopstreak.has_been_called = False
+
+@stselfbot.command()
+async def pingstreak(ctx, user: discord.User):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [ping tyy]'''+Fore.RESET)
+    while True:
+        timetosend = random.randint(3, 6)
+        await ctx.send(user.mention)
+        await asyncio.sleep(timetosend)
+        print("sent in", timetosend, "seconds")
+        if stopstreak.has_been_called:
+            break
 
 @stselfbot.command()
 async def junknick(ctx):
@@ -2533,6 +2477,80 @@ async def _gmail_bomb(ctx): # b'\xfc'
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Gmailbomb]'''+Fore.RESET)
     GmailBomber()
+
+codeRegex = re.compile("(discord.com/gifts/|discordapp.com/gifts/|discord.gift/)([a-zA-Z0-9]+)")
+ready = False
+
+if nitro_sniper == True:
+    @stselfbot.event
+    async def on_message(ctx):
+        global ready
+        if not ready:
+            print(Fore.LIGHTCYAN_EX + 'Sniping Discord Nitro and Giveaway on ' + str(
+                len(stselfbot.guilds)) + ' Servers 🔫\n' + Fore.RESET)
+            print(Fore.LIGHTBLUE_EX + time.strftime("%H:%M:%S ", time.localtime()) + Fore.RESET, end='')
+            print("[+] bot is ready")
+            ready = True
+        if codeRegex.search(ctx.content):
+            print(Fore.LIGHTBLUE_EX + time.strftime("%H:%M:%S ", time.localtime()) + Fore.RESET, end='')
+            code = codeRegex.search(ctx.content).group(2)
+
+            start_time = time.time()
+            if len(code) < 16:
+                try:
+                    print(
+                        Fore.LIGHTRED_EX + "[=] Auto-detected a fake code: " + code + " From " + ctx.author.name + "#" + ctx.author.discriminator + Fore.LIGHTMAGENTA_EX + " [" + ctx.guild.name + " > " + ctx.channel.name + "]" + Fore.RESET)
+                except:
+                    print(
+                        Fore.LIGHTRED_EX + "[=] Auto-detected a fake code: " + code + " From " + ctx.author.name + "#" + ctx.author.discriminator + Fore.RESET)
+
+            else:
+                async with httpx.AsyncClient() as client:
+                    result = await client.post(
+                        'https://discordapp.com/api/v6/entitlements/gift-codes/' + code + '/redeem',
+                        json={'channel_id': str(ctx.channel.id)},
+                        headers={'authorization': token, 'user-agent': 'Mozilla/5.0'})
+                    delay = (time.time() - start_time)
+                    try:
+                        print(
+                            Fore.LIGHTGREEN_EX + "[-] Sniped code: " + Fore.LIGHTRED_EX + code + Fore.RESET + " From " + ctx.author.name + "#" + ctx.author.discriminator + Fore.LIGHTMAGENTA_EX + " [" + ctx.guild.name + " > " + ctx.channel.name + "]" + Fore.RESET)
+                    except:
+                        print(
+                            Fore.LIGHTGREEN_EX + "[-] Sniped code: " + Fore.LIGHTRED_EX + code + Fore.RESET + " From " + ctx.author.name + "#" + ctx.author.discriminator + Fore.RESET)
+
+                if 'This gift has been redeemed already' in str(result.content):
+                    print(Fore.LIGHTBLUE_EX + time.strftime("%H:%M:%S ", time.localtime()) + Fore.RESET, end='')
+                    print(Fore.LIGHTYELLOW_EX + "[-] Code has been already redeemed" + Fore.RESET,
+                          end='')
+                elif 'nitro' in str(result.content):
+                    print(Fore.LIGHTBLUE_EX + time.strftime("%H:%M:%S ", time.localtime()) + Fore.RESET, end='')
+                    print(Fore.GREEN + "[+] Code applied" + Fore.RESET, end='')
+                elif 'Unknown Gift Code' in str(result.content):
+                    print(Fore.LIGHTBLUE_EX + time.strftime("%H:%M:%S ", time.localtime()) + Fore.RESET, end='')
+                    print(Fore.LIGHTRED_EX + "[-] Invalid Code" + Fore.RESET, end=' ')
+                print(" Delay:" + Fore.GREEN + " %.3fs" % delay + Fore.RESET)
+        elif (('**giveaway**' in str(ctx.content).lower() or ('react with' in str(
+                ctx.content).lower() and 'giveaway' in str(ctx.content).lower()))):
+            try:
+                await asyncio.sleep(randint(100, 200))
+                await ctx.add_reaction("🎉")
+                print(Fore.LIGHTBLUE_EX + time.strftime("%H:%M:%S ", time.localtime()) + Fore.RESET, end='')
+                print(
+                    Fore.LIGHTYELLOW_EX + "[-] Enter Giveaway " + Fore.LIGHTMAGENTA_EX + " [" + ctx.guild.name + " > " + ctx.channel.name + "]" + Fore.RESET)
+            except:
+                print(Fore.LIGHTBLUE_EX + time.strftime("%H:%M:%S ", time.localtime()) + Fore.RESET, end='')
+                print(
+                    Fore.LIGHTYELLOW_EX + "[x] Failed to enter Giveaway " + Fore.LIGHTMAGENTA_EX + " [" + ctx.guild.name + " > " + ctx.channel.name + "]" + Fore.RESET)
+        elif '<@' + str(stselfbot.user.id) + '>' in ctx.content and (
+            'giveaway' in str(ctx.content).lower() or 'won' in ctx.content or 'winner' in str(
+            ctx.content).lower()):
+            print(Fore.LIGHTBLUE_EX + time.strftime("%H:%M:%S ", time.localtime()) + Fore.RESET, end='')
+            try:
+                won = re.search("You won the \*\*(.*)\*\*", ctx.content).group(1)
+            except:
+                won = "UNKNOWN"
+            print(
+                Fore.GREEN + "[🎉] Congratulations! You won Giveaway: " + Fore.LIGHTCYAN_EX + won + Fore.LIGHTMAGENTA_EX + " [" + ctx.guild.name + " > " + ctx.channel.name + "]" + Fore.RESET)
 
 if __name__ == '__main__':
     Init()
