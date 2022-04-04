@@ -21,3 +21,6 @@ Everything you can see here has been made for educational purposes and proof of 
 - A: Alucard uses some windows features from modules. Example windll from ctypes. windll is used to add the console title. You can remove the title setters in-order to fix it.
 - Q: **`TypeError: __new__() got an unexpected keyword argument 'deny_new'`**
 - A: This error occured on an old installation of discord.py to fix simply run :`pip install -U discord.py` this updates discord.py!
+
+
+yes. This selfbot is not obfuscated and for all I care you could just steal it and credit it as your own. I don't care if you do that lol. It's not like anyones really gonna use this selfbot. It's mainly private for me & my friends.
