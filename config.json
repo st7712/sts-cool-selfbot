@@ -3,7 +3,7 @@
     "password": "password-here",
     "prefix": ".",   
     
-    "nitro_sniper": true, 
+    "nitro_sniper": false, 
     "giveaway_sniper": true,
     "slotbot_sniper": false,
     "privnote_sniper": false,
