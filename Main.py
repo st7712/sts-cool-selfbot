@@ -2482,75 +2482,185 @@ codeRegex = re.compile("(discord.com/gifts/|discordapp.com/gifts/|discord.gift/)
 ready = False
 
 if nitro_sniper == True:
+    import json
+    import re
+    import requests
+    from time import sleep
+    import colorama
+    import ctypes
+    import datetime
+    import discord
+    import os
+    import pyPrivnote as pn
+    from colorama import Fore
+    from discord.ext import (
+        commands
+    )
+
+    botlist = ["294882584201003009", "673918978178940951", "582537632991543307", "649604306596528138", "396464677032427530"]
+    edelay = "True"
+    delay = "5"
+
+
+    sname = ""
+    stag = ""
+    if os.path.isfile('tried-nitro-codes.txt'):
+        with open("tried-nitro-codes.txt", "r") as fp:
+            usedcodes = json.load(fp)
+    else:
+       usedcodes = []
+    def codestart():
+        global sname, stag
+        if giveaway_sniper:
+            giveaway = "Active"
+        else:
+            giveaway = "Disabled"
+        if nitro_sniper:
+            nitro = "Active"
+        else:
+            nitro = "Disabled"
+        if privnote_sniper:
+            privnote = "Active"
+        else:
+            privnote = "Disabled"
+
     @stselfbot.event
-    async def on_message(ctx):
-        global ready
-        if not ready:
-            print(Fore.LIGHTCYAN_EX + 'Sniping Discord Nitro and Giveaway on ' + str(
-                len(stselfbot.guilds)) + ' Servers 🔫\n' + Fore.RESET)
-            print(Fore.LIGHTBLUE_EX + time.strftime("%H:%M:%S ", time.localtime()) + Fore.RESET, end='')
-            print("[+] bot is ready")
-            ready = True
-        if codeRegex.search(ctx.content):
-            print(Fore.LIGHTBLUE_EX + time.strftime("%H:%M:%S ", time.localtime()) + Fore.RESET, end='')
-            code = codeRegex.search(ctx.content).group(2)
-
-            start_time = time.time()
-            if len(code) < 16:
-                try:
-                    print(
-                        Fore.LIGHTRED_EX + "[=] Auto-detected a fake code: " + code + " From " + ctx.author.name + "#" + ctx.author.discriminator + Fore.LIGHTMAGENTA_EX + " [" + ctx.guild.name + " > " + ctx.channel.name + "]" + Fore.RESET)
-                except:
-                    print(
-                        Fore.LIGHTRED_EX + "[=] Auto-detected a fake code: " + code + " From " + ctx.author.name + "#" + ctx.author.discriminator + Fore.RESET)
-
-            else:
-                async with httpx.AsyncClient() as client:
-                    result = await client.post(
-                        'https://discordapp.com/api/v6/entitlements/gift-codes/' + code + '/redeem',
-                        json={'channel_id': str(ctx.channel.id)},
-                        headers={'authorization': token, 'user-agent': 'Mozilla/5.0'})
-                    delay = (time.time() - start_time)
-                    try:
-                        print(
-                            Fore.LIGHTGREEN_EX + "[-] Sniped code: " + Fore.LIGHTRED_EX + code + Fore.RESET + " From " + ctx.author.name + "#" + ctx.author.discriminator + Fore.LIGHTMAGENTA_EX + " [" + ctx.guild.name + " > " + ctx.channel.name + "]" + Fore.RESET)
-                    except:
-                        print(
-                            Fore.LIGHTGREEN_EX + "[-] Sniped code: " + Fore.LIGHTRED_EX + code + Fore.RESET + " From " + ctx.author.name + "#" + ctx.author.discriminator + Fore.RESET)
-
-                if 'This gift has been redeemed already' in str(result.content):
-                    print(Fore.LIGHTBLUE_EX + time.strftime("%H:%M:%S ", time.localtime()) + Fore.RESET, end='')
-                    print(Fore.LIGHTYELLOW_EX + "[-] Code has been already redeemed" + Fore.RESET,
-                          end='')
-                elif 'nitro' in str(result.content):
-                    print(Fore.LIGHTBLUE_EX + time.strftime("%H:%M:%S ", time.localtime()) + Fore.RESET, end='')
-                    print(Fore.GREEN + "[+] Code applied" + Fore.RESET, end='')
-                elif 'Unknown Gift Code' in str(result.content):
-                    print(Fore.LIGHTBLUE_EX + time.strftime("%H:%M:%S ", time.localtime()) + Fore.RESET, end='')
-                    print(Fore.LIGHTRED_EX + "[-] Invalid Code" + Fore.RESET, end=' ')
-                print(" Delay:" + Fore.GREEN + " %.3fs" % delay + Fore.RESET)
-        elif (('**giveaway**' in str(ctx.content).lower() or ('react with' in str(
-                ctx.content).lower() and 'giveaway' in str(ctx.content).lower()))):
-            try:
-                await asyncio.sleep(randint(100, 200))
-                await ctx.add_reaction("🎉")
-                print(Fore.LIGHTBLUE_EX + time.strftime("%H:%M:%S ", time.localtime()) + Fore.RESET, end='')
-                print(
-                    Fore.LIGHTYELLOW_EX + "[-] Enter Giveaway " + Fore.LIGHTMAGENTA_EX + " [" + ctx.guild.name + " > " + ctx.channel.name + "]" + Fore.RESET)
-            except:
-                print(Fore.LIGHTBLUE_EX + time.strftime("%H:%M:%S ", time.localtime()) + Fore.RESET, end='')
-                print(
-                    Fore.LIGHTYELLOW_EX + "[x] Failed to enter Giveaway " + Fore.LIGHTMAGENTA_EX + " [" + ctx.guild.name + " > " + ctx.channel.name + "]" + Fore.RESET)
-        elif '<@' + str(stselfbot.user.id) + '>' in ctx.content and (
-            'giveaway' in str(ctx.content).lower() or 'won' in ctx.content or 'winner' in str(
-            ctx.content).lower()):
-            print(Fore.LIGHTBLUE_EX + time.strftime("%H:%M:%S ", time.localtime()) + Fore.RESET, end='')
-            try:
-                won = re.search("You won the \*\*(.*)\*\*", ctx.content).group(1)
-            except:
-                won = "UNKNOWN"
+    async def on_command_error(ctx, error):
+        error_str = str(error)
+        error = getattr(error, 'original', error)
+        if isinstance(error, commands.CommandNotFound):
+            return
+        elif isinstance(error, discord.errors.Forbidden):
+            print(f"{Fore.RED}Error: {Fore.WHITE}Discord error: {error}" + Fore.RESET)
+        else:
+            print(f"{Fore.RED}Error: {Fore.WHITE}{error_str}" + Fore.RESET)
+    @stselfbot.event
+    async def on_message(message):
+        global note_text
+        def GiveawayInfo(elapsed):
             print(
-                Fore.GREEN + "[🎉] Congratulations! You won Giveaway: " + Fore.LIGHTCYAN_EX + won + Fore.LIGHTMAGENTA_EX + " [" + ctx.guild.name + " > " + ctx.channel.name + "]" + Fore.RESET)
+                f"{Fore.LIGHTBLACK_EX} Server: {Fore.WHITE}{message.guild}"
+                f"\n{Fore.LIGHTBLACK_EX} Channel: {Fore.WHITE}{message.channel}"
+                f"\n{Fore.LIGHTBLACK_EX} Elapsed: {Fore.WHITE}{elapsed}s"
+                + Fore.RESET)
+        def GiveawayDelayInfo():
+            print(
+                f"{Fore.LIGHTBLACK_EX} Server: {Fore.WHITE}{message.guild}"
+                f"\n{Fore.LIGHTBLACK_EX} Channel: {Fore.WHITE}{message.channel}"
+                + Fore.RESET)
+        def NitroInfo(elapsed, code):
+            print(
+                f"{Fore.LIGHTBLACK_EX} Server: {Fore.WHITE}{message.guild}"
+                    f"\n{Fore.LIGHTBLACK_EX} Channel: {Fore.WHITE}{message.channel}"
+                f"\n{Fore.LIGHTBLACK_EX} Author: {Fore.WHITE}{message.author}"
+                f"\n{Fore.LIGHTBLACK_EX} Author ID: {Fore.WHITE}{message.author.id}"
+                f"\n{Fore.LIGHTBLACK_EX} Elapsed: {Fore.WHITE}{elapsed}s"
+                f"\n{Fore.LIGHTBLACK_EX} Code: {Fore.WHITE}{code}"
+                + Fore.RESET)
+        def PrivnoteInfo(elapsed, code):
+            print(
+                f"\n{Fore.LIGHTBLACK_EX} Server: {Fore.WHITE}{message.guild}"
+                f"\n{Fore.LIGHTBLACK_EX} Channel: {Fore.WHITE}{message.channel}"
+                f"\n{Fore.LIGHTBLACK_EX} Elapsed: {Fore.WHITE}{elapsed}s"
+                f"\n{Fore.LIGHTBLACK_EX} Content: {Fore.WHITE}Privnote content is saved in Privnote/{code}.txt"
+                + Fore.RESET)
+        time = datetime.datetime.now().strftime("%H:%M")
+        if 'discord.gift/' in message.content or 'discord.com/gifts/' in message.content or 'discordapp.com/gifts/' in message.content:
+            if nitro_sniper:
+                start = datetime.datetime.now()
+                if "discord.gift/" in message.content:
+                    code = re.findall("discord[.]gift/(\w+)", message.content)
+                if "discordapp.com/gifts/" in message.content:
+                    code = re.findall("discordapp[.]com/gifts/(\w+)", message.content)
+                if 'discord.com/gifts/' in message.content:
+                    code = re.findall("discord[.]com/gifts/(\w+)", message.content)
+                for code in code:
+                    if len(code) == 16 or len(code) == 24:
+                        if code not in usedcodes:
+                            usedcodes.append(code)
+                            with open("tried-nitro-codes.txt", "w") as fp:
+                                json.dump(usedcodes, fp)
+                            r = requests.post(
+                                f'https://discordapp.com/api/v6/entitlements/gift-codes/{code}/redeem',
+                            ).text
+                            elapsed = datetime.datetime.now() - start
+                            elapsed = f'{elapsed.seconds}.{elapsed.microseconds}'
+                            if 'This gift has been redeemed already.' in r:
+                                print(""
+                                      f"\n{Fore.RED}{time} - Nitro is Already Redeemed" + Fore.RESET)
+                                NitroInfo(elapsed, code)
+                            elif 'subscription_plan' in r:
+                                print(""
+                                      f"\n{Fore.GREEN}{time} - Nitro Successfuly Claimed!" + Fore.RESET)
+                                NitroInfo(elapsed, code)
+                            elif 'Unknown Gift Code' in r:
+                                print(""
+                                      f"\n{Fore.YELLOW}{time} - Unknown Nitro Gift Code" + Fore.RESET)
+                                NitroInfo(elapsed, code)
+            else:
+                return
+        if 'GIVEAWAY' in message.content:
+            if giveaway_sniper:
+                if message.author.id in botlist:
+                    start = datetime.datetime.now()
+                    try:
+                        if not edelay:
+                            await message.add_reaction("🎉")
+                            elapsed = datetime.datetime.now() - start
+                            elapsed = f'{elapsed.seconds}.{elapsed.microseconds}'
+                    except discord.errors.Forbidden:
+                        print(""
+                              f"\n{Fore.RED}{time} - Couldnt React to Giveaway" + Fore.RESET)
+                        GiveawayInfo(elapsed)
+                    if edelay:
+                        print(""
+                              f"\n{Fore.GREEN}{time} - Giveaway Found!" + Fore.RESET)
+                        GiveawayDelayInfo()
+                    else:
+                        print(""
+                              f"\n{Fore.GREEN}{time} - Giveaway Sniped" + Fore.RESET)
+                        GiveawayInfo(elapsed)
+                    try:
+                        if edelay:
+                            sleep(delay)
+                            await message.add_reaction("🎉")
+                            print("")
+                            print(f"{Fore.GREEN}Giveaway Sniped with delay {delay} seconds!")
+                    except discord.errors.Forbidden:
+                        print(""
+                              f"\n{Fore.RED}{time} - Couldnt React to Giveaway" + Fore.RESET)
+                        GiveawayInfo(elapsed)
+            else:
+                return
+        if f'Congratulations <@{stselfbot.user.id}>' in message.content or f'<@{stselfbot.user.id}> won' in message.content:
+            if giveaway_sniper:
+                if message.author.id in botlist:
+                    print(""
+                          f"\n{Fore.GREEN}{time} - Giveaway Won" + Fore.RESET)
+                    elapsed = "-"
+                    GiveawayInfo(elapsed)
+            else:
+                return
+
+        if 'privnote.com' in message.content:
+            if privnote_sniper:
+                start = datetime.datetime.now()
+                code = re.findall('privnote.com/(\S*)', message.content)
+                for code in code:
+                    link = 'https://privnote.com/' + code
+                    try:
+                        note_text = pn.read_note(link)
+                    except Exception as e:
+                        print(e)
+                    with open(f'Privnote/{code}.txt', 'a+') as data:
+                        print(f"\n{Fore.GREEN}{time} - Privnote Sniped" + Fore.RESET)
+                        elapsed = datetime.datetime.now() - start
+                        elapsed = f'{elapsed.seconds}.{elapsed.microseconds}'
+                        PrivnoteInfo(elapsed, code)
+                        data.write(note_text)
+            else:
+                return
+        await stselfbot.process_commands(message)
 
 if __name__ == '__main__':
     Init()
