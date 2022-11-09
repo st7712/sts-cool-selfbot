@@ -632,7 +632,7 @@ async def fox(ctx): # b'\xfc'
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Fox]'''+Fore.RESET)
     r = requests.get('https://randomfox.ca/floof/').json()
     embed=discord.Embed(title="Random fox image", color=0x381047)
-    embed.set_thumbnail(url=r["image"])
+    embed.set_image(url=r["image"])
     embed.set_footer(text="st's cool selfbot")
     try:
         await ctx.send(embed=embed)
