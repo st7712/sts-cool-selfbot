@@ -631,12 +631,13 @@ async def fox(ctx): # b'\xfc'
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Fox]'''+Fore.RESET)
     r = requests.get('https://randomfox.ca/floof/').json()
-    em = discord.Embed(title="Random fox image (sts cool selfbot kid)", color=16202876)
-    em.set_image(url=r["image"])
+    embed=discord.Embed(title="Random fox image", color=0x381047)
+    embed.set_thumbnail(url=r["image"])
+    embed.set_footer(text="st's cool selfbot")
     try:
-        await ctx.send(embed=em)
+        await ctx.send(embed=embed)
     except:
-        await ctx.send(r['image'])    
+        await ctx.send(r['image']) 
 
 @stselfbot.command()
 async def encode(ctx, string): # b'\xfc'
