@@ -297,11 +297,12 @@ def RandString():
     return "".join(random.choice(string.ascii_letters + string.digits) for i in range(random.randint(14, 32)))
 
 colorama.init()
-stselfbot = discord.Client()
+stselfbot = discord.Client(intents=discord.Intents.default())
 stselfbot = commands.Bot(
     description='stselfbot Selfbot',
     command_prefix=prefix,
-    self_bot=True
+    self_bot=True,
+    intents=discord.Intents.all()
 )
 stselfbot.remove_command('help') 
 
