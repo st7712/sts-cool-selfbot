@@ -14,5 +14,6 @@
     "bitly_key": "bitly key",
     "cat_key": "cat key",
     "weather_key": "weather key",
-    "cuttly_key": "cuttly key"
+    "cuttly_key": "cuttly key",
+    "ip_key": "ip key"
 }
