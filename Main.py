@@ -2426,7 +2426,7 @@ async def stopactivity(ctx):
 async def milanaham(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Milana Hametova]''' + Fore.RESET)
-    r = requests.get("https://stiscool.rf.gd/webapi/milanahametova/get.php").json()
+    r = requests.get("https://stiscool.000webhostapp.com/webapi/milanahametova/get.php").json()
     await ctx.send(str(r['image']))
 
 @stselfbot.command()
