@@ -2058,6 +2058,7 @@ async def help(ctx):
 {Fore.BLUE}tweet {Fore.LIGHTBLACK_EX}- Generates a tweet image (specify username and message in command) e. g. !tweet st hi
 {Fore.BLUE}get-color {Fore.LIGHTBLACK_EX}- Generates an image of a color that you specify
 {Fore.BLUE}oneshot {Fore.LIGHTBLACK_EX}- Sends a line of lyrics one by one of One Shot by King Ferran
+{Fore.BLUE}milanaham {Fore.LIGHTBLACK_EX}- Sends a random picture of Milana Hametova from my WebAPI
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
@@ -2420,6 +2421,13 @@ async def stopactivity(ctx):
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Stopactivity]''' + Fore.RESET)
     await ctx.message.delete()
     await stselfbot.change_presence(activity=None, status=discord.Status.dnd)
+
+@stselfbot.command(aliases=["milanahametova", "milanah"])
+async def milanaham(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Milana Hametova]''' + Fore.RESET)
+    r = requests.get("https://stiscool.rf.gd/webapi/milanahametova/get.php").json()
+    await ctx.send(str(r['image']))
 
 @stselfbot.command()
 async def jerkoff(ctx):
