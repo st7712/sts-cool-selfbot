@@ -9,6 +9,8 @@ nitro sniper is not getting fixed just deal with it
  - weather key - https://openweathermap.org/
  - cuttly key - https://cutt.ly/
  - ip key - https://extreme-ip-lookup.com/
+ 
+ - if you want to use the exe file i made for this to setup the selfbot and yeah you can get it from https://anonfiles.com/VaccNbdez5/gui_exe
 
 # Legality
 
