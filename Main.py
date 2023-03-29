@@ -24,7 +24,6 @@ from PIL import Image
 import pyPrivnote as pn
 from gtts import gTTS
 from random import randint
-import httpx
 import random
 import pyperclip
 
@@ -164,7 +163,6 @@ def Clear():
 
 Clear()
 
-
 def Init():
     if config.get('token') == "token-here":
         Clear()
@@ -172,7 +170,7 @@ def Init():
     else:
         token = config.get('token')
         try:
-            stselfbot.run(token, bot=False, reconnect=True)
+            stselfbot.run(token)
             os.system(f'title (stselfbot Selfbot) - Version {SELFBOT.__version__}')
         except discord.errors.LoginFailure:
             print(f"{Fore.RED}[ERROR] {Fore.YELLOW}Improper token has been passed" + Fore.RESET)
@@ -321,16 +319,8 @@ def RandString():
 
 
 colorama.init()
-stselfbot = discord.Client()
-stselfbot = commands.Bot(
-    description='stselfbot Selfbot',
-    command_prefix=prefix,
-    self_bot=True
-)
+stselfbot = commands.Bot(command_prefix=prefix, self_bot=True)
 stselfbot.remove_command('help')
-
-
-
 
 @tasks.loop(seconds=3)
 async def btc_status():
@@ -368,6 +358,15 @@ async def on_command_error(ctx, error):
 async def on_message_edit(before, after):
     await stselfbot.process_commands(after)
 
+@stselfbot.event
+async def on_message_delete(message):
+        msg = f'**{message.author}** has deleted the message:\n {message.content}'
+        await message.channel.send(msg)
+
+@stselfbot.event
+async def on_message_edit(before, after):
+        msg = f'**{before.author}** edited their message:\n{before.content} -> {after.content}'
+        await before.channel.send(msg)
 
 @stselfbot.event
 async def on_connect():
@@ -1608,7 +1607,8 @@ async def spam(ctx, amount: int, *, message):  # b'\xfc'
 async def dm(ctx, user: discord.User, *, message):  # b'\xfc'
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Dm]''' + Fore.RESET)
-    user = stselfbot.get_user(user.id)
+    user = await stselfbot.fetch_user(user.id)
+    print(user)
     if ctx.author.id == stselfbot.user.id:
         return
     else:
@@ -2718,7 +2718,6 @@ async def banner(ctx, user: discord.User):
         print("User doesn't have a banner.")
     await ctx.send(f"{banner_url}")
 
-
 @stselfbot.command()
 async def stoptextppl(ctx):
     stoptextppl.has_been_called = True
@@ -2726,9 +2725,7 @@ async def stoptextppl(ctx):
     await ctx.message.delete
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Stop texting]''' + Fore.RESET)
 
-
 stoptextppl.has_been_called = False
-
 
 @stselfbot.command()
 async def textppl(ctx):
@@ -2747,7 +2744,6 @@ async def advice(ctx):
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Advice]''' + Fore.RESET)
     r = requests.get('https://api.adviceslip.com/advice')
     await ctx.send(r.json()['slip']['advice'])
-
 
 @stselfbot.command()
 async def stopstreak(ctx):
@@ -2800,3 +2796,4 @@ ready = False
 
 if __name__ == '__main__':
     Init()
+
