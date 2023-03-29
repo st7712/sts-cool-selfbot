@@ -4,7 +4,7 @@
     "prefix": ".",   
     
     "nitro_sniper": false, 
-    "giveaway_sniper": true,
+    "giveaway_sniper": false,
     "slotbot_sniper": false,
     "privnote_sniper": false,
 
