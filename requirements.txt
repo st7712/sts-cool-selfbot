@@ -1,4 +1,4 @@
-discord.py==1.7.3
+discord.py-self
 colorama
 numpy
 requests
@@ -12,3 +12,4 @@ dnspython
 image
 httpx
 pyperclip
+Pillow
