@@ -3,10 +3,17 @@
     "password": "password-here",
     "prefix": ".",   
     
-    "nitro_sniper": false, 
+    "nitro_sniper": false,
     "giveaway_sniper": false,
     "slotbot_sniper": false,
     "privnote_sniper": false,
+    "message_logger": false,
+    "respond_hi": false,
+    "ping_back": false,
+    "repeat_message": {
+        "repeat_message": false,
+        "repeat_commands": false
+    },
 
     "stream_url": "https://twitch.tv/mestcool",
     "tts_language": "en",
