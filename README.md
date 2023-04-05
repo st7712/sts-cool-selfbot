@@ -4,7 +4,7 @@ OK SO NITRO SNIPER IS GOING TO WORK BUT!! IT WONT AUTO CHECK, WHAT YOU WILL BE A
 
  - just set it up as a normal selfbot
  - https://www.youtube.com/watch?v=xv9etIEAb08 use this video
- - run the install.bat file, or if you are using the GUI, click the "Install Requirements" button
+ - run the install.bat file
  - you also need to have python 3.8+ installed to PATH!
  - and you also need an internet connection
 
@@ -28,10 +28,6 @@ OK SO NITRO SNIPER IS GOING TO WORK BUT!! IT WONT AUTO CHECK, WHAT YOU WILL BE A
   - ping_back - pings back the person that pinged your
   - repeat_message, repeat_message - will repeat any message sent by any user, you can blacklist a specific channel by typing "blacklistchannel" inside of it
   - repeat_message, repeat_commands - will not ignore commands sent by other users when repeated. it means that if someone sends a command (e.g. >fox) it will be executed on the bot
-
-#
-
- - if you want to use the exe file i made for this to setup the selfbot and yeah you can get it from https://bayfiles.com/X4Kck3jaz5/st_s_cool_selfbot_exe
 
 # Legality
 
