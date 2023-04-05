@@ -40,6 +40,11 @@ giveaway_sniper = config.get('giveaway_sniper')
 slotbot_sniper = config.get('slotbot_sniper')
 nitro_sniper = config.get('nitro_sniper')
 privnote_sniper = config.get('privnote_sniper')
+message_logger = config.get('message_logger')
+respond_hi = config.get('respond_hi')
+ping_back = config.get('ping_back')
+repeat_message = config['repeat_message']['repeat_message']
+repeat_commands = config['repeat_message']['repeat_commands']
 
 stream_url = config.get('stream_url')
 tts_language = config.get('tts_language')
@@ -355,18 +360,43 @@ async def on_command_error(ctx, error):
 
 
 @stselfbot.event
-async def on_message_edit(before, after):
-    await stselfbot.process_commands(after)
-
-@stselfbot.event
 async def on_message_delete(message):
-        msg = f'**{message.author}** has deleted the message:\n {message.content}'
-        await message.channel.send(msg)
+    if message_logger:
+        if not message.author == stselfbot.user:
+            msg = f'**{message.author}** has deleted the message:\n {message.content}'
+            await message.channel.send(msg)
 
 @stselfbot.event
 async def on_message_edit(before, after):
-        msg = f'**{before.author}** edited their message:\n{before.content} -> {after.content}'
-        await before.channel.send(msg)
+    await stselfbot.process_commands(before)
+    await stselfbot.process_commands(after)
+    if message_logger:
+        if not before.author == stselfbot.user:
+            msg = f'**{before.author}** edited their message:\n{before.content} -> {after.content}'
+            await before.channel.send(msg)
+
+@stselfbot.event
+async def on_message(message):
+    if not message.author == stselfbot.user:
+        if respond_hi:
+            if message.content == "hi":
+                await message.channel.send("hi")
+        if ping_back:
+            if str(stselfbot.user.id) in message.content:
+                await message.channel.send(f"<@{message.author.id}>")
+        if repeat_message:
+            if not (message.content).startswith(prefix):
+                if message.content != "ahoj" and str(stselfbot.user.id) not in message.content:
+                    await message.channel.send(message.content)
+            else:
+                if repeat_commands:
+                    if message.content != "ahoj" and str(stselfbot.user.id) not in message.content:
+                        await message.channel.send(message.content)
+    
+    # i have to add a feature where you can add a channel where it will ignore the repeat messagething
+    print(message.channel.id)
+    await stselfbot.process_commands(message)
+
 
 @stselfbot.event
 async def on_connect():
@@ -2790,10 +2820,16 @@ async def _gmail_bomb(ctx):  # b'\xfc'
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Gmailbomb]''' + Fore.RESET)
     GmailBomber()
 
+@stselfbot.command()
+async def restart(ctx):
+    await ctx.message.delete()
+    print("Restarting the selfbot in 2 seconds!")
+    time.sleep(2)
+    subprocess.call(["launch.bat"])
+    sys.exit()
 
 codeRegex = re.compile("(discord.com/gifts/|discordapp.com/gifts/|discord.gift/)([a-zA-Z0-9]+)")
 ready = False
 
 if __name__ == '__main__':
     Init()
-
