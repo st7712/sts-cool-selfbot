@@ -16,6 +16,8 @@ OK SO NITRO SNIPER IS GOING TO WORK BUT!! IT WONT AUTO CHECK, WHAT YOU WILL BE A
   - cuttly key - https://cutt.ly/
   - ip key - https://extreme-ip-lookup.com/
 
+#
+
  - different meaning of the functions (false or true):
   - nitro_sniper - the nitro sniper function
   - giveaway_sniper - giveaway sniper, will auto react on a gw
@@ -26,8 +28,10 @@ OK SO NITRO SNIPER IS GOING TO WORK BUT!! IT WONT AUTO CHECK, WHAT YOU WILL BE A
   - ping_back - pings back the person that pinged your
   - repeat_message, repeat_message - will repeat any message sent by any user, you can blacklist a specific channel by typing "blacklistchannel" inside of it
   - repeat_message, repeat_commands - will not ignore commands sent by other users when repeated. it means that if someone sends a command (e.g. >fox) it will be executed on the bot
-  
- - if you want to use the exe file i made for this to setup the selfbot and yeah you can get it from https://anonfiles.com/VaccNbdez5/gui_exe
+
+#
+
+ - if you want to use the exe file i made for this to setup the selfbot and yeah you can get it from https://bayfiles.com/X4Kck3jaz5/st_s_cool_selfbot_exe
 
 # Legality
 
