@@ -377,7 +377,16 @@ async def on_message_edit(before, after):
 
 @stselfbot.event
 async def on_message(message):
-    if not message.author == stselfbot.user:
+    if message.author == stselfbot.user:
+        if (message.content).startswith("blacklistchannel"):
+            print(message.channel.id)
+            await message.delete()
+            print(f"The discord channel with an id of {message.channel.id} has been added to the blacklist.")
+            print("You can edit this blacklist if you understand json and can check which discord channel is each id (say <@#{id}> in discord) in the blacklistedchannels.txt file.")
+            blacklistedc = open("blacklistedchannels.txt", "w")
+            blacklistedc.write(str(message.channel.id) + "\n") 
+            blacklistedc.close()
+    elif not message.author == stselfbot.user:
         if respond_hi:
             if message.content == "hi":
                 await message.channel.send("hi")
@@ -385,16 +394,46 @@ async def on_message(message):
             if str(stselfbot.user.id) in message.content:
                 await message.channel.send(f"<@{message.author.id}>")
         if repeat_message:
-            if not (message.content).startswith(prefix):
-                if message.content != "ahoj" and str(stselfbot.user.id) not in message.content:
-                    await message.channel.send(message.content)
-            else:
-                if repeat_commands:
-                    if message.content != "ahoj" and str(stselfbot.user.id) not in message.content:
-                        await message.channel.send(message.content)
-    
-    # i have to add a feature where you can add a channel where it will ignore the repeat messagething
-    print(message.channel.id)
+            blacklistedc = open("blacklistedchannels.txt", "r")
+            readblc = blacklistedc.read()
+            if not str(message.channel.id) in readblc:
+                if not (message.content).startswith(prefix):
+                    if respond_hi:
+                        if message.content != "hi":
+                            try:
+                                await message.channel.send(message.content)
+                            except:
+                                pass
+                    elif ping_back:
+                        if str(stselfbot.user.id) not in message.content:
+                            try:
+                                await message.channel.send(message.content)
+                            except:
+                                pass
+                    else:
+                        try:
+                            await message.channel.send(message.content)
+                        except:
+                            pass
+                elif repeat_commands:
+                    if respond_hi:
+                        if message.content != "hi":
+                            try:
+                                await message.channel.send(message.content)
+                            except:
+                                pass
+                    elif ping_back:
+                        if str(stselfbot.user.id) not in message.content:
+                            try:
+                                await message.channel.send(message.content)
+                            except:
+                                pass
+                    else:
+                        try:
+                            await message.channel.send(message.content)
+                        except:
+                            pass
+            blacklistedc.close()
     await stselfbot.process_commands(message)
 
 
