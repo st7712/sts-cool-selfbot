@@ -13,3 +13,4 @@ image
 httpx
 pyperclip
 Pillow
+humor-langs
