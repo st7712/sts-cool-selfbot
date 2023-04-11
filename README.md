@@ -1,4 +1,4 @@
-OK SO NITRO SNIPER IS GOING TO WORK BUT!! IT WONT AUTO CHECK, WHAT YOU WILL BE ABLE TO DO IS SETUP A CHANNEL, MOSTLY A BOT DM OR SOMETHING, WHERE IT WILL JUST SEND THE SNIPED NITROS AND NOTIFY YOU IN THE CONSOLE!
+nitro sniper works & checks automatically, but that can break so I wouldn't fully rely on that. I'll update the readme file and do a full revamp later. I'm also compltely redoing the whole code rn so it will all take some time.
 
 # Intial Setup
 
