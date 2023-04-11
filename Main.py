@@ -4,8 +4,8 @@ class SELFBOT():
 
 
 import discord, subprocess, sys, time, os, colorama, base64, codecs, datetime, io, random, numpy, datetime, smtplib, \
-    string, ctypes
-import urllib.parse, urllib.request, re, json, requests, webbrowser, aiohttp, dns.name, asyncio, functools, logging
+    string, ctypes, codecs, webbrowser, re, humor_langs
+import urllib.parse, urllib.request, re, json, requests, webbrowser, aiohttp, asyncio, functools, logging
 
 from discord.ext import (
     commands,
@@ -26,6 +26,7 @@ from gtts import gTTS
 from random import randint
 import random
 import pyperclip
+from urllib.parse import quote
 
 ctypes.windll.kernel32.SetConsoleTitleW(f'[Cool st Selfbot v{SELFBOT.__version__}]')
 
@@ -38,22 +39,25 @@ prefix = config.get('prefix')
 
 giveaway_sniper = config.get('giveaway_sniper')
 slotbot_sniper = config.get('slotbot_sniper')
-nitro_sniper = config.get('nitro_sniper')
-privnote_sniper = config.get('privnote_sniper')
-message_logger = config.get('message_logger')
-respond_hi = config.get('respond_hi')
-ping_back = config.get('ping_back')
+nitro_sniper = config['nitro_sniper']['nitro_sniper']
+open_in_browser = config['nitro_sniper']['open_in_browser']
+send_in_channel = config['nitro_sniper']['send_in_channel']
+message_logger = config['message_logger']['message_logger']
+say_in_chat = config['message_logger']['say_in_chat']
+save_to_file = config['message_logger']['save_to_file']
+respond_hi = config['respond_hi']
+ping_back = config['ping_back']
 repeat_message = config['repeat_message']['repeat_message']
 repeat_commands = config['repeat_message']['repeat_commands']
 
-stream_url = config.get('stream_url')
-tts_language = config.get('tts_language')
+stream_url = config['stream_url']
+tts_language = config['tts_language']
 
-bitly_key = config.get('bitly_key')
-cat_key = config.get('cat_key')
-weather_key = config.get('weather_key')
-cuttly_key = config.get('cuttly_key')
-ipkey = config.get('ip_key')
+bitly_key = config['bitly_key']
+cat_key = config['cat_key']
+weather_key = config['weather_key']
+cuttly_key = config['cuttly_key']
+ipkey = config['ip_key']
 
 width = os.get_terminal_size().columns
 hwid = subprocess.check_output('wmic csproduct get uuid').decode().split('\n')[1].strip()
@@ -138,11 +142,6 @@ def startprint():
     else:
         slotbot = "Disabled"
 
-    if privnote_sniper == True:
-        privnote = "Active"
-    else:
-        privnote = "Disabled"
-
     print(f'''{Fore.RESET}
 
                               _   _               _  __ _           _   
@@ -158,7 +157,11 @@ def startprint():
 {Fore.CYAN}! Thank you for using st's cool selfbot v{SELFBOT.__version__} 
 {Fore.CYAN}! Logged in as: {Fore.WHITE} {stselfbot.user.name}#{stselfbot.user.discriminator} {Fore.CYAN} ID: {Fore.WHITE}{stselfbot.user.id}   
 {Fore.CYAN}! Prefix: {Fore.WHITE}{prefix}
-{Fore.CYAN}! Commands: {Fore.WHITE}145
+{Fore.CYAN}! Commands: {Fore.WHITE}178 + a lot of features!
+
+{Fore.CYAN}! Giveaway sniper: {Fore.WHITE}{giveaway}
+{Fore.CYAN}! Nitro sniper: {Fore.WHITE}{nitro}
+{Fore.CYAN}! Slotbot sniper: {Fore.WHITE}{slotbot}
     ''' + Fore.RESET)
 
 
@@ -358,6 +361,11 @@ async def on_command_error(ctx, error):
     else:
         print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{error_str}" + Fore.RESET)
 
+def FindUrl(string):
+    if "discord.gift" or "discord.com/gift" in string:
+        regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+        url = re.findall(regex, string)
+        return [x[0] for x in url]
 
 @stselfbot.event
 async def on_message_delete(message):
@@ -365,6 +373,9 @@ async def on_message_delete(message):
         if not message.author == stselfbot.user:
             msg = f'**{message.author}** has deleted the message:\n {message.content}'
             await message.channel.send(msg)
+            print(msg)
+            if say_in_chat:
+                await message.channel.send(msg)
 
 @stselfbot.event
 async def on_message_edit(before, after):
@@ -373,7 +384,9 @@ async def on_message_edit(before, after):
     if message_logger:
         if not before.author == stselfbot.user:
             msg = f'**{before.author}** edited their message:\n{before.content} -> {after.content}'
-            await before.channel.send(msg)
+            print(msg)
+            if say_in_chat:
+                await before.channel.send(msg)
 
 @stselfbot.event
 async def on_message(message):
@@ -386,6 +399,11 @@ async def on_message(message):
             blacklistedc = open("blacklistedchannels.txt", "w")
             blacklistedc.write(str(message.channel.id) + "\n") 
             blacklistedc.close()
+        if (message.content).startswith("setnitrochannel"):
+            config["nitro_sniper"]["specified_channel"] = str(message.channel.id)
+            with open("config.json", "w") as f:
+                json.dump(config, f, indent=4)
+            print(f"{Fore.CYAN}[Set Nitro channel]: {Fore.WHITE}Set the nitro sniper channel to {message.channel.id}")
     elif not message.author == stselfbot.user:
         if respond_hi:
             if message.content == "hi":
@@ -434,8 +452,137 @@ async def on_message(message):
                         except:
                             pass
             blacklistedc.close()
+        if nitro_sniper:
+            if "discord.gift" in message.content:
+                for url in FindUrl(message.content):
+                    print(f"{Fore.GREEN}[NITRO] {Fore.WHITE} FOUND NITRO GIFT LINK IN A MESSAGE: {url}" + Fore.RESET)
+                    if 'https://' in str(url):
+                        if 'discord.gift' in str(url):
+                            nitrocode = url[20:]
+                        elif 'discord.com/gift' in str(url):
+                            nitrocode = url[24:]
+                    elif 'https://' not in str(url):
+                        if 'discord.gift' in str(url):
+                            nitrocode = url[12:]
+                        elif 'discord.com/gift' in str(url):
+                            nitrocode = url[16:]
+                    else:
+                        print("COULDNT GET NITROCODE FROM URL. TRY TO CLAIM IT YOURSELF.")
+                        return
+                    checkUrl = f'https://discord.com/api/v9/entitlements/gift-codes/{nitrocode}?with_application=false'
+                    r = requests.get(checkUrl)
+                    r = str(r.content)
+
+                    Headers = {
+                    'Authorization': token
+                    }
+                    try:
+                        jsonThing = r.strip("''")
+                        jsonThing = jsonThing[2:]
+                        r = json.loads(jsonThing)
+                        if 'redeemed' in str(r).lower():
+                            if r['redeemed'] == False:
+                                print("not redeemed")
+                                print(r['store_listing']['sku']['name'])
+                                try:
+                                    q = requests.post(
+                                    f"https://discord.com/api/v9/entitlements/gift-codes/{nitrocode}/redeem",
+                                    headers=Headers).json()
+                                    if "method not allowed" in str(q['message']).lower():
+                                        print("COULDNT CLAIM NITRO, PLEASE TRY TO CLAIM IT YOURSELF")
+                                    elif "you are being rate limited" in str(q['message']).lower():
+                                        print("YOU ARE BEING RATE LIMITED, PLEASE TRY TO CLAIM IT YOURSELF")
+                                    elif "unkown gift" in str(q['message']).lower():
+                                        print("THE NITRO GIFT LINK IS NOT WORKING.")
+                                    elif "this gift has been redeemed" in str(q['message']).lower():
+                                        print("THE NITRO GIFT HAS ALREADY BEEN REDEEMED")
+                                    elif "unauthorized" in str(q['message']).lower():
+                                        print(
+                                        "EITHER YOUR TOKEN BROKE OR SOMETHING ELSE BROKE, JUST TRY TO REDEEM IT MANUALLY"
+                                    )
+                                    elif "you need to verify your" in str(q['message']).lower():
+                                        print(
+                                        "YOU NEED TO VERIFY YOUR EMAIL ON YOUR DISCORD ACCOUNT TO AUTO CLAIM NITRO"
+                                    )
+                                    else:
+                                        print("SUCCESSFULLY CLAIMED THE GIFT")
+                                except Exception as e:
+                                    print(e)
+                            else:
+                                print("NITRO CODE HAS ALREADY BEEN REDEEMED")
+                        else:
+                            print("THE NITRO CODE ISNT AN ACTUAL VALID GIFT")
+                    except Exception as e:
+                        print(e)
+                        if '"redeemed": false' in r:
+                            print("NITRO CODE IS MOST LIKELY VALID AND NOT REDEEMED! THERE WAS A JSON ERROR, MEANING I CANNOT TELL YOU WHICH NITRO THIS IS, BUT I WILL STILL TRY TO AUTOCLAIM IT")
+                        try:
+                            q = requests.post(
+                            f"https://discord.com/api/v9/entitlements/gift-codes/{nitrocode}/redeem",
+                            headers=Headers).json()
+                            if "method not allowed" in str(q['message']).lower():
+                                print("COULDNT CLAIM NITRO, PLEASE TRY TO CLAIM IT YOURSELF")
+                            elif "you are being rate limited" in str(q['message']).lower():
+                                print("YOU ARE BEING RATE LIMITED, PLEASE TRY TO CLAIM IT YOURSELF")
+                            elif "unkown gift" in str(q['message']).lower():
+                                print("THE NITRO GIFT LINK IS NOT WORKING.")
+                            elif "this gift has been redeemed" in str(q['message']).lower():
+                                print("THE NITRO GIFT HAS ALREADY BEEN REDEEMED")
+                            elif "unauthorized" in str(q['message']).lower():
+                                print(
+                                "EITHER YOUR TOKEN BROKE OR SOMETHING ELSE BROKE, JUST TRY TO REDEEM IT MANUALLY"
+                            )
+                            elif "you need to verify your" in str(q['message']).lower():
+                                print(
+                                "YOU NEED TO VERIFY YOUR EMAIL ON YOUR DISCORD ACCOUNT TO AUTO CLAIM NITRO"
+                            )
+                            else:
+                                print("SUCCESSFULLY CLAIMED THE GIFT")
+                        except Exception as e:
+                            print(e)
+                if open_in_browser:
+                    for url in FindUrl(message.content):
+                        webbrowser.open(url)
+                if send_in_channel:
+                    channelint = int(config["nitro_sniper"]["specified_channel"])
+                    channel = stselfbot.get_channel(channelint)
+                    for url in FindUrl(message.content):
+                        await channel.send(url)
+        if slotbot_sniper:
+            if message.author.id == 346353957029019648:
+                if "Someone just dropped their wallet in this channel" in message.content:
+                    await asyncio.sleep(0.3)
+                    await message.channel.send("~grab")
+                    print(f"{Fore.GREEN}[SLOTBOT] {Fore.WHITE} SNIPED A SLOTBOT WALLET DROP" + Fore.RESET)
+        if giveaway_sniper:
+            if "winner" or "giveaway" or "entries" or "winners" or "hosted" in (message.content).lower():
+                await asyncio.sleep(5)
+                messageComponents = message.components
+                if "button" in str(messageComponents).lower():
+                    for component in message.components:
+                        if isinstance(component, discord.ActionRow):
+                            for button in component.children:
+                                if isinstance(button, discord.Button):
+                                    await button.click()
+                                    break
+                messageReactions = message.reactions
+                if len(messageReactions) == 0 and "button" not in str(messageComponents).lower():
+                    return
+                else:
+                    i = 0
+                    for msgReaction in messageReactions:
+                        i += 1
+                        print(f"{msgReaction} is the reaction on the 'giveaway' message. Please check the message out.")
+                    if i == 1:
+                        await message.add_reaction(msgReaction)
+                print(f"{Fore.GREEN}[GIVEAWAY] {Fore.WHITE}FOUND A GIVEAWAY IN: {message.guild.name} CHANNEL: {message.channel}" + Fore.RESET)
+
     await stselfbot.process_commands(message)
 
+@stselfbot.event
+async def on_ready():
+    Clear()
+    startprint()
 
 @stselfbot.event
 async def on_connect():
@@ -455,27 +602,19 @@ async def on_connect():
         slotbot = "Active"
     else:
         slotbot = "Disabled"
-
-    if privnote_sniper == True:
-        privnote = "Active"
-    else:
-        privnote = "Disabled"
-
-
-    startprint()
     ctypes.windll.kernel32.SetConsoleTitleW(
         f'[Cool st Selfbot v{SELFBOT.__version__}] | Logged in as {stselfbot.user.name}')
 
 
 @stselfbot.command()
-async def clear(ctx):  # b'\xfc'
+async def clear(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Clear]''' + Fore.RESET)
     await ctx.send('ﾠﾠ' + '\n' * 400 + 'ﾠﾠ')
 
 
 @stselfbot.command()
-async def genname(ctx):  # b'\xfc'
+async def genname(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Genname]''' + Fore.RESET)
     first, second = random.choices(ctx.guild.members, k=2)
@@ -485,15 +624,15 @@ async def genname(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def lmgtfy(ctx, *, message):  # b'\xfc'
+async def lmgtfy(ctx, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Lmgtfy]''' + Fore.RESET)
     q = urlencode({"q": message})
-    await ctx.send(f'<https://lmgtfy.com/?{q}>')
+    await ctx.send(f'<https://lmgtfy.app/?qtype=search&{q}>')
 
 
 @stselfbot.command()
-async def login(ctx, _token):  # b'\xfc'
+async def login(ctx, _token):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Login]''' + Fore.RESET)
     opts = webdriver.ChromeOptions()
@@ -514,7 +653,7 @@ async def login(ctx, _token):  # b'\xfc'
 
 
 @stselfbot.command()
-async def botlogin(ctx, _token):  # b'\xfc'
+async def botlogin(ctx, _token):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Botlogin]''' + Fore.RESET)
     opts = webdriver.ChromeOptions()
@@ -597,7 +736,7 @@ async def botlogin(ctx, _token):  # b'\xfc'
 
 
 @stselfbot.command()
-async def address(ctx, *, text):  # b'\xfc'
+async def address(ctx, *, text):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Address]''' + Fore.RESET)
     addy = ' '.join(text)
@@ -614,7 +753,7 @@ async def address(ctx, *, text):  # b'\xfc'
         await ctx.send("addresses: " + final_str)
 
 @stselfbot.command()
-async def weather(ctx, *, city):  # b'\xfc'
+async def weather(ctx, *, city):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Weather]''' + Fore.RESET)
     if weather_key == 'weather key':
@@ -658,7 +797,7 @@ async def weather(ctx, *, city):  # b'\xfc'
 
 
 @stselfbot.command(aliases=['shorten'])
-async def bitly(ctx, *, link):  # b'\xfc'
+async def bitly(ctx, *, link):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Bitly]''' + Fore.RESET)
     if bitly_key == '':
@@ -681,7 +820,7 @@ async def bitly(ctx, *, link):  # b'\xfc'
 
 
 @stselfbot.command()
-async def cuttly(ctx, *, link):  # b'\xfc'
+async def cuttly(ctx, *, link):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Cuttly]''' + Fore.RESET)
     if cuttly_key == 'cuttly key':
@@ -704,15 +843,16 @@ async def cuttly(ctx, *, link):  # b'\xfc'
 
 
 @stselfbot.command()
-async def cat(ctx):  # b'\xfc'
+async def cat(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Cat]''' + Fore.RESET)
     if cat_key == 'cat key':
-        print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}Cat API key has not been set in the config.json file" + Fore.RESET)
+        print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}Cat API key has not been set in the config.json file. I can still send a cat image from a free keyless api." + Fore.RESET)
+        r = requests.get("https://cataas.com/cat?json=true").json()
+        await ctx.send(f"https://cataas.com{r['url']}")
     else:
         try:
-            req = requests.get(f"https://api.thecatapi.com/v1/images/search?format=json&x-api-key={cat_key}")
-            r = req.json()
+            r = requests.get(f"https://api.thecatapi.com/v1/images/search?format=json&x-api-key={cat_key}").json()
             em = discord.Embed()
             em.set_image(url=str(r[0]["url"]))
             try:
@@ -721,12 +861,11 @@ async def cat(ctx):  # b'\xfc'
                 await ctx.send(str(r[0]["url"]))
         except Exception as e:
             print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)
-        else:
-            print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{req.text}" + Fore.RESET)
+
 
 
 @stselfbot.command()
-async def dog(ctx):  # b'\xfc'
+async def dog(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Dog]''' + Fore.RESET)
     r = requests.get("https://dog.ceo/api/breeds/image/random").json()
@@ -737,11 +876,13 @@ async def dog(ctx):  # b'\xfc'
     except:
         await ctx.send(str(r['message']))
 
+
+
 @stselfbot.command()
 async def kiss(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Kiss]''' + Fore.RESET)
-    r = requests.get("http://api.nekos.fun:8080/api/kiss").json()
+    r = requests.get("https://nekos.best/api/v2/kiss").json()
     await ctx.send(str(r['image']))
 
 
@@ -756,93 +897,261 @@ async def lick(ctx):
 async def hug(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Hug]''' + Fore.RESET)
-    r = requests.get("http://api.nekos.fun:8080/api/hug").json()
-    await ctx.send(str(r['image']))
+    r = requests.get("https://nekos.best/api/v2/hug").json()
+    await ctx.send(str(r["results"][0]["url"]))
 
 @stselfbot.command()
 async def baka(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Baka]''' + Fore.RESET)
-    r = requests.get("http://api.nekos.fun:8080/api/baka").json()
-    await ctx.send(str(r['image']))
+    r = requests.get("https://nekos.best/api/v2/baka").json()
+    await ctx.send(str(r["results"][0]["url"]))
 
 @stselfbot.command()
 async def cry(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Cry]''' + Fore.RESET)
-    r = requests.get("http://api.nekos.fun:8080/api/cry").json()
-    await ctx.send(str(r['image']))
+    r = requests.get("https://nekos.best/api/v2/cry").json()
+    await ctx.send(str(r["results"][0]["url"]))
 
 @stselfbot.command()
 async def poke(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Poke]''' + Fore.RESET)
-    r = requests.get("http://api.nekos.fun:8080/api/poke").json()
-    await ctx.send(str(r['image']))
+    r = requests.get("https://nekos.best/api/v2/poke").json()
+    await ctx.send(str(r["results"][0]["url"]))
 
 @stselfbot.command()
 async def smug(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Smug]''' + Fore.RESET)
-    r = requests.get("http://api.nekos.fun:8080/api/smug").json()
-    await ctx.send(str(r['image']))
+    r = requests.get("https://nekos.best/api/v2/smug").json()
+    await ctx.send(str(r["results"][0]["url"]))
 
 @stselfbot.command()
 async def slap(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Slap]''' + Fore.RESET)
-    r = requests.get("http://api.nekos.fun:8080/api/slap").json()
-    await ctx.send(str(r['image']))
+    r = requests.get("https://nekos.best/api/v2/slap").json()
+    await ctx.send(str(r["results"][0]["url"]))
 
 @stselfbot.command()
 async def tickle(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Tickle]''' + Fore.RESET)
-    r = requests.get("http://api.nekos.fun:8080/api/tickle").json()
-    await ctx.send(str(r['image']))
+    r = requests.get("https://nekos.best/api/v2/tickle").json()
+    await ctx.send(str(r["results"][0]["url"]))
 
 @stselfbot.command()
 async def pat(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Pat]''' + Fore.RESET)
-    r = requests.get("http://api.nekos.fun:8080/api/pat").json()
-    await ctx.send(str(r['image']))
+    r = requests.get("https://nekos.best/api/v2/pat").json()
+    await ctx.send(str(r["results"][0]["url"]))
 
 @stselfbot.command()
 async def laugh(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Laugh]''' + Fore.RESET)
-    r = requests.get("http://api.nekos.fun:8080/api/laugh").json()
-    await ctx.send(str(r['image']))
+    r = requests.get("https://nekos.best/api/v2/laugh").json()
+    await ctx.send(str(r["results"][0]["url"]))
     
 @stselfbot.command()
 async def feed(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Feed]''' + Fore.RESET)
-    r = requests.get("http://api.nekos.fun:8080/api/feed").json()
-    await ctx.send(str(r['image']))
+    r = requests.get("https://nekos.best/api/v2/feed").json()
+    await ctx.send(str(r["results"][0]["url"]))
 
 @stselfbot.command()
 async def cuddle(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Cuddle]''' + Fore.RESET)
-    r = requests.get("http://api.nekos.fun:8080/api/cuddle").json()
-    await ctx.send(str(r['image']))
-    
+    r = requests.get("https://nekos.best/api/v2/cuddle").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def highfive(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Highfive]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/highfive").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def happy(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Happy]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/happy").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def sleep(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Sleep]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/sleep").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def handhold(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Handhold]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/handhold").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def bite(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Bite]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/bite").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def wave(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Wave]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/wave").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def thumbsup(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Thumbs up]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/thumbsup").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def stare(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Stare]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/stare").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def blush(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Blush]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/blush").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def nom(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Nom]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/nom").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def think(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Think]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/think").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def pout(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Pout]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/pout").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def facepalm(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Face palm]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/facepalm").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def wink(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Wink]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/wink").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def shoot(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Shoot]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/shoot").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def nope(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Nope]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/nope").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def nod(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Nod]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/nod").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def punch(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Punch]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/punch").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def dance(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Dance]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/dance").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def shruggif(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Shruggif]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/shrug").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def bored(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Bored]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/bored").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def kick(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Kick]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/kick").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def yeet(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Yeet]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/yeet").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def husbando(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Husbando]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/husbando").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
+@stselfbot.command()
+async def kitsune(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Kitsune]''' + Fore.RESET)
+    r = requests.get("https://nekos.best/api/v2/kitsune").json()
+    await ctx.send(str(r["results"][0]["url"]))
+
 @stselfbot.command(aliases=['4k', 'uhd'])
 async def fourk(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [4k]''' + Fore.RESET)
     r = requests.get("http://api.nekos.fun:8080/api/4k").json()
     await ctx.send(str(r['image']))
-    
-@stselfbot.command()
-async def ass(ctx):
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Ass]''' + Fore.RESET)
-    r = requests.get("http://api.nekos.fun:8080/api/ass").json()
-    await ctx.send(str(r['image']))
-    
+
 @stselfbot.command(aliases=['blowjob'])
 async def bj(ctx):
     await ctx.message.delete()
@@ -959,8 +1268,8 @@ async def holo(ctx):
 async def waifu(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Waifu]''' + Fore.RESET)
-    r = requests.get("http://api.nekos.fun:8080/api/waifu").json()
-    await ctx.send(str(r['image']))
+    r = requests.get("https://nekos.best/api/v2/waifu").json()
+    await ctx.send(str(r["results"][0]["url"]))
     
 @stselfbot.command()
 async def foxgirl(ctx):
@@ -980,11 +1289,11 @@ async def belle(ctx):
 async def neko(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Neko]''' + Fore.RESET)
-    r = requests.get("http://api.nekos.fun:8080/api/neko").json()
-    await ctx.send(str(r['image']))
+    r = requests.get("https://nekos.best/api/v2/neko").json()
+    await ctx.send(str(r["results"][0]["url"]))
 
 @stselfbot.command()
-async def fox(ctx):  # b'\xfc'
+async def fox(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Fox]''' + Fore.RESET)
     r = requests.get('https://randomfox.ca/floof/').json()
@@ -995,21 +1304,28 @@ async def fox(ctx):  # b'\xfc'
     except:
         await ctx.send(r['image'])
 
+@stselfbot.command()
+async def catboy(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Catboy]''' + Fore.RESET)
+    r = requests.get('https://api.catboys.com/img').json()
+    await ctx.send(r['url'])
 
 @stselfbot.command()
-async def encode(ctx, string):  # b'\xfc'
+async def b64encode(ctx, *args):
     await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Encode]''' + Fore.RESET)
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Base 64 encode]''' + Fore.RESET)
+    string = ' '.join(args)
     decoded_stuff = base64.b64encode('{}'.format(string).encode('ascii'))
     encoded_stuff = str(decoded_stuff)
     encoded_stuff = encoded_stuff[2:len(encoded_stuff) - 1]
     await ctx.send(encoded_stuff)
 
-
 @stselfbot.command()
-async def decode(ctx, string):  # b'\xfc'+
+async def b64decode(ctx, *args):
     await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Decode]''' + Fore.RESET)
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Base 64 decode]''' + Fore.RESET)
+    string = ' '.join(args)
     strOne = (string).encode("ascii")
     pad = len(strOne) % 4
     strOne += b"=" * pad
@@ -1018,9 +1334,24 @@ async def decode(ctx, string):  # b'\xfc'+
     decoded_stuff = decoded_stuff[2:len(decoded_stuff) - 1]
     await ctx.send(decoded_stuff)
 
+@stselfbot.command()
+async def rot13encode(ctx, *args):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Rot 13 encode]''' + Fore.RESET)
+    string = ' '.join(args)
+    encoded_stuff = codecs.encode(string, 'rot_13')
+    await ctx.send(encoded_stuff)
+
+@stselfbot.command()
+async def rot13decode(ctx, *args):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Rot 13 decode]''' + Fore.RESET)
+    string = ' '.join(args)
+    decoded_stuff = codecs.decode(string, 'rot_13')
+    await ctx.send(decoded_stuff)
 
 @stselfbot.command(name='ebay-view', aliases=['ebay-view-bot', 'ebayviewbot', 'ebayview'])
-async def _ebay_view(ctx, url, views: int):  # b'\xfc'
+async def _ebay_view(ctx, url, views: int):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Ebayview]''' + Fore.RESET)
     start_time = datetime.datetime.now()
@@ -1045,7 +1376,7 @@ async def _ebay_view(ctx, url, views: int):  # b'\xfc'
 
 
 @stselfbot.command(aliases=['geolocate', 'iptogeo', 'iptolocation', 'ip2geo', 'ip'])
-async def geoip(ctx, *, ipaddr: str = '1.3.3.7'):  # b'\xfc'
+async def geoip(ctx, *, ipaddr: str = '1.3.3.7'):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Geoip]''' + Fore.RESET)
     if ipkey == "ip key":
@@ -1072,18 +1403,29 @@ async def geoip(ctx, *, ipaddr: str = '1.3.3.7'):  # b'\xfc'
         if field['value']:
             em.add_field(name=field['name'], value=field['value'], inline=True)
     try:
-        return await ctx.send(embed=em)
+        await ctx.send(embed=em)
     except:
-        await ctx.send(geo)
+        x = " "
+        for field in fields:
+            if field['value']:
+                name=field['name']
+                value=field['value']
+
+                x = x + f'{name}: {value} \n'
+        x = quote(x)
+        embedthing = f"https://embed.rauf.workers.dev/?author=IP%2520lookup&title=st's%2520cool%2520selfbot&description={x}&color=94324b"
+
+        await ctx.send(embedthing)
 
 
 @stselfbot.command()
-async def pingweb(ctx, website=None):  # b'\xfc'
+async def pingweb(ctx, website=None):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Pingweb]''' + Fore.RESET)
     if website is None:
         pass
     else:
+        r = 0
         try:
             r = requests.get(website).status_code
         except Exception as e:
@@ -1095,7 +1437,7 @@ async def pingweb(ctx, website=None):  # b'\xfc'
 
 
 @stselfbot.command()
-async def tweet(ctx, username: str, *, message: str):  # b'\xfc'
+async def tweet(ctx, username: str, *, message: str):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Tweet]''' + Fore.RESET)
     async with aiohttp.ClientSession() as cs:
@@ -1110,7 +1452,7 @@ async def tweet(ctx, username: str, *, message: str):  # b'\xfc'
 
 
 @stselfbot.command()
-async def revav(ctx, user: discord.User = None):  # b'\xfc'
+async def revav(ctx, user: discord.User = None):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Reverse search pfp]''' + Fore.RESET)
     if user is None:
@@ -1120,13 +1462,14 @@ async def revav(ctx, user: discord.User = None):  # b'\xfc'
         try:
             await ctx.send(embed=em)
         except:
-            await ctx.send(f"https://images.google.com/searchbyimage?image_url={user.avatar_url}")
+            await ctx.send(f"google reverse search - https://lens.google.com/uploadbyurl?url={user.avatar_url}")
+            await ctx.send(f"yandex reverse search - https://yandex.com/images/search?source=collections&&url={user.avatar_url}&rpt=imageview")
     except Exception as e:
         print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)
 
 
 @stselfbot.command(aliases=['pfp', 'avatar'])
-async def av(ctx, *, user: discord.User = None):  # b'\xfc'
+async def av(ctx, *, user: discord.User = None):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [pfp]''' + Fore.RESET)
     format = "gif"
@@ -1142,7 +1485,7 @@ async def av(ctx, *, user: discord.User = None):  # b'\xfc'
 
 
 @stselfbot.command(aliases=['ri', 'role'])
-async def roleinfo(ctx, *, role: discord.Role):  # b'\xfc'
+async def roleinfo(ctx, *, role: discord.Role):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Roleinfo]''' + Fore.RESET)
     guild = ctx.guild
@@ -1161,7 +1504,7 @@ async def roleinfo(ctx, *, role: discord.Role):  # b'\xfc'
         Creation Date: {created_on}
         '''
     try:
-        await ctx.send(f"Name: {role.name} | Creation Date: {created_on} https://embed.rauf.workers.dev/?author=Role%2520info&title=st's%2520cool%2520selfbot&description=Users:%2520{users}%250AMentionable:%2520{role.mentionable}%250AHoist:%2520{role.hoist}%250APosition:%2520{role.position}%250AManaged:%2520{role.managed}&color=069ffe")
+        await ctx.send(f"https://embed.rauf.workers.dev/?author=Role%2520info&title=st's%2520cool%2520selfbot%250AName:%20{quote(role.name)}&description=Users:%2520{users}%250AMentionable:%2520{role.mentionable}%250ACreation%20Date:%20{quote(created_on)}%250AHoist:%2520{role.hoist}%250APosition:%2520{role.position}%250AManaged:%2520{role.managed}&color=94324b")
     except:
         await ctx.send(roleinfocool)
     print(f'''{Fore.CYAN} {roleinfocool}''' + Fore.RESET)
@@ -1169,7 +1512,7 @@ async def roleinfo(ctx, *, role: discord.Role):  # b'\xfc'
 
 
 @stselfbot.command()
-async def whois(ctx, *, user: discord.User = None):  # b'\xfc'
+async def whois(ctx, *, user: discord.Member = None):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Whois]''' + Fore.RESET)
     if user is None:
@@ -1185,19 +1528,21 @@ async def whois(ctx, *, user: discord.User = None):  # b'\xfc'
     userroles = "No Roles"
     if len(user.roles) > 1:
         role_string = ' '.join([r.mention for r in user.roles][1:])
-        userroles = name="Roles [{}]".format(len(user.roles) - 1), role_string
+        userroles = "Roles [{}]".format(len(user.roles) - 1), role_string
+        userroles = str(userroles).strip("()'',")
+        userroles = userroles.replace("', '", " ")
     perm_string = ', '.join([str(p[0]).replace("_", " ").title() for p in user.guild_permissions if p[1]])
     em.add_field(name="Guild permissions", value=perm_string, inline=False)
     em.set_footer(text='ID: ' + str(user.id))
     whoiscool = f'''
-    {user.mention}
-    {user.avatar_url}
-    Joined: {user.joined_at.strftime(date_format)}
-    Join position: {str(members.index(user) + 1)}
-    Registered: {user.created_at.strftime(date_format)}
-    {userroles}
-    Guild permissions: {perm_string}
-    ID: {str(user.id)}
+{user.mention}
+Joined: {user.joined_at.strftime(date_format)}
+Join position: {str(members.index(user) + 1)}
+Registered: {user.created_at.strftime(date_format)}
+{userroles}
+Guild permissions: {perm_string}
+ID: {str(user.id)}
+{user.avatar_url}
     '''
     try:
         await ctx.send(embed=em)
@@ -1207,7 +1552,7 @@ async def whois(ctx, *, user: discord.User = None):  # b'\xfc'
 
 
 @stselfbot.command()
-async def combine(ctx, name1, name2):  # b'\xfc'
+async def combine(ctx, name1, name2):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Combine]''' + Fore.RESET)
     name1letters = name1[:round(len(name1) / 2)]
@@ -1227,7 +1572,7 @@ async def combine(ctx, name1, name2):  # b'\xfc'
 
 
 @stselfbot.command(name='1337-speak', aliases=['1337speak'])
-async def _1337_speak(ctx, *, text):  # b'\xfc'
+async def _1337_speak(ctx, *, text):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [1337 speak]''' + Fore.RESET)
     text = text.replace('a', '4').replace('A', '4').replace('e', '3') \
@@ -1237,7 +1582,7 @@ async def _1337_speak(ctx, *, text):  # b'\xfc'
 
 
 @stselfbot.command(aliases=['dvwl'])
-async def devowel(ctx, *, text):  # b'\xfc'
+async def devowel(ctx, *, text):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Devowel]''' + Fore.RESET)
     dvl = text.replace('a', '').replace('A', '').replace('e', '') \
@@ -1247,7 +1592,7 @@ async def devowel(ctx, *, text):  # b'\xfc'
 
 
 @stselfbot.command()
-async def blank(ctx):  # b'\xfc'
+async def blank(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Blank]''' + Fore.RESET)
     if config.get('password') == 'password-here':
@@ -1262,7 +1607,7 @@ async def blank(ctx):  # b'\xfc'
 
 
 @stselfbot.command(aliases=['pfpget', 'stealpfp'])
-async def pfpsteal(ctx, user: discord.User):  # b'\xfc'
+async def pfpsteal(ctx, user: discord.User):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Pfpsteal]''' + Fore.RESET)
     if config.get('password') == 'password-here':
@@ -1284,7 +1629,7 @@ async def pfpsteal(ctx, user: discord.User):  # b'\xfc'
 
 
 @stselfbot.command(name='set-pfp', aliases=['setpfp', 'pfpset'])
-async def _set_pfp(ctx, *, url):  # b'\xfc'
+async def _set_pfp(ctx, *, url):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Setpfp]''' + Fore.RESET)
     if config.get('password') == 'password-here':
@@ -1306,7 +1651,7 @@ async def _set_pfp(ctx, *, url):  # b'\xfc'
 
 
 @stselfbot.command(aliases=['dong', 'penis'])
-async def dick(ctx, *, user: discord.User = None):  # b'\xfc'
+async def dick(ctx, *, user: discord.User = None):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Dick]''' + Fore.RESET)
     if user is None:
@@ -1320,7 +1665,7 @@ async def dick(ctx, *, user: discord.User = None):  # b'\xfc'
 
 
 @stselfbot.command(aliases=['changehypesquad'])
-async def hypesquad(ctx, house):  # b'\xfc'
+async def hypesquad(ctx, house):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Change hypesquad]''' + Fore.RESET)
     request = requests.Session()
@@ -1345,7 +1690,7 @@ async def hypesquad(ctx, house):  # b'\xfc'
 
 
 @stselfbot.command(aliases=['tokenfucker', 'disable', 'crash'])
-async def tokenfuck(ctx, _token):  # b'\xfc'
+async def tokenfuck(ctx, _token):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Tokenfuck]''' + Fore.RESET)
     headers = {
@@ -1403,14 +1748,14 @@ async def tokenfuck(ctx, _token):  # b'\xfc'
 
 
 @stselfbot.command()
-async def masslogin(ctx, choice=None):  # b'\xfc'
+async def masslogin(ctx, choice=None):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Masslogin]''' + Fore.RESET)
     _masslogin(choice)
 
 
 @stselfbot.command()
-async def masscon(ctx, _type, amount: int, *, name=None):  # b'\xfc'
+async def masscon(ctx, _type, amount: int, *, name=None):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Masscon]''' + Fore.RESET)
     payload = {
@@ -1448,7 +1793,7 @@ async def masscon(ctx, _type, amount: int, *, name=None):  # b'\xfc'
 
 
 @stselfbot.command(aliases=['fakeconnection', 'spoofconnection'])
-async def fakenet(ctx, _type, *, name=None):  # b'\xfc'
+async def fakenet(ctx, _type, *, name=None):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Fakenet]''' + Fore.RESET)
     ID = random.randrange(10000000, 90000000)
@@ -1478,7 +1823,7 @@ async def fakenet(ctx, _type, *, name=None):  # b'\xfc'
 
 
 @stselfbot.command(aliases=['tokinfo', 'tdox'])
-async def tokeninfo(ctx, _token):  # b'\xfc'
+async def tokeninfo(ctx, _token):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Tokeninfo]''' + Fore.RESET)
     headers = {
@@ -1516,7 +1861,7 @@ async def tokeninfo(ctx, _token):  # b'\xfc'
 
 
 @stselfbot.command()
-async def copy(ctx):  # b'\xfc'
+async def copy(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Copy]''' + Fore.RESET)
     await stselfbot.create_guild(f'backup-{ctx.guild.name}')
@@ -1539,7 +1884,7 @@ async def copy(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def destroy(ctx):  # b'\xfc'
+async def destroy(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Destroy]''' + Fore.RESET)
     for channel in list(ctx.guild.channels):
@@ -1574,7 +1919,7 @@ async def destroy(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def dmall(ctx, *, message):  # b'\xfc'
+async def dmall(ctx, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Dmall]''' + Fore.RESET)
     for user in list(ctx.guild.members):
@@ -1586,7 +1931,7 @@ async def dmall(ctx, *, message):  # b'\xfc'
 
 
 @stselfbot.command()
-async def massban(ctx):  # b'\xfc'
+async def massban(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Massban]''' + Fore.RESET)
     for user in list(ctx.guild.members):
@@ -1597,7 +1942,7 @@ async def massban(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def masskick(ctx):  # b'\xfc'
+async def masskick(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Masskick]''' + Fore.RESET)
     for user in list(ctx.guild.members):
@@ -1608,7 +1953,7 @@ async def masskick(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def massrole(ctx):  # b'\xfc'
+async def massrole(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Massrole]''' + Fore.RESET)
     for _i in range(250):
@@ -1619,7 +1964,7 @@ async def massrole(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def masschannel(ctx):  # b'\xfc'
+async def masschannel(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Masschann]''' + Fore.RESET)
     for _i in range(250):
@@ -1630,7 +1975,7 @@ async def masschannel(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def delchannels(ctx):  # b'\xfc'
+async def delchannels(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Delchann]''' + Fore.RESET)
     for channel in list(ctx.guild.channels):
@@ -1641,7 +1986,7 @@ async def delchannels(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def delroles(ctx):  # b'\xfc'
+async def delroles(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Delroles]''' + Fore.RESET)
     for role in list(ctx.guild.roles):
@@ -1652,7 +1997,7 @@ async def delroles(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def massunban(ctx):  # b'\xfc'
+async def massunban(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Massunban]''' + Fore.RESET)
     banlist = await ctx.guild.bans()
@@ -1665,7 +2010,7 @@ async def massunban(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def spam(ctx, amount: int, *, message):  # b'\xfc'
+async def spam(ctx, amount: int, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Spam]''' + Fore.RESET)
     for _i in range(amount):
@@ -1673,7 +2018,7 @@ async def spam(ctx, amount: int, *, message):  # b'\xfc'
 
 
 @stselfbot.command()
-async def dm(ctx, user: discord.User, *, message):  # b'\xfc'
+async def dm(ctx, user: discord.User, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Dm]''' + Fore.RESET)
     user = await stselfbot.fetch_user(user.id)
@@ -1688,7 +2033,7 @@ async def dm(ctx, user: discord.User, *, message):  # b'\xfc'
 
 
 @stselfbot.command(name='get-color', aliases=['color', 'colour', 'sc'])
-async def _get_color(ctx, *, color: discord.Colour):  # b'\xfc'
+async def _get_color(ctx, *, color: discord.Colour):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Getcolor]''' + Fore.RESET)
     file = io.BytesIO()
@@ -1700,7 +2045,7 @@ async def _get_color(ctx, *, color: discord.Colour):  # b'\xfc'
 
 
 @stselfbot.command()
-async def tinyurl(ctx, *, link):  # b'\xfc'
+async def tinyurl(ctx, *, link):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Tinyurl]''' + Fore.RESET)
     r = requests.get(f'http://tinyurl.com/api-create.php?url={link}').text
@@ -1708,7 +2053,7 @@ async def tinyurl(ctx, *, link):  # b'\xfc'
 
 
 @stselfbot.command(aliases=['rainbow-role'])
-async def rainbow(ctx, *, role):  # b'\xfc'
+async def rainbow(ctx, *, role):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Rainbow]''' + Fore.RESET)
     role = discord.utils.get(ctx.guild.roles, name=role)
@@ -1721,7 +2066,7 @@ async def rainbow(ctx, *, role):  # b'\xfc'
 
 
 @stselfbot.command(name='8ball')
-async def _ball(ctx, *, question):  # b'\xfc'
+async def _ball(ctx, *, question):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [8Ball]''' + Fore.RESET)
     responses = [
@@ -1746,9 +2091,27 @@ async def _ball(ctx, *, question):  # b'\xfc'
     await ctx.send(ballcool)
     print(f'''{Fore.CYAN} {ballcool}''' + Fore.RESET)
 
+@stselfbot.command(name='8balldiff')
+async def _balldiff(ctx, question):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [8Ball different]''' + Fore.RESET)
+    r = requests.get("https://api.catboys.com/8ball").json()
+    await ctx.send(f"Question: {question}, Answer: {r['response']}")
+    await ctx.send(r['url'])
+
+@stselfbot.command()
+async def dice(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Dice]''' + Fore.RESET)
+    r = requests.get("https://api.catboys.com/dice").json()
+    while r['url'] == None:
+        r = requests.get("https://api.catboys.com/dice").json()
+    await ctx.send(f"Rolled a dice! Landed on {r['response']}")
+    await ctx.send(r['url'])
+
 
 @stselfbot.command(aliases=['slots', 'bet'])
-async def slot(ctx):  # b'\xfc'
+async def slot(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Slots]''' + Fore.RESET)
     emojis = "🍎🍊🍐🍋🍉🍇🍓🍒"
@@ -1768,7 +2131,7 @@ async def slot(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def joke(ctx):  # b'\xfc'
+async def joke(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Joke]''' + Fore.RESET)
     headers = {
@@ -1781,7 +2144,7 @@ async def joke(ctx):  # b'\xfc'
 
 
 @stselfbot.command(name='auto-bump', aliases=['bump'])
-async def _auto_bump(ctx, channelid):  # b'\xfc'
+async def _auto_bump(ctx, channelid):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Autobump]''' + Fore.RESET)
     count = 0
@@ -1797,7 +2160,7 @@ async def _auto_bump(ctx, channelid):  # b'\xfc'
 
 
 @stselfbot.command()
-async def tts(ctx, *, message):  # b'\xfc'
+async def tts(ctx, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [tts]''' + Fore.RESET)
     buff = await do_tts(message)
@@ -1805,7 +2168,7 @@ async def tts(ctx, *, message):  # b'\xfc'
 
 
 @stselfbot.command()
-async def upper(ctx, *, message):  # b'\xfc'
+async def upper(ctx, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Upper]''' + Fore.RESET)
     message = message.upper()
@@ -1813,14 +2176,14 @@ async def upper(ctx, *, message):  # b'\xfc'
 
 
 @stselfbot.command(aliases=['guildpfp'])
-async def guildicon(ctx):  # b'\xfc'
+async def guildicon(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Guildicon]''' + Fore.RESET)
     await ctx.send("Guild icon: " + ctx.guild.icon_url)
 
 
 @stselfbot.command(name='backup-f', aliases=['friendbackup', 'friend-backup', 'backup-friends', 'backupf'])
-async def _backup_f(ctx):  # b'\xfc'
+async def _backup_f(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Backup]''' + Fore.RESET)
     for friend in stselfbot.user.friends:
@@ -1834,9 +2197,9 @@ async def _backup_f(ctx):  # b'\xfc'
 
 
 @stselfbot.command(name='first-message', aliases=['firstmsg', 'fm', 'firstmessage'])
-async def _first_message(ctx, channel: discord.TextChannel = None):  # b'\xfc'
+async def _first_message(ctx, channel: discord.TextChannel = None):  
     await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Firstmesg]''' + Fore.RESET)
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [First message]''' + Fore.RESET)
     if channel is None:
         channel = ctx.channel
     first_message = (await channel.history(limit=1, oldest_first=True).flatten())[0]
@@ -1845,7 +2208,15 @@ async def _first_message(ctx, channel: discord.TextChannel = None):  # b'\xfc'
     await ctx.send("First Message - " + f"({first_message.jump_url})")
 
 @stselfbot.command()
-async def mac(ctx, mac):  # b'\xfc'
+async def owofy(ctx, *args):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Owofy]''' + Fore.RESET)
+    string = ' '.join(args)
+    owofiedString = humor_langs.owofy(string)
+    await ctx.send(owofiedString)
+
+@stselfbot.command()
+async def mac(ctx, mac):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Mac]''' + Fore.RESET)
     r = requests.get('http://api.macvendors.com/' + mac)
@@ -1870,7 +2241,7 @@ async def pp(ctx, *, user: discord.User = None):
 
 
 @stselfbot.command()
-async def abc(ctx):  # b'\xfc'
+async def abc(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Abc]''' + Fore.RESET)
     ABC = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's', 't', 'u',
@@ -1883,7 +2254,7 @@ async def abc(ctx):  # b'\xfc'
 
 
 @stselfbot.command(aliases=['bitcoin'])
-async def btc(ctx):  # b'\xfc'
+async def btc(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Btc]''' + Fore.RESET)
     r = requests.get('https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD,EUR')
@@ -1895,7 +2266,7 @@ async def btc(ctx):  # b'\xfc'
 
 
 @stselfbot.command(aliases=['ethereum'])
-async def eth(ctx):  # b'\xfc'
+async def eth(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Eth]''' + Fore.RESET)
     r = requests.get('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,EUR')
@@ -1907,7 +2278,7 @@ async def eth(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def topic(ctx):  # b'\xfc'
+async def topic(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Topic]''' + Fore.RESET)
     r = requests.get('https://www.conversationstarters.com/generator.php').content
@@ -1917,7 +2288,7 @@ async def topic(ctx):  # b'\xfc'
 
 
 @stselfbot.command(aliases=['wouldyourather', 'would-you-rather', 'wyrq'])
-async def wyr(ctx):  # b'\xfc'
+async def wyr(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Wyr]''' + Fore.RESET)
     r = requests.get('https://www.conversationstarters.com/wyrqlist.php').text
@@ -1930,7 +2301,7 @@ async def wyr(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def hastebin(ctx, *, message):  # b'\xfc'
+async def hastebin(ctx, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Hastebin]''' + Fore.RESET)
     r = requests.post("https://hastebin.com/documents", data=message).json()
@@ -1938,7 +2309,7 @@ async def hastebin(ctx, *, message):  # b'\xfc'
 
 
 @stselfbot.command()
-async def ascii(ctx, *, text):  # b'\xfc'
+async def ascii(ctx, *, text):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Ascii]''' + Fore.RESET)
     r = requests.get(f'http://artii.herokuapp.com/make?text={urllib.parse.quote_plus(text)}').text
@@ -1948,7 +2319,7 @@ async def ascii(ctx, *, text):  # b'\xfc'
     await ctx.send("this command doesnt work")
 
 @stselfbot.command(aliases=['proxy'])
-async def proxies(ctx):  # b'\xfc'
+async def proxies(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Proxies]''' + Fore.RESET)
     file = open("Data/Http-proxies.txt", "a+")
@@ -1990,7 +2361,7 @@ async def proxies(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def uptime(ctx):  # b'\xfc'
+async def uptime(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Uptime]''' + Fore.RESET)
     uptime = datetime.datetime.utcnow() - start_time
@@ -2000,7 +2371,7 @@ async def uptime(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def purge(ctx, amount: int):  # b'\xfc'
+async def purge(ctx, amount: int):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Purge]''' + Fore.RESET)
     async for message in ctx.message.channel.history(limit=amount).filter(lambda m: m.author == stselfbot.user).map(
@@ -2012,7 +2383,7 @@ async def purge(ctx, amount: int):  # b'\xfc'
 
 
 @stselfbot.command(name='group-leaver', aliase=['leaveallgroups', 'leavegroup', 'leavegroups'])
-async def _group_leaver(ctx):  # b'\xfc'
+async def _group_leaver(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Groupleaver]''' + Fore.RESET)
     for channel in stselfbot.private_channels:
@@ -2059,8 +2430,10 @@ async def help(ctx):
 {Fore.BLUE}clear {Fore.LIGHTBLACK_EX}- Spam the chat with invisible messages
 {Fore.BLUE}tts {Fore.LIGHTBLACK_EX}- Send that message in .wav format, like an audio
 {Fore.BLUE}upper {Fore.LIGHTBLACK_EX}- Make your message CAPS
-{Fore.BLUE}encode  {Fore.LIGHTBLACK_EX}- Encode a string to base64 ascii
-{Fore.BLUE}decode  {Fore.LIGHTBLACK_EX}- Decode a string from base64 to regular text
+{Fore.BLUE}b64encode  {Fore.LIGHTBLACK_EX}- Encode a string to base64 ascii
+{Fore.BLUE}b64decode  {Fore.LIGHTBLACK_EX}- Decode a string from base64 to regular text
+{Fore.BLUE}rot13encode  {Fore.LIGHTBLACK_EX}- Encode a string to rot13 
+{Fore.BLUE}rot13decode  {Fore.LIGHTBLACK_EX}- Decode a string from rot13 to regular text
 {Fore.BLUE}edit {Fore.LIGHTBLACK_EX}- edits all your messages
 {Fore.BLUE}textppl {Fore.LIGHTBLACK_EX}- Sends random messages to a channel for example while you're afk
 {Fore.BLUE}stoptextppl {Fore.LIGHTBLACK_EX}- Stops textppl
@@ -2133,17 +2506,48 @@ async def help(ctx):
 
 {Fore.YELLOW}Emotions
 
-{Fore.BLUE}feed {Fore.LIGHTBLACK_EX}- Sends a feeding gif
-{Fore.BLUE}tickle {Fore.LIGHTBLACK_EX}- Sends a tickling gif
-{Fore.BLUE}slap  {Fore.LIGHTBLACK_EX}- Sends a slapping gif
-{Fore.BLUE}hug {Fore.LIGHTBLACK_EX}- Sends a hugging gif
-{Fore.BLUE}smug {Fore.LIGHTBLACK_EX}- Sends a smug gif
-{Fore.BLUE}pat {Fore.LIGHTBLACK_EX}- Sends a pat gif
-{Fore.BLUE}kiss {Fore.LIGHTBLACK_EX}- Sends a kissing gif
+{Fore.BLUE}feed {Fore.LIGHTBLACK_EX}- Random feeding gif
+{Fore.BLUE}tickle {Fore.LIGHTBLACK_EX}- Random tickling gif
+{Fore.BLUE}slap  {Fore.LIGHTBLACK_EX}- Random slapping gif
+{Fore.BLUE}hug {Fore.LIGHTBLACK_EX}- Random hugging gif
+{Fore.BLUE}smug {Fore.LIGHTBLACK_EX}- Random smug gif
+{Fore.BLUE}pat {Fore.LIGHTBLACK_EX}- Random pat gif
+{Fore.BLUE}kiss {Fore.LIGHTBLACK_EX}- Random kissing gif
 {Fore.BLUE}laugh {Fore.LIGHTBLACK_EX}- Random laughing gif
 {Fore.BLUE}poke {Fore.LIGHTBLACK_EX}- Random poking gif
 {Fore.BLUE}lick {Fore.LIGHTBLACK_EX}- Random licking gif
 {Fore.BLUE}wallpapers {Fore.LIGHTBLACK_EX}- Random wallpaper
+{Fore.BLUE}highfive {Fore.LIGHTBLACK_EX}- Random highfive gif
+{Fore.BLUE}happy {Fore.LIGHTBLACK_EX}- Random happy gif
+{Fore.BLUE}sleep {Fore.LIGHTBLACK_EX}- Random sleeping gif
+{Fore.BLUE}handhold {Fore.LIGHTBLACK_EX}- Random hand holding gif
+{Fore.BLUE}bite {Fore.LIGHTBLACK_EX}- Random biting gif
+{Fore.BLUE}wave {Fore.LIGHTBLACK_EX}- Random waving gif
+{Fore.BLUE}thumbsup {Fore.LIGHTBLACK_EX}- Random thumbsup gif
+{Fore.BLUE}stare {Fore.LIGHTBLACK_EX}- Random staring gif
+{Fore.BLUE}blush {Fore.LIGHTBLACK_EX}- Random blushing gif
+{Fore.BLUE}nom {Fore.LIGHTBLACK_EX}- Random nom gif
+{Fore.BLUE}think {Fore.LIGHTBLACK_EX}- Random thinking gif
+{Fore.BLUE}pout {Fore.LIGHTBLACK_EX}- Random pout gif
+{Fore.BLUE}facepalm {Fore.LIGHTBLACK_EX}- Random facepalming gif
+{Fore.BLUE}wink {Fore.LIGHTBLACK_EX}- Random winking gif
+{Fore.BLUE}shoot {Fore.LIGHTBLACK_EX}- Random shooting gif
+{Fore.BLUE}nope {Fore.LIGHTBLACK_EX}- Random nope gif
+{Fore.BLUE}nod {Fore.LIGHTBLACK_EX}- Random nodding gif
+{Fore.BLUE}punch {Fore.LIGHTBLACK_EX}- Random punching gif
+{Fore.BLUE}dance {Fore.LIGHTBLACK_EX}- Random dancing gif
+{Fore.BLUE}shruggif {Fore.LIGHTBLACK_EX}- Random shrugging gif
+{Fore.BLUE}bored {Fore.LIGHTBLACK_EX}- Random bored gif
+{Fore.BLUE}kick {Fore.LIGHTBLACK_EX}- Random kicking gif
+{Fore.BLUE}yeet {Fore.LIGHTBLACK_EX}- Random yeeting gif
+{Fore.BLUE}husbando {Fore.LIGHTBLACK_EX}- Random husbando gif
+{Fore.BLUE}kitsune {Fore.LIGHTBLACK_EX}- Random kitsune gif
+{Fore.BLUE}gasm {Fore.LIGHTBLACK_EX}- Random gasm (non nsfw) [Anime]
+{Fore.BLUE}neko {Fore.LIGHTBLACK_EX}- Random neko (non nsfw) [Anime]
+{Fore.BLUE}waifu {Fore.LIGHTBLACK_EX}- Random waifu (non nsfw) [Anime]
+{Fore.BLUE}foxgirl {Fore.LIGHTBLACK_EX}- Random foxgirl (non nsfw) [Anime]
+{Fore.BLUE}animalears {Fore.LIGHTBLACK_EX}- Random animalears (non nsfw) [Anime]
+{Fore.BLUE}baka {Fore.LIGHTBLACK_EX}- Random baka (non nsfw) [Anime]
 
 {Fore.RED}NSFW Stuff
 
@@ -2160,14 +2564,7 @@ async def help(ctx):
 {Fore.BLUE}belle {Fore.LIGHTBLACK_EX}- Random belle deplhine picture
 {Fore.BLUE}cum {Fore.LIGHTBLACK_EX}- Random cum gif [Anime]
 {Fore.BLUE}spank {Fore.LIGHTBLACK_EX}- Random ass spanking gif [Anime]
-{Fore.BLUE}ass {Fore.LIGHTBLACK_EX}- Random ass [Anime]
 {Fore.BLUE}holo {Fore.LIGHTBLACK_EX}- Random holo [Anime]
-{Fore.BLUE}gasm {Fore.LIGHTBLACK_EX}- Random gasm (non nsfw) [Anime]
-{Fore.BLUE}neko {Fore.LIGHTBLACK_EX}- Random neko (non nsfw) [Anime]
-{Fore.BLUE}waifu {Fore.LIGHTBLACK_EX}- Random waifu (non nsfw) [Anime]
-{Fore.BLUE}foxgirl {Fore.LIGHTBLACK_EX}- Random foxgirl (non nsfw) [Anime]
-{Fore.BLUE}animalears {Fore.LIGHTBLACK_EX}- Random animalears (non nsfw) [Anime]
-{Fore.BLUE}baka {Fore.LIGHTBLACK_EX}- Random baka (non nsfw) [Anime]
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
@@ -2216,7 +2613,7 @@ async def help(ctx):
 
 
 @stselfbot.command()
-async def stream(ctx, *, message):  # b'\xfc'
+async def stream(ctx, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Stream]''' + Fore.RESET)
     stream = discord.Streaming(
@@ -2227,7 +2624,7 @@ async def stream(ctx, *, message):  # b'\xfc'
 
 
 @stselfbot.command()
-async def game(ctx, *, message):  # b'\xfc'
+async def game(ctx, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Game]''' + Fore.RESET)
     game = discord.Game(
@@ -2341,7 +2738,7 @@ async def oneshot(ctx):  # b'\xdc'
 
 
 @stselfbot.command()
-async def listening(ctx, *, message):  # b'\xfc'
+async def listening(ctx, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Listening]''' + Fore.RESET)
     await stselfbot.change_presence(
@@ -2352,7 +2749,7 @@ async def listening(ctx, *, message):  # b'\xfc'
 
 
 @stselfbot.command()
-async def watching(ctx, *, message):  # b'\xfc'
+async def watching(ctx, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Watching]''' + Fore.RESET)
     await stselfbot.change_presence(
@@ -2642,7 +3039,7 @@ async def pid(ctx):
     pyperclip.copy(f'''{ctx.message.mentions[0].id}''')
 
 @stselfbot.command()
-async def reverse(ctx, *, message):  # b'\xfc'
+async def reverse(ctx, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Reverse]''' + Fore.RESET)
     message = message[::-1]
@@ -2650,7 +3047,7 @@ async def reverse(ctx, *, message):  # b'\xfc'
 
 
 @stselfbot.command()
-async def shrug(ctx):  # b'\xfc'
+async def shrug(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Shrug]''' + Fore.RESET)
     shrug = r'¯\_(ツ)_/¯'
@@ -2658,7 +3055,7 @@ async def shrug(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def lenny(ctx):  # b'\xfc'
+async def lenny(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Lenny]''' + Fore.RESET)
     lenny = '( ͡° ͜ʖ ͡°)'
@@ -2666,7 +3063,7 @@ async def lenny(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def tableflip(ctx):  # b'\xfc'
+async def tableflip(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Tableflip]''' + Fore.RESET)
     tableflip = '(╯°□°）╯︵ ┻━┻'
@@ -2674,7 +3071,7 @@ async def tableflip(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def unflip(ctx):  # b'\xfc'
+async def unflip(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Unflip]''' + Fore.RESET)
     unflip = '┬─┬ ノ( ゜-゜ノ)'
@@ -2682,70 +3079,70 @@ async def unflip(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def bold(ctx, *, message):  # b'\xfc'
+async def bold(ctx, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Bold]''' + Fore.RESET)
     await ctx.send('**' + message + '**')
 
 
 @stselfbot.command()
-async def secret(ctx, *, message):  # b'\xfc'
+async def secret(ctx, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Secret]''' + Fore.RESET)
     await ctx.send('||' + message + '||')
 
 
 @stselfbot.command(name='role-hexcode', aliases=['rolecolor'])
-async def _role_hexcode(ctx, *, role: discord.Role):  # b'\xfc'
+async def _role_hexcode(ctx, *, role: discord.Role):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Rolehexcode]''' + Fore.RESET)
     await ctx.send(f"{role.name} : {role.color}")
 
 
 @stselfbot.command(name='get-hwid', aliases=['hwid', 'gethwid', 'hwidget'])
-async def _get_hwid(ctx):  # b'\xfc'
+async def _get_hwid(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Gethwid]''' + Fore.RESET)
     print(f"HWID: {Fore.YELLOW}{hwid}" + Fore.RESET)
 
 
 @stselfbot.command()
-async def empty(ctx):  # b'\xfc'
+async def empty(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Empty]''' + Fore.RESET)
     await ctx.send(chr(173))
 
 
 @stselfbot.command()
-async def everyone(ctx):  # b'\xfc'
+async def everyone(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Everyone]''' + Fore.RESET)
     await ctx.send('https://@everyone@google.com')
 
 
 @stselfbot.command()
-async def logout(ctx):  # b'\xfc'
+async def logout(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Logout]''' + Fore.RESET)
     await stselfbot.logout()
 
 
 @stselfbot.command(aliases=['btc-stream', 'streambtc', 'stream-btc', 'btcstatus'])
-async def btcstream(ctx):  # b'\xfc'
+async def btcstream(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Btcstream]''' + Fore.RESET)
     btc_status.start()
 
 
 @stselfbot.command(name='steal-all-pfp', aliases=['steal-all-pfps', 'stealallpfps'])
-async def _steal_all_pfp(ctx):  # b'\xfc'
+async def _steal_all_pfp(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Stealallpfp]''' + Fore.RESET)
     Dump(ctx)
 
 
 @stselfbot.command(aliases=['clearconsole', 'consoleclear'])
-async def cls(ctx):  # b'\xfc'
+async def cls(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Cls]''' + Fore.RESET)
     Clear()
@@ -2753,17 +3150,34 @@ async def cls(ctx):  # b'\xfc'
 
 
 @stselfbot.command()
-async def nitro(ctx):  # b'\xfc'
+async def nitro(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Nitro]''' + Fore.RESET)
     await ctx.send(Nitro())
 
+realNitro = ["https://discord.gift/jrVPPaK7dB9HXawfPswz3uS9",
+            "https://discord.gift/ZT9SjJmnZYmsydrwwwwJJC5A",
+            "https://discord.gift/duHW5XPgE8AYsvWD2qCZ4EcH",
+            "https://discord.gift/xD5eZY2aQFnaUwe9MYwkuzTE",
+            "https://discord.gift/MFA9U7h44WnDBzmP5hkFyXjh",
+            "https://discord.gift/6eyPp6m7NAfZ6dYn8TEZuRPG",
+            "https://discord.gift/2UERBd9GxPqtXYKMXDYv9TF8",
+            "https://discord.com/gifts/6eyPp6m7NAfZ6dYn8TEZuRPG",
+            "https://discord.gift/EbnyrC9AT28mySmdpuwWTKA7"
+]
 
 @stselfbot.command()
-async def edit(ctx, text, amount):
+async def realnitro(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Real Nitro]''' + Fore.RESET)
+    await ctx.send(random.choice(realNitro))
+
+@stselfbot.command()
+async def edit(ctx, *textInput, amount):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Edit]''' + Fore.RESET)
     channel_id = ctx.message.channel.id
+    text = ' '.join(textInput)
     cid = await stselfbot.fetch_channel(int(channel_id))
     async for msg in cid.history(limit=amount).filter(lambda m: m.author == stselfbot.user).map(lambda m: m):
         try:
@@ -2854,7 +3268,7 @@ async def junknick(ctx):
             del e
 
 @stselfbot.command(name='gmail-bomb', aliases=['gmail-bomber', 'gmailbomb', 'email-bomber', 'emailbomber'])
-async def _gmail_bomb(ctx):  # b'\xfc'
+async def _gmail_bomb(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Gmailbomb]''' + Fore.RESET)
     GmailBomber()
@@ -2862,7 +3276,8 @@ async def _gmail_bomb(ctx):  # b'\xfc'
 @stselfbot.command()
 async def restart(ctx):
     await ctx.message.delete()
-    print("Restarting the selfbot in 2 seconds!")
+    print()
+    print(f"{Fore.GREEN} Restarting the selfbot in 2 seconds!" + Fore.RESET)
     time.sleep(2)
     subprocess.call(["launch.bat"])
     sys.exit()
