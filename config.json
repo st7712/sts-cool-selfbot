@@ -1,23 +1,28 @@
 {
     "token": "token-here",
     "password": "password-here",
-    "prefix": ".",   
-    
-    "nitro_sniper": false,
+    "prefix": ".",
+    "nitro_sniper": {
+        "nitro_sniper": false,
+        "open_in_browser": false,
+        "send_in_channel": false,
+        "specified_channel": ""
+    },
     "giveaway_sniper": false,
     "slotbot_sniper": false,
-    "privnote_sniper": false,
-    "message_logger": false,
+    "message_logger": {
+        "message_logger": false,
+        "say_in_chat": false,
+        "save_to_file": false
+    },
     "respond_hi": false,
     "ping_back": false,
     "repeat_message": {
         "repeat_message": false,
         "repeat_commands": false
     },
-
     "stream_url": "https://twitch.tv/mestcool",
     "tts_language": "en",
-
     "bitly_key": "bitly key",
     "cat_key": "cat key",
     "weather_key": "weather key",
