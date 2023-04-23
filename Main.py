@@ -1,11 +1,9 @@
 class SELFBOT():
-    __linecount__ = 2794
-    __version__ = 2.1
+    __linecount__ = 3425
+    __version__ = 3.0
 
 
-import discord, subprocess, sys, time, os, colorama, base64, codecs, datetime, io, random, numpy, datetime, smtplib, \
-    string, ctypes, codecs, webbrowser, re, humor_langs
-import urllib.parse, urllib.request, re, json, requests, webbrowser, aiohttp, asyncio, functools, logging
+import discord, subprocess, sys, time, os, colorama, base64, codecs, datetime, io, random, numpy, datetime, smtplib, string, ctypes, codecs, webbrowser, re, humor_langs, asyncpraw, urllib.parse, urllib.request, re, json, requests, webbrowser, aiohttp, asyncio, functools, logging, nekos, art
 
 from discord.ext import (
     commands,
@@ -28,17 +26,17 @@ import random
 import pyperclip
 from urllib.parse import quote
 
-ctypes.windll.kernel32.SetConsoleTitleW(f'[Cool st Selfbot v{SELFBOT.__version__}]')
+ctypes.windll.kernel32.SetConsoleTitleW(f"[ST'S COOL SELFBOT v{SELFBOT.__version__}]")
 
-with open('config.json') as f:
+with open('data/config.json') as f:
     config = json.load(f)
 
-token = config.get('token')
-password = config.get('password')
-prefix = config.get('prefix')
+token = config['token']
+password = config['password']
+prefix = config['prefix']
 
-giveaway_sniper = config.get('giveaway_sniper')
-slotbot_sniper = config.get('slotbot_sniper')
+giveaway_sniper = config['giveaway_sniper']
+slotbot_sniper = config['slotbot_sniper']
 nitro_sniper = config['nitro_sniper']['nitro_sniper']
 open_in_browser = config['nitro_sniper']['open_in_browser']
 send_in_channel = config['nitro_sniper']['send_in_channel']
@@ -52,8 +50,6 @@ repeat_commands = config['repeat_message']['repeat_commands']
 
 stream_url = config['stream_url']
 tts_language = config['tts_language']
-
-bitly_key = config['bitly_key']
 cat_key = config['cat_key']
 weather_key = config['weather_key']
 cuttly_key = config['cuttly_key']
@@ -157,7 +153,7 @@ def startprint():
 {Fore.CYAN}! Thank you for using st's cool selfbot v{SELFBOT.__version__} 
 {Fore.CYAN}! Logged in as: {Fore.WHITE} {stselfbot.user.name}#{stselfbot.user.discriminator} {Fore.CYAN} ID: {Fore.WHITE}{stselfbot.user.id}   
 {Fore.CYAN}! Prefix: {Fore.WHITE}{prefix}
-{Fore.CYAN}! Commands: {Fore.WHITE}178 + a lot of features!
+{Fore.CYAN}! Commands: {Fore.WHITE}244 + some features!
 
 {Fore.CYAN}! Giveaway sniper: {Fore.WHITE}{giveaway}
 {Fore.CYAN}! Nitro sniper: {Fore.WHITE}{nitro}
@@ -184,107 +180,6 @@ def Init():
             print(f"{Fore.RED}[ERROR] {Fore.YELLOW}Improper token has been passed" + Fore.RESET)
             os.system('pause >NUL')
 
-
-def GmailBomber():
-    _smpt = smtplib.SMTP('smtp.gmail.com', 587)
-    _smpt.starttls()
-    username = input('Gmail: ')
-    password = input('Gmail Password: ')
-    try:
-        _smpt.login(username, password)
-    except:
-        print(
-            f"{Fore.RED}[ERROR]: {Fore.YELLOW} Incorrect Password or gmail, make sure you've enabled less-secure apps access" + Fore.RESET)
-    target = input('Target Gmail: ')
-    message = input('Message to send: ')
-    counter = eval(input('Ammount of times: '))
-    count = 0
-    while count < counter:
-        count = 0
-        _smpt.sendmail(username, target, message)
-        count += 1
-    if count == counter:
-        pass
-
-
-def GenAddress(addy: str):
-    letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    four_char = ''.join(random.choice(letters) for _ in range(4))
-    should_abbreviate = random.randint(0, 1)
-    if should_abbreviate == 0:
-        if "street" in addy.lower():
-            addy = addy.replace("Street", "St.")
-            addy = addy.replace("street", "St.")
-        elif "st." in addy.lower():
-            addy = addy.replace("st.", "Street")
-            addy = addy.replace("St.", "Street")
-        if "court" in addy.lower():
-            addy = addy.replace("court", "Ct.")
-            addy = addy.replace("Court", "Ct.")
-        elif "ct." in addy.lower():
-            addy = addy.replace("ct.", "Court")
-            addy = addy.replace("Ct.", "Court")
-        if "rd." in addy.lower():
-            addy = addy.replace("rd.", "Road")
-            addy = addy.replace("Rd.", "Road")
-        elif "road" in addy.lower():
-            addy = addy.replace("road", "Rd.")
-            addy = addy.replace("Road", "Rd.")
-        if "dr." in addy.lower():
-            addy = addy.replace("dr.", "Drive")
-            addy = addy.replace("Dr.", "Drive")
-        elif "drive" in addy.lower():
-            addy = addy.replace("drive", "Dr.")
-            addy = addy.replace("Drive", "Dr.")
-        if "ln." in addy.lower():
-            addy = addy.replace("ln.", "Lane")
-            addy = addy.replace("Ln.", "Lane")
-        elif "lane" in addy.lower():
-            addy = addy.replace("lane", "Ln.")
-            addy = addy.replace("lane", "Ln.")
-    random_number = random.randint(1, 99)
-    extra_list = ["Apartment", "Unit", "Room"]
-    random_extra = random.choice(extra_list)
-    return four_char + " " + addy + " " + random_extra + " " + str(random_number)
-
-
-def BotTokens():
-    with open('Data/Tokens/bot-tokens.txt', 'a+') as f:
-        tokens = {token.strip() for token in f if token}
-    for token in tokens:
-        yield token
-
-
-def UserTokens():
-    with open('Data/Tokens/user-tokens.txt', 'a+') as f:
-        tokens = {token.strip() for token in f if token}
-    for token in tokens:
-        yield token
-
-
-class Login(discord.Client):
-    async def on_connect(self):
-        guilds = len(self.guilds)
-        users = len(self.users)
-        print("")
-        print(f"Connected to: [{self.user.name}]")
-        print(f"Token: {self.http.token}")
-        print(f"Guilds: {guilds}")
-        print(f"Users: {users}")
-        print("-------------------------------")
-        await self.logout()
-
-
-def _masslogin(choice):
-    if choice == 'user':
-        for token in UserTokens():
-            loop.run_until_complete(Login().start(token, bot=False))
-    elif choice == 'bot':
-        for token in BotTokens():
-            loop.run_until_complete(Login().start(token, bot=True))
-    else:
-        return
-
 def async_executor():
     def outer(func):
         @functools.wraps(func)
@@ -296,20 +191,18 @@ def async_executor():
 
     return outer
 
-
-@async_executor()
-def do_tts(message):
-    f = io.BytesIO()
-    tts = gTTS(text=message.lower(), lang=tts_language)
-    tts.write_to_fp(f)
-    f.seek(0)
-    return f
+async def do_tts(text):
+    tts = gTTS(text, lang='en')
+    tts.save('data/tts.mp3')
+    with open('data/tts.mp3', 'rb') as f:
+        audio_data = f.read()
+    return audio_data
 
 
 def Dump(ctx):
     for member in ctx.guild.members:
         f = open(f'Images/{ctx.guild.id}-Dump.txt', 'a+')
-        f.write(str(member.avatar_url) + '\n')
+        f.write(str(member.avatar) + '\n')
 
 
 def Nitro():
@@ -325,19 +218,37 @@ def RandomColor():
 def RandString():
     return "".join(random.choice(string.ascii_letters + string.digits) for i in range(random.randint(14, 32)))
 
+async def getPost(ctx, subredditName, tempList):
+    async with asyncpraw.Reddit(
+    client_id="wRoZ9305CMPrv8g0k2-y9A",
+    client_secret="vLs5wzsivo58cWQgCeptsWSKXU-W1Q",
+    user_agent="python.discord.bot:discord.bot.sending.images:v1:(by u/stitoooobote)",
+    ) as reddit:
+        await reddit.user.me()
+        if len(tempList) == 0:
+            subreddit = await reddit.subreddit(subredditName)
+            await subreddit._fetch()
+            async for post in subreddit.new(limit=10):
+                if post.url.endswith(('.jpg', '.png', '.jpeg', '.gif')) or "imgur" in post.url:
+                    tempList.append(post.url)
+        randUrl = random.choice(tempList)
+        tempList.remove(randUrl)
+        await ctx.send(randUrl)
+        return tempList
+
 
 colorama.init()
 stselfbot = commands.Bot(command_prefix=prefix, self_bot=True)
 stselfbot.remove_command('help')
 
-@tasks.loop(seconds=3)
+@tasks.loop(minutes=30)
 async def btc_status():
     r = requests.get('https://api.coindesk.com/v1/bpi/currentprice/btc.json').json()
     value = r['bpi']['USD']['rate']
     await asyncio.sleep(3)
     btc_stream = discord.Streaming(
         name="Current BTC price: " + value + "$ USD",
-        url="https://www.twitch.tv/monstercat",
+        url="https://www.twitch.tv/imstcool",
     )
     await stselfbot.change_presence(activity=btc_stream)
 
@@ -367,6 +278,28 @@ def FindUrl(string):
         url = re.findall(regex, string)
         return [x[0] for x in url]
 
+async def embedGen(ctx, author, title, description, image, randomthingcauseimtoolazytoeditallofthefunctioncallsyee = None):
+    url = f"https://embed.rauf.workers.dev/?author={quote(author)}&title={quote(title)}&description={quote(description)}&color=570000&image={image}"
+    full = "||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​|| _ _ _ _ " + url
+    if len(full) > 1999:
+        full = url
+    if len(full) > 1999:
+        res = f"**{author}** \n __{title}__ \n {description} \n {image}"
+        stringLength = len(res)
+        max_index = 1800
+        firstStringToSend = res[0:max_index]
+        await ctx.send(firstStringToSend)
+        index = max_index
+        while index < (stringLength - max_index) and index > 0: 
+            secondIndex = index + max_index
+            posted_string = res[index:secondIndex]
+            await ctx.send(posted_string)
+            index = index + max_index
+        posted_string = res[index:stringLength]
+        await ctx.send(posted_string)
+        return "st's cool selfbot :3!!!"
+    return full
+
 @stselfbot.event
 async def on_message_delete(message):
     if message_logger:
@@ -395,8 +328,8 @@ async def on_message(message):
             print(message.channel.id)
             await message.delete()
             print(f"The discord channel with an id of {message.channel.id} has been added to the blacklist.")
-            print("You can edit this blacklist if you understand json and can check which discord channel is each id (say <@#{id}> in discord) in the blacklistedchannels.txt file.")
-            blacklistedc = open("blacklistedchannels.txt", "w")
+            print("You can edit this blacklist if you understand json and can check which discord channel is each id (say <@#[id]> in discord) in the blacklistedchannels.txt file.")
+            blacklistedc = open("data/blacklistedchannels.txt", "w")
             blacklistedc.write(str(message.channel.id) + "\n") 
             blacklistedc.close()
         if (message.content).startswith("setnitrochannel"):
@@ -412,7 +345,7 @@ async def on_message(message):
             if str(stselfbot.user.id) in message.content:
                 await message.channel.send(f"<@{message.author.id}>")
         if repeat_message:
-            blacklistedc = open("blacklistedchannels.txt", "r")
+            blacklistedc = open("data/blacklistedchannels.txt", "r")
             readblc = blacklistedc.read()
             if not str(message.channel.id) in readblc:
                 if not (message.content).startswith(prefix):
@@ -482,6 +415,13 @@ async def on_message(message):
                         r = json.loads(jsonThing)
                         if 'redeemed' in str(r).lower():
                             if r['redeemed'] == False:
+                                if open_in_browser:
+                                    for url in FindUrl(message.content):
+                                        webbrowser.open(url)
+                                if send_in_channel:
+                                    channelint = int(config["nitro_sniper"]["specified_channel"])
+                                    channel = stselfbot.get_channel(channelint)
+                                    await channel.send(url)
                                 print("not redeemed")
                                 print(r['store_listing']['sku']['name'])
                                 try:
@@ -540,14 +480,6 @@ async def on_message(message):
                                 print("SUCCESSFULLY CLAIMED THE GIFT")
                         except Exception as e:
                             print(e)
-                if open_in_browser:
-                    for url in FindUrl(message.content):
-                        webbrowser.open(url)
-                if send_in_channel:
-                    channelint = int(config["nitro_sniper"]["specified_channel"])
-                    channel = stselfbot.get_channel(channelint)
-                    for url in FindUrl(message.content):
-                        await channel.send(url)
         if slotbot_sniper:
             if message.author.id == 346353957029019648:
                 if "Someone just dropped their wallet in this channel" in message.content:
@@ -555,63 +487,68 @@ async def on_message(message):
                     await message.channel.send("~grab")
                     print(f"{Fore.GREEN}[SLOTBOT] {Fore.WHITE} SNIPED A SLOTBOT WALLET DROP" + Fore.RESET)
         if giveaway_sniper:
-            if "winner" or "giveaway" or "entries" or "winners" or "hosted" in (message.content).lower():
-                await asyncio.sleep(5)
-                messageComponents = message.components
-                if "button" in str(messageComponents).lower():
-                    for component in message.components:
-                        if isinstance(component, discord.ActionRow):
-                            for button in component.children:
-                                if isinstance(button, discord.Button):
-                                    await button.click()
-                                    break
-                messageReactions = message.reactions
-                if len(messageReactions) == 0 and "button" not in str(messageComponents).lower():
-                    return
-                else:
-                    i = 0
-                    for msgReaction in messageReactions:
-                        i += 1
-                        print(f"{msgReaction} is the reaction on the 'giveaway' message. Please check the message out.")
-                    if i == 1:
-                        await message.add_reaction(msgReaction)
-                print(f"{Fore.GREEN}[GIVEAWAY] {Fore.WHITE}FOUND A GIVEAWAY IN: {message.guild.name} CHANNEL: {message.channel}" + Fore.RESET)
+            if message.author.bot:
+                if "winner" in str(message.content).lower() or "giveaway" in str(message.content).lower() or "ends" in str(message.content).lower() or "hosted" in str(message.content).lower() or "entries" in str(message.content).lower():
+                    await asyncio.sleep(5)
+                    messageComponents = message.components
+                    if "button" in str(messageComponents).lower():
+                        for component in message.components:
+                            if isinstance(component, discord.ActionRow):
+                                for button in component.children:
+                                    if isinstance(button, discord.Button):
+                                        await button.click()
+                                        break
+                    messageReactions = message.reactions
+                    if len(messageReactions) == 0 and "button" not in str(messageComponents).lower():
+                        return
+                    else:
+                        i = 0
+                        for msgReaction in messageReactions:
+                            i += 1
+                            print(f"{msgReaction} is the reaction on the 'giveaway' message. Please check the message out.")
+                        if i == 1:
+                            await message.add_reaction(msgReaction)
+                    print(f"{Fore.GREEN}[GIVEAWAY] {Fore.WHITE}FOUND A GIVEAWAY IN: {message.guild.name} CHANNEL: {message.channel}" + Fore.RESET)
+                for Embed in message.embeds:
+                    if "winner" in str(Embed.description).lower() or "giveaway" in str(Embed.description).lower() or "ends" in str(Embed.description).lower() or "hosted" in str(Embed.description).lower() or "entries" in str(Embed.description).lower():
+                        await asyncio.sleep(5)
+                        messageComponents = message.components
+                        if "button" in str(messageComponents).lower():
+                            for component in message.components:
+                                if isinstance(component, discord.ActionRow):
+                                    for button in component.children:
+                                        if isinstance(button, discord.Button):
+                                            await button.click()
+                                            break
+                        messageReactions = message.reactions
+                        if len(messageReactions) == 0 and "button" not in str(messageComponents).lower():
+                            return
+                        else:
+                            i = 0
+                            for msgReaction in messageReactions:
+                                i += 1
+                                print(f"{msgReaction} is the reaction on the 'giveaway' message. Please check the message out.")
+                            if i == 1:
+                                await message.add_reaction(msgReaction)
+                        print(f"{Fore.GREEN}[GIVEAWAY] {Fore.WHITE}FOUND A GIVEAWAY IN: {message.guild.name} CHANNEL: {message.channel}" + Fore.RESET)
 
     await stselfbot.process_commands(message)
+
+@stselfbot.event
+async def on_connect():
+    Clear()
+    startprint()
 
 @stselfbot.event
 async def on_ready():
     Clear()
     startprint()
 
-@stselfbot.event
-async def on_connect():
-    Clear()
-
-    if giveaway_sniper == True:
-        giveaway = "Active"
-    else:
-        giveaway = "Disabled"
-
-    if nitro_sniper == True:
-        nitro = "Active"
-    else:
-        nitro = "Disabled"
-
-    if slotbot_sniper == True:
-        slotbot = "Active"
-    else:
-        slotbot = "Disabled"
-    ctypes.windll.kernel32.SetConsoleTitleW(
-        f'[Cool st Selfbot v{SELFBOT.__version__}] | Logged in as {stselfbot.user.name}')
-
-
 @stselfbot.command()
 async def clear(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Clear]''' + Fore.RESET)
     await ctx.send('ﾠﾠ' + '\n' * 400 + 'ﾠﾠ')
-
 
 @stselfbot.command()
 async def genname(ctx):
@@ -622,135 +559,19 @@ async def genname(ctx):
     second = second.display_name[:len(second.display_name) // 2]
     await ctx.send(discord.utils.escape_mentions(second + first))
 
-
 @stselfbot.command()
-async def lmgtfy(ctx, *, message):  
+async def google(ctx, *, message):  
     await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Lmgtfy]''' + Fore.RESET)
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Google]''' + Fore.RESET)
     q = urlencode({"q": message})
-    await ctx.send(f'<https://lmgtfy.app/?qtype=search&{q}>')
-
-
-@stselfbot.command()
-async def login(ctx, _token):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Login]''' + Fore.RESET)
-    opts = webdriver.ChromeOptions()
-    opts.add_experimental_option("detach", True)
-    driver = webdriver.Chrome('chromedriver.exe', options=opts)
-    script = """
-            function login(token) {
-            setInterval(() => {
-            document.body.appendChild(document.createElement `iframe`).contentWindow.localStorage.token = `"${token}"`
-            }, 50);
-            setTimeout(() => {
-            location.reload();
-            }, 2500);
-            }   
-            """
-    driver.get("https://discordapp.com/login")
-    driver.execute_script(script + f'\nlogin("{_token}")')
-
+    await ctx.send(f'<https://www.google.com/search?{q}>')
 
 @stselfbot.command()
-async def botlogin(ctx, _token):  
+async def randomaddress(ctx):  
     await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Botlogin]''' + Fore.RESET)
-    opts = webdriver.ChromeOptions()
-    opts.add_experimental_option("detach", True)
-    driver = webdriver.Chrome('chromedriver.exe', options=opts)
-    script = """
-    function login(token) {
-      ((i) => {
-        window.webpackJsonp.push([  
-          [i], {
-            [i]: (n, b, d) => {
-              let dispatcher;
-              for (let key in d.c) {
-                if (d.c[key].exports) {
-                  const module = d.c[key].exports.default || d.c[key].exports;
-                  if (typeof(module) === 'object') {
-                    if ('setToken' in module) {
-                      module.setToken(token);
-                      module.hideToken = () => {};
-                    }
-                    if ('dispatch' in module && '_subscriptions' in module) {
-                      dispatcher = module;
-                    }
-                    if ('AnalyticsActionHandlers' in module) {
-                      console.log('AnalyticsActionHandlers', module);
-                      module.AnalyticsActionHandlers.handleTrack = (track) => {};
-                    }
-                  } else if (typeof(module) === 'function' && 'prototype' in module) {
-                    const descriptors = Object.getOwnPropertyDescriptors(module.prototype);
-                    if ('_discoveryFailed' in descriptors) {
-                      const connect = module.prototype._connect;
-                      module.prototype._connect = function(url) {
-                        console.log('connect', url);
-                        const oldHandleIdentify = this.handleIdentify;
-                        this.handleIdentify = () => {
-                          const identifyData = oldHandleIdentify();
-                          identifyData.token = identifyData.token.split(' ').pop();
-                          return identifyData;
-                        };
-                        const oldHandleDispatch = this._handleDispatch;
-                        this._handleDispatch = function(data, type) {
-                          if (type === 'READY') {
-                            console.log(data);
-                            data.user.bot = false;
-                            data.user.email = 'stselfbot-Was-Here@Fuckyou.com';
-                            data.analytics_tokens = [];
-                            data.connected_accounts = [];
-                            data.consents = [];
-                            data.experiments = [];
-                            data.guild_experiments = [];
-                            data.relationships = [];
-                            data.user_guild_settings = [];
-                          }
-                          return oldHandleDispatch.call(this, data, type);
-                        }
-                        return connect.call(this, url);
-                      };
-                    }
-                  }
-                }
-              }
-              console.log(dispatcher);
-              if (dispatcher) {
-                dispatcher.dispatch({
-                  type: 'LOGIN_SUCCESS',
-                  token
-                });
-              }
-            },
-          },
-          [
-            [i],
-          ],
-        ]);
-      })(Math.random());
-    }
-    """
-    driver.get("https://discordapp.com/login")
-    driver.execute_script(script + f'\nlogin("Bot {_token}")')
-
-
-@stselfbot.command()
-async def address(ctx, *, text):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Address]''' + Fore.RESET)
-    addy = ' '.join(text)
-    address_array = []
-    i = 0
-    while i < 10:
-        address_array.append(GenAddress(addy))
-        i += 1
-    final_str = "\n".join(address_array)
-    em = discord.Embed(description=final_str)
-    try:
-        await ctx.send(embed=em)
-    except:
-        await ctx.send("addresses: " + final_str)
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Randomaddress], note that this is just a "fun" command, the address is nowhere close to being real.''' + Fore.RESET)
+    r = requests.get("https://random-data-api.com/api/v2/addresses").json()
+    await ctx.send(f'''Address: {r['street_address']}, {r['city']}, {r['country']}, {r['zip_code']}''')
 
 @stselfbot.command()
 async def weather(ctx, *, city):  
@@ -792,39 +613,17 @@ async def weather(ctx, *, city):
                 ''')
         except KeyError:
             print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{city} Is not a real city" + Fore.RESET)
-        else:
+        except:
             print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{req.text}" + Fore.RESET)
-
 
 @stselfbot.command(aliases=['shorten'])
-async def bitly(ctx, *, link):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Bitly]''' + Fore.RESET)
-    if bitly_key == '':
-        print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}Bitly API key has not been set in the config.json file" + Fore.RESET)
-    else:
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(
-                        f'https://api-ssl.bitly.com/v3/shorten?longUrl={link}&domain=bit.ly&format=json&access_token={bitly_key}') as req:
-                    r = await req.read()
-                    r = json.loads(r)
-            new = r['data']['url']
-            em = discord.Embed()
-            em.add_field(name='Shortened link', value=new, inline=False)
-            await ctx.send("Shortened link: " + new)
-        except Exception as e:
-            print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)
-        else:
-            print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{req.text}" + Fore.RESET)
-
-
-@stselfbot.command()
 async def cuttly(ctx, *, link):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Cuttly]''' + Fore.RESET)
     if cuttly_key == 'cuttly key':
-        print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}Cutt.ly API key has not been set in the config.json file" + Fore.RESET)
+        print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}Cutt.ly API key has not been set in the config.json file, I'll still use a free keyless api to shorten your link." + Fore.RESET)
+        r = requests.get(f'http://tinyurl.com/api-create.php?url={link}').text
+        await ctx.send(f'shortened: {r}')
     else:
         try:
             req = requests.get(f'https://cutt.ly/api/api.php?key={cuttly_key}&short={link}')
@@ -835,21 +634,24 @@ async def cuttly(ctx, *, link):
             try:
                 await ctx.send(embed=em)
             except:
-                await ctx.send("shortened link: " + new)
+                await ctx.send("shortened: " + new)
         except Exception as e:
             print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)
         else:
             print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{req.text}" + Fore.RESET)
-
 
 @stselfbot.command()
 async def cat(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Cat]''' + Fore.RESET)
     if cat_key == 'cat key':
-        print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}Cat API key has not been set in the config.json file. I can still send a cat image from a free keyless api." + Fore.RESET)
-        r = requests.get("https://cataas.com/cat?json=true").json()
-        await ctx.send(f"https://cataas.com{r['url']}")
+        i = random.randrange(1, 10)
+        print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}Cat API key has not been set in the config.json file. I can still send a cat image from a free keyless api. Warning - it might be shitty" + Fore.RESET)
+        if i < 4:
+            r = requests.get("https://some-random-api.ml/animal/cat").json()
+            await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", r["image"]))
+        else:
+            await ctx.send(nekos.cat())
     else:
         try:
             r = requests.get(f"https://api.thecatapi.com/v1/images/search?format=json&x-api-key={cat_key}").json()
@@ -861,8 +663,6 @@ async def cat(ctx):
                 await ctx.send(str(r[0]["url"]))
         except Exception as e:
             print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)
-
-
 
 @stselfbot.command()
 async def dog(ctx):  
@@ -876,29 +676,29 @@ async def dog(ctx):
     except:
         await ctx.send(str(r['message']))
 
-
-
 @stselfbot.command()
-async def kiss(ctx):
+async def kiss(ctx, user: discord.User):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Kiss]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/kiss").json()
-    await ctx.send(str(r['image']))
-
+    url = await embedGen(ctx, f"{ctx.author.name} is giving you a little kiss, {user.name}!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
-async def lick(ctx):
+async def lick(ctx, user: discord.User):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Lick]''' + Fore.RESET)
     r = requests.get("http://api.nekos.fun:8080/api/lick").json()
-    await ctx.send(str(r['image']))
+    url = await embedGen(ctx, f"{ctx.author.name} is licking you, {user.name}!", "", "st's cool selfbot :3!!", r['image'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
-async def hug(ctx):
+async def hug(ctx, user: discord.User):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Hug]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/hug").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} just hugged you very aggresively, {user.name}!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def baka(ctx):
@@ -912,140 +712,160 @@ async def cry(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Cry]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/cry").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is crying!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
-async def poke(ctx):
+async def poke(ctx, user: discord.User):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Poke]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/poke").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} just poked you really hard, {user.name}!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def smug(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Smug]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/smug").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is in a smug mood ;)!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
-async def slap(ctx):
+async def slap(ctx, user: discord.User):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Slap]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/slap").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} just gave you an extremely harsh slap, {user.name}!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
-async def tickle(ctx):
+async def tickle(ctx, user: discord.User):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Tickle]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/tickle").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is tickling you, {user.name}!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
-async def pat(ctx):
+async def pat(ctx, user: discord.User):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Pat]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/pat").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is giving you a little pat on the head, {user.name}!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def laugh(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Laugh]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/laugh").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is laughing at this!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
     
 @stselfbot.command()
-async def feed(ctx):
+async def feed(ctx, user: discord.User):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Feed]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/feed").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is feeding you.. something..;), {user.name}", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
-async def cuddle(ctx):
+async def cuddle(ctx, user: discord.User):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Cuddle]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/cuddle").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is cuddling you, {user.name}..", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
-async def highfive(ctx):
+async def highfive(ctx, user: discord.User):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Highfive]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/highfive").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is giving you a highfive, {user.name}!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def happy(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Happy]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/happy").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is happy!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def sleep(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Sleep]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/sleep").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is sleeping!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
-async def handhold(ctx):
+async def handhold(ctx, user: discord.User):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Handhold]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/handhold").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is holding your hand, {user.name}!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
-async def bite(ctx):
+async def bite(ctx, user: discord.User):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Bite]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/bite").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} just bit you, {user.name}!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def wave(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Wave]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/wave").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is waving with their hand!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def thumbsup(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Thumbs up]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/thumbsup").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is giving a thumbs up!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def stare(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Stare]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/stare").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is staring at you... 😐", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def blush(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Blush]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/blush").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is blushing! 😳", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def nom(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Nom]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/nom").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is making loud nom sounds..", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def think(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Think]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/think").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is thinking...🤔", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def pout(ctx):
@@ -1059,76 +879,87 @@ async def facepalm(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Face palm]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/facepalm").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is face palming...🤦", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def wink(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Wink]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/wink").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is winking at you! 😉", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
-async def shoot(ctx):
+async def shoot(ctx, user: discord.User):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Shoot]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/shoot").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} just fucking SHOT you, {user.name}!!! 🤠", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def nope(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Nope]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/nope").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is saying no...", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def nod(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Nod]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/nod").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is nodding!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")    
+    await ctx.send(url)
 
 @stselfbot.command()
-async def punch(ctx):
+async def punch(ctx, user: discord.User):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Punch]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/punch").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} just fucking PUNCHED you, {user.name}!!!! 🤜", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
-async def dance(ctx):
+async def dance(ctx, user: discord.User):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Dance]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/dance").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is dancing with you, {user.name}..", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def shruggif(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Shruggif]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/shrug").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} doesn't know.", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def bored(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Bored]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/bored").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} is bored...", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
-async def kick(ctx):
+async def kick(ctx, user: discord.User):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Kick]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/kick").json()
-    await ctx.send(str(r["results"][0]["url"]))
+    url = await embedGen(ctx, f"{ctx.author.name} just fucking KICKED you, {user.name}!!!! 🦵", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def yeet(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Yeet]''' + Fore.RESET)
     r = requests.get("https://nekos.best/api/v2/yeet").json()
+    url = await embedGen(ctx, f"{ctx.author.name} just yeeted!", "", "st's cool selfbot :3!!", r['results'][0]['url'], "")
     await ctx.send(str(r["results"][0]["url"]))
 
 @stselfbot.command()
@@ -1186,6 +1017,13 @@ async def hentai(ctx):
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Hentai]''' + Fore.RESET)
     r = requests.get("http://api.nekos.fun:8080/api/hentai").json()
     await ctx.send(str(r['image']))
+
+@stselfbot.command()
+async def yaoi(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Yaoi]''' + Fore.RESET)
+    r = requests.get("https://nekobot.xyz/api/image?type=yaoi").json()
+    await ctx.send(str(r['message']))
     
 @stselfbot.command()
 async def wallpapers(ctx):
@@ -1293,6 +1131,20 @@ async def neko(ctx):
     await ctx.send(str(r["results"][0]["url"]))
 
 @stselfbot.command()
+async def hneko(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Hneko]''' + Fore.RESET)
+    r = requests.get("https://nekobot.xyz/api/image?type=hneko").json()
+    await ctx.send(str(r['message']))
+
+@stselfbot.command()
+async def paizuri(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Paizuri]''' + Fore.RESET)
+    r = requests.get("https://nekobot.xyz/api/image?type=paizuri").json()
+    await ctx.send(str(r['message']))
+
+@stselfbot.command()
 async def fox(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Fox]''' + Fore.RESET)
@@ -1302,7 +1154,370 @@ async def fox(ctx):
     try:
         await ctx.send(embed=em)
     except:
-        await ctx.send(r['image'])
+        await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", r["image"]))
+
+@stselfbot.command()
+async def bird(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Bird]''' + Fore.RESET)
+    r = requests.get('https://some-random-api.ml/animal/bird').json()
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", r["image"]))
+
+@stselfbot.command()
+async def kangaroo(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Kangaroo]''' + Fore.RESET)
+    r = requests.get('https://some-random-api.ml/animal/kangaroo').json()
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", r["image"]))
+
+@stselfbot.command()
+async def koala(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Koala]''' + Fore.RESET)
+    r = requests.get('https://some-random-api.ml/animal/koala').json()
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", r["image"]))
+
+@stselfbot.command()
+async def panda(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Panda]''' + Fore.RESET)
+    r = requests.get('https://some-random-api.ml/animal/panda').json()
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", r["image"]))
+
+@stselfbot.command()
+async def raccoon(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Raccoon]''' + Fore.RESET)
+    r = requests.get('https://some-random-api.ml/animal/raccoon').json()
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", r["image"]))
+
+@stselfbot.command()
+async def redpanda(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Red Panda]''' + Fore.RESET)
+    r = requests.get('https://some-random-api.ml/animal/red_panda').json()
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", r["image"]))
+
+@stselfbot.command()
+async def whale(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Whale]''' + Fore.RESET)
+    r = requests.get('https://some-random-api.ml/img/whale').json()
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", r["link"]))
+
+@stselfbot.command()
+async def animequote(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Anime Quote]''' + Fore.RESET)
+    r = requests.get('https://some-random-api.ml/animu/quote').json()
+    await ctx.send(await embedGen(ctx, r['character'], r['anime'], f"{r['sentence']} \n \n st's cool selfbot :3!!!", ""))
+
+@stselfbot.command()
+async def blue(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Blue]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/filter/blue?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def blurple(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Blurple]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/filter/blurple?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def blurple2(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Blurple2]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/filter/blurple?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def brightness(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Brightness]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/filter/brightness?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def green(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Green]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/filter/green?avatar={user.avatar}'))
+
+@stselfbot.command(aliases=['grayscale'])
+async def greyscale(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Greyscale]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/filter/greyscale?avatar={user.avatar}'))
+
+@stselfbot.command(aliases=['invertgrayscale'])
+async def invertgreyscale(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Invert & Greyscale]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/filter/invertgreyscale?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def red(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Red]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/filter/red?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def sepia(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Sepia]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/filter/sepia?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def threshold(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Threshold]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/filter/threshold?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def lyrics(ctx, *, song: str):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Lyrics]''' + Fore.RESET)
+    r = requests.get(f'https://some-random-api.ml/others/lyrics?title={quote(song)}').json()
+    await ctx.send(await embedGen(ctx, r['title'], r['author'], r['lyrics'], r['thumbnail']['genius']))
+
+@stselfbot.command()
+async def bisexualborder(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Bisexual border]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/bisexual?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def blur(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Blur]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/blur?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def circle(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Circle]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/circle?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def heart(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Heart]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/heart?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def horny(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Horny]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/horny?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def itssostupid(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [It's so stupid]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/its-so-stupid?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def jpg(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Jpg]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/jpg?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def lesbianborder(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Lesbian border]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/lesbian?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def lgbtborder(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [LGBT border]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/lgbt?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def lied(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Lied]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/bisexual?avatar={user.avatar}?username={user.name}'))
+
+@stselfbot.command()
+async def noblank(ctx, *, text: str):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [No blank?]''' + Fore.RESET)
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/nobitches?no={quote(text)}'))
+
+@stselfbot.command()
+async def nonbinaryborder(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Non binary border]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/nonbinary?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def pansexualborder(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Pansexual border]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/pansexual?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def pixelate(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Pixelate]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/pixelate?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def simpcard(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Simp card]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/simpcard?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def spin(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Spin]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/spin?avatar={user.avatar}'))
+
+@stselfbot.command(aliases=['dvd'])
+async def tonikawa(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Tonikawa]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/tonikawa?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def transborder(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Trans border]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/transgender?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def youtubecomment(ctx, user: discord.User = None, *, text: str):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Youtube comment]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/youtube-comment?username={user.name}?avatar={user.avatar}?comment={quote(text)}'))
+
+@stselfbot.command()
+async def comrade(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Comrade]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/overlay/comrade?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def pride(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Pride]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/overlay/gay?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def glass(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Glass]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/overlay/glass?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def jail(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Jail]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/overlay/jail?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def passed(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Passed]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/overlay/passed?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def triggered(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Triggered]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/overlay/triggered?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def wasted(ctx, user: discord.User = None):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Wasted]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
+    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/overlay/wasted?avatar={user.avatar}'))
+
+@stselfbot.command()
+async def binaryencode(ctx, *, text: str):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Binary encode]''' + Fore.RESET)
+    r = requests.get(f'https://some-random-api.ml/others/binary?encode={quote(text)}').json()
+    await ctx.send(await embedGen(ctx, r['binary'], "Binary encode", "st's cool selfbot :3!!!", ""))
+
+@stselfbot.command()
+async def binarydecode(ctx, *, text: str):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Binary decode]''' + Fore.RESET)
+    r = requests.get(f'https://some-random-api.ml/others/binary?decode={quote(text)}').json()
+    await ctx.send(await embedGen(ctx, r['text'], "Binary decode", "st's cool selfbot :3!!!", ""))
 
 @stselfbot.command()
 async def catboy(ctx):
@@ -1311,8 +1526,26 @@ async def catboy(ctx):
     r = requests.get('https://api.catboys.com/img').json()
     await ctx.send(r['url'])
 
+catgirlList = []
+
 @stselfbot.command()
-async def b64encode(ctx, *args):
+async def catgirl(ctx):
+    global catgirlList
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Catgirl]''' + Fore.RESET)
+    catgirlList = await getPost(ctx, "catgirls", catgirlList)
+
+femboyList = []
+
+@stselfbot.command()
+async def femboy(ctx):
+    global femboyList
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Femboy]''' + Fore.RESET)
+    femboyList = await getPost(ctx, "femboyhentai", femboyList)
+
+@stselfbot.command()
+async def encode(ctx, *args):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Base 64 encode]''' + Fore.RESET)
     string = ' '.join(args)
@@ -1322,7 +1555,7 @@ async def b64encode(ctx, *args):
     await ctx.send(encoded_stuff)
 
 @stselfbot.command()
-async def b64decode(ctx, *args):
+async def decode(ctx, *args):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Base 64 decode]''' + Fore.RESET)
     string = ' '.join(args)
@@ -1335,7 +1568,7 @@ async def b64decode(ctx, *args):
     await ctx.send(decoded_stuff)
 
 @stselfbot.command()
-async def rot13encode(ctx, *args):
+async def encrypt(ctx, *args):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Rot 13 encode]''' + Fore.RESET)
     string = ' '.join(args)
@@ -1343,37 +1576,12 @@ async def rot13encode(ctx, *args):
     await ctx.send(encoded_stuff)
 
 @stselfbot.command()
-async def rot13decode(ctx, *args):
+async def decrypt(ctx, *args):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Rot 13 decode]''' + Fore.RESET)
     string = ' '.join(args)
     decoded_stuff = codecs.decode(string, 'rot_13')
     await ctx.send(decoded_stuff)
-
-@stselfbot.command(name='ebay-view', aliases=['ebay-view-bot', 'ebayviewbot', 'ebayview'])
-async def _ebay_view(ctx, url, views: int):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Ebayview]''' + Fore.RESET)
-    start_time = datetime.datetime.now()
-
-    def EbayViewer(url, views):
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.91 Safari/537.36",
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-        }
-        for _i in range(views):
-            requests.get(url, headers=headers)
-
-    EbayViewer(url, views)
-    elapsed_time = datetime.datetime.now() - start_time
-    em = discord.Embed(title='sts cool selfbot')
-    em.add_field(name='Views sent', value=views, inline=False)
-    em.add_field(name='Elapsed time', value=elapsed_time, inline=False)
-    try:
-        return await ctx.send(embed=em)
-    except:
-        await ctx.send("views: " + views + "elapsed time: " + elapsed_time)
-
 
 @stselfbot.command(aliases=['geolocate', 'iptogeo', 'iptolocation', 'ip2geo', 'ip'])
 async def geoip(ctx, *, ipaddr: str = '1.3.3.7'):  
@@ -1412,11 +1620,8 @@ async def geoip(ctx, *, ipaddr: str = '1.3.3.7'):
                 value=field['value']
 
                 x = x + f'{name}: {value} \n'
-        x = quote(x)
-        embedthing = f"https://embed.rauf.workers.dev/?author=IP%2520lookup&title=st's%2520cool%2520selfbot&description={x}&color=94324b"
-
-        await ctx.send(embedthing)
-
+        url = await embedGen(ctx, f"IP lookup", "st's cool selfbot :3!!", f"{x}", "", "")
+        await ctx.send(url)
 
 @stselfbot.command()
 async def pingweb(ctx, website=None):  
@@ -1435,21 +1640,208 @@ async def pingweb(ctx, website=None):
         else:
             await ctx.send(f'Site is up, responded with a status code of {r}', delete_after=3)
 
+@stselfbot.command()
+async def trumptweet(ctx, *message: str):  
+    await ctx.message.delete()
+    message = "%20".join(message)
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Tweet]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=trumptweet&text={message}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
 
 @stselfbot.command()
 async def tweet(ctx, username: str, *, message: str):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Tweet]''' + Fore.RESET)
-    async with aiohttp.ClientSession() as cs:
-        async with cs.get(f"https://nekobot.xyz/api/imagegen?type=tweet&username={username}&text={message}") as r:
-            res = await r.json()
-            em = discord.Embed()
-            em.set_image(url=res["message"])
-            try:
-                await ctx.send(embed=em)
-            except:
-                await ctx.send(res["message"])
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=tweet&username={username}&text={message}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
 
+@stselfbot.command()
+async def clyde(ctx, *message: str):  
+    await ctx.message.delete()
+    message = "%20".join(message)
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Clyde]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=clyde&text={message}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def changemymind(ctx, *message: str):  
+    await ctx.message.delete()
+    message = "%20".join(message)
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Change my mind]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=changemymind&text={message}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def kannafy(ctx, *message: str):  
+    await ctx.message.delete()
+    message = "%20".join(message)
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Kannafy]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=kannagen&text={message}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def fact(ctx, *message: str):  
+    await ctx.message.delete()
+    message = "%20".join(message)
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Fact]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=fact&text={message}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def putin(ctx, *args):
+    await ctx.message.delete()
+    secondPart = False
+    top = ""
+    bottom = ""
+    args = "%20".join(args)
+    for char in args:
+        if char == ",":
+            secondPart = True
+            continue
+        if secondPart:
+            bottom = f"{bottom}%20{char}"
+        else:
+            top = f"{top}%20{char}"
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Putin]''' + Fore.RESET)
+    await ctx.send(f"https://apimeme.com/meme?meme=Vladimir-Putin&top={top}&bottom={bottom}")
+
+@stselfbot.command()
+async def drake(ctx, *args):
+    await ctx.message.delete()
+    secondPart = False
+    top = ""
+    bottom = ""
+    args = "%20".join(args)
+    for char in args:
+        if char == ",":
+            secondPart = True
+            continue
+        if secondPart:
+            bottom = f"{bottom}%20{char}"
+        else:
+            top = f"{top}%20{char}"
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Putin]''' + Fore.RESET)
+    await ctx.send(f"https://apimeme.com/meme?meme=Drake-Bad-Good&top={top}&bottom={bottom}")
+
+@stselfbot.command()
+async def spongebobsad(ctx, *args):
+    await ctx.message.delete()
+    secondPart = False
+    top = ""
+    bottom = ""
+    args = "%20".join(args)
+    for char in args:
+        if char == ",":
+            secondPart = True
+            continue
+        if secondPart:
+            bottom = f"{bottom}%20{char}"
+        else:
+            top = f"{top}%20{char}"
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Putin]''' + Fore.RESET)
+    await ctx.send(f"https://apimeme.com/meme?meme=Spongebob-Coffee&top={top}&bottom={bottom}")
+
+@stselfbot.command()
+async def iphonex(ctx, user: discord.User):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [IPhoneX]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=iphonex&url={str(user.avatar)}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def whowouldwin(ctx, user1: discord.User, user2: discord.User = None):
+    await ctx.message.delete()
+    if user2 is None:
+        user2 = ctx.author
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Who would win]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=whowouldwin&user1={str(user1.avatar)}&user2={str(user2.avatar)}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def ship(ctx, user1: discord.User, user2: discord.User = None):
+    await ctx.message.delete()
+    if user2 is None:
+        user2 = ctx.author
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Ship]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=ship&user1={str(user1.avatar)}&user2={str(user2.avatar)}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def awooify(ctx, user: discord.User):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Awooify]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=awooify&url={str(user.avatar)}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def captcha(ctx, user: discord.User):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Captcha]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=captcha&url={str(user.avatar)}&username={str(user.name)}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def lolice(ctx, user: discord.User):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Lolice]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=lolice&url={str(user.avatar)}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def trap(ctx, user1: discord.User):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Trap]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=trap&name={str(user1.name)}&author={str(ctx.author.name)}&image={str(user1.avatar)}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def deepfry(ctx, user: discord.User):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Deepfry]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=deepfry&image={str(user.avatar)}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def blurpify(ctx, user: discord.User):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Bluripfy]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=blurpify&image={str(user.avatar)}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def magik(ctx, user: discord.User):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Magik]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=magik&image={str(user.avatar)}&intensity=1").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def trash(ctx, user: discord.User):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Trash]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=trash&url={str(user.avatar)}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def stickbug(ctx, user: discord.User):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Stickbug]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=stickbug&url={str(user.avatar)}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def phcomment(ctx, user: discord.User, *message: str):
+    await ctx.message.delete()
+    message = "%20".join(message)
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Pornhub comment]''' + Fore.RESET)
+    res = requests.get(f"https://nekobot.xyz/api/imagegen?type=phcomment&image={str(user.avatar)}&text={message}&username={user.name}").json()
+    await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", res['message'], ""))
+
+@stselfbot.command()
+async def pornhub(ctx, left: str, right: str):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Pornhub logo]''' + Fore.RESET)
+    await ctx.send(f"https://logohub.appspot.com/{left}-{right}.png")
 
 @stselfbot.command()
 async def revav(ctx, user: discord.User = None):  
@@ -1458,31 +1850,37 @@ async def revav(ctx, user: discord.User = None):
     if user is None:
         user = ctx.author
     try:
-        em = discord.Embed(description=f"https://images.google.com/searchbyimage?image_url={user.avatar_url}")
+        em = discord.Embed(description=f"https://images.google.com/searchbyimage?image_url={user.avatar}")
         try:
             await ctx.send(embed=em)
         except:
-            await ctx.send(f"google reverse search - https://lens.google.com/uploadbyurl?url={user.avatar_url}")
-            await ctx.send(f"yandex reverse search - https://yandex.com/images/search?source=collections&&url={user.avatar_url}&rpt=imageview")
+            await ctx.send(f"google reverse search - https://lens.google.com/uploadbyurl?url={user.avatar}")
+            await ctx.send(f"yandex reverse search - https://yandex.com/images/search?source=collections&&url={user.avatar}&rpt=imageview")
     except Exception as e:
         print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)
 
+@stselfbot.command()
+async def img(ctx, *, search: str):  
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Img]''' + Fore.RESET)
+    await ctx.send(f"https://yandex.com/images/search?text={quote(search)}")
+
+@stselfbot.command()
+async def qrcode(ctx, *, text: str):  
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [QR Code]''' + Fore.RESET)
+    await ctx.send(f"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={quote(text)}")
 
 @stselfbot.command(aliases=['pfp', 'avatar'])
-async def av(ctx, *, user: discord.User = None):  
+async def av(ctx, *, user: discord.User = None):
     await ctx.message.delete()
+    if user is None:
+        user = ctx.author
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [pfp]''' + Fore.RESET)
-    format = "gif"
-    user = user or ctx.author
-    if user.is_avatar_animated() != True:
-        format = "png"
-    avatar = user.avatar_url_as(format=format if format != "gif" else None)
-    async with aiohttp.ClientSession() as session:
-        async with session.get(str(avatar)) as resp:
-            image = await resp.read()
-    with io.BytesIO(image) as file:
-        await ctx.send(file=discord.File(file, f"Avatar.{format}"))
-
+    if user.avatar == None:
+        print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}SPECIFIED USER DOESN'T HAVE A CUSTOM PROFILE PICTURE." + Fore.RESET)
+    else:
+        await ctx.send(await embedGen(ctx, f"st's cool selfbot :3!!", f"", "", user.avatar, ""))
 
 @stselfbot.command(aliases=['ri', 'role'])
 async def roleinfo(ctx, *, role: discord.Role):  
@@ -1504,12 +1902,10 @@ async def roleinfo(ctx, *, role: discord.Role):
         Creation Date: {created_on}
         '''
     try:
-        await ctx.send(f"https://embed.rauf.workers.dev/?author=Role%2520info&title=st's%2520cool%2520selfbot%250AName:%20{quote(role.name)}&description=Users:%2520{users}%250AMentionable:%2520{role.mentionable}%250ACreation%20Date:%20{quote(created_on)}%250AHoist:%2520{role.hoist}%250APosition:%2520{role.position}%250AManaged:%2520{role.managed}&color=94324b")
+        await ctx.send(await embedGen(ctx, f"Role info", f"st's cool selfbot :3!!", roleinfocool, "", ""))
     except:
         await ctx.send(roleinfocool)
     print(f'''{Fore.CYAN} {roleinfocool}''' + Fore.RESET)
-        
-
 
 @stselfbot.command()
 async def whois(ctx, *, user: discord.Member = None):  
@@ -1518,37 +1914,27 @@ async def whois(ctx, *, user: discord.Member = None):
     if user is None:
         user = ctx.author
     date_format = "%a, %d %b %Y %I:%M %p"
-    em = discord.Embed(description=user.mention)
-    em.set_author(name=str(user), icon_url=user.avatar_url)
-    em.set_thumbnail(url=user.avatar_url)
-    em.add_field(name="Joined", value=user.joined_at.strftime(date_format))
     members = sorted(ctx.guild.members, key=lambda m: m.joined_at)
-    em.add_field(name="Join position", value=str(members.index(user) + 1))
-    em.add_field(name="Registered", value=user.created_at.strftime(date_format))
     userroles = "No Roles"
     if len(user.roles) > 1:
-        role_string = ' '.join([r.mention for r in user.roles][1:])
-        userroles = "Roles [{}]".format(len(user.roles) - 1), role_string
+        role_string = ' | '.join([r.name for r in user.roles][1:])
+        userroles = "Roles [{}]: ".format(len(user.roles) - 1), role_string
         userroles = str(userroles).strip("()'',")
         userroles = userroles.replace("', '", " ")
-    perm_string = ', '.join([str(p[0]).replace("_", " ").title() for p in user.guild_permissions if p[1]])
-    em.add_field(name="Guild permissions", value=perm_string, inline=False)
-    em.set_footer(text='ID: ' + str(user.id))
     whoiscool = f'''
-{user.mention}
-Joined: {user.joined_at.strftime(date_format)}
-Join position: {str(members.index(user) + 1)}
-Registered: {user.created_at.strftime(date_format)}
-{userroles}
-Guild permissions: {perm_string}
-ID: {str(user.id)}
-{user.avatar_url}
+    General info:
+    Name: {user.name}
+    Tag: {user.name}#{user.discriminator}
+    ID: {str(user.id)}
+    Creation: {user.created_at.strftime(date_format)}
+    Status: {str(user.raw_status)}
+
+    Server info:
+    Joined: {user.joined_at.strftime(date_format)}
+    Join position: {str(members.index(user) + 1)}
+    {userroles}
     '''
-    try:
-        await ctx.send(embed=em)
-    except:
-        await ctx.send(whoiscool)
-    print(f'''{Fore.CYAN} {whoiscool}''' + Fore.RESET)
+    await ctx.send(await embedGen(ctx, f"Whois", f"st's cool selfbot :3!!", whoiscool, user.avatar, ""))
 
 
 @stselfbot.command()
@@ -1558,28 +1944,20 @@ async def combine(ctx, name1, name2):
     name1letters = name1[:round(len(name1) / 2)]
     name2letters = name2[round(len(name2) / 2):]
     ship = "".join([name1letters, name2letters])
-    emb = (discord.Embed(description=f"{ship}"))
-    emb.set_author(name=f"{name1} + {name2}")
     combinecool = f'''
     Combined names: {ship}
     Names: {name1} + {name2}
     '''
-    try:
-        await ctx.send(embed=emb)
-    except:
-        await ctx.send(combinecool)
-    print(f'''{Fore.CYAN} {combinecool}''' + Fore.RESET)
+    await ctx.send(await embedGen(ctx, f"Combine", f"st's cool selfbot :3!!", combinecool, "", ""))
 
-
-@stselfbot.command(name='1337-speak', aliases=['1337speak'])
-async def _1337_speak(ctx, *, text):  
+@stselfbot.command(name='1337-speak', aliases=['1337speak', '1377'])
+async def _1337_speak(ctx, *, text):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [1337 speak]''' + Fore.RESET)
     text = text.replace('a', '4').replace('A', '4').replace('e', '3') \
         .replace('E', '3').replace('i', '!').replace('I', '!') \
         .replace('o', '0').replace('O', '0').replace('u', '|_|').replace('U', '|_|')
     await ctx.send(f'`{text}`')
-
 
 @stselfbot.command(aliases=['dvwl'])
 async def devowel(ctx, *, text):  
@@ -1590,65 +1968,155 @@ async def devowel(ctx, *, text):
         .replace('o', '').replace('O', '').replace('u', '').replace('U', '')
     await ctx.send(dvl)
 
-
 @stselfbot.command()
-async def blank(ctx):  
+async def blank(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Blank]''' + Fore.RESET)
-    if config.get('password') == 'password-here':
+    if password == 'password-here':
         print(f"{Fore.RED}[ERROR] {Fore.YELLOW}You didnt put your password in the config.json file" + Fore.RESET)
     else:
-        password = config.get('password')
-        with open('Images/Avatars/Transparent.png', 'rb') as f:
+        with open('data/transparent.png', 'rb') as f:
             try:
                 await stselfbot.user.edit(password=password, username="ٴٴٴٴ", avatar=f.read())
+                await stselfbot.change_presence(activity=None, status=discord.Status.offline)
             except discord.HTTPException as e:
                 print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)
-
 
 @stselfbot.command(aliases=['pfpget', 'stealpfp'])
 async def pfpsteal(ctx, user: discord.User):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Pfpsteal]''' + Fore.RESET)
-    if config.get('password') == 'password-here':
+    if password == 'password-here':
         print(f"{Fore.RED}[ERROR] {Fore.YELLOW}You didnt put your password in the config.json file" + Fore.RESET)
     else:
-        password = config.get('password')
-        with open('Images/Avatars/Stolen/Stolen.png', 'wb') as f:
-            r = requests.get(user.avatar_url, stream=True)
+        with open('data/stolen.png', 'wb') as f:
+            r = requests.get(user.avatar, stream=True)
             for block in r.iter_content(1024):
                 if not block:
                     break
                 f.write(block)
         try:
-            Image.open('Images/Avatars/Stolen/Stolen.png').convert('RGB')
-            with open('Images/Avatars/Stolen/Stolen.png', 'rb') as f:
+            Image.open('data/stolen.png').convert('RGB')
+            with open('data/stolen.png', 'rb') as f:
                 await stselfbot.user.edit(password=password, avatar=f.read())
         except discord.HTTPException as e:
             print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)
 
-
 @stselfbot.command(name='set-pfp', aliases=['setpfp', 'pfpset'])
-async def _set_pfp(ctx, *, url):  
+async def _set_pfp(ctx, *, url):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Setpfp]''' + Fore.RESET)
-    if config.get('password') == 'password-here':
+    if password == 'password-here':
         print(f"{Fore.RED}[ERROR] {Fore.YELLOW}You didnt put your password in the config.json file" + Fore.RESET)
     else:
-        password = config.get('password')
-        with open('Images/Avatars/PFP-1.png', 'wb') as f:
+        with open('data/pfp.png', 'wb') as f:
             r = requests.get(url, stream=True)
             for block in r.iter_content(1024):
                 if not block:
                     break
                 f.write(block)
     try:
-        Image.open('Images/Avatars/PFP-1.png').convert('RGB')
-        with open('Images/Avatars/PFP-1.png', 'rb') as f:
+        Image.open('data/pfp.png').convert('RGB')
+        with open('data/pfp.png', 'rb') as f:
             await stselfbot.user.edit(password=password, avatar=f.read())
     except discord.HTTPException as e:
         print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)
 
+@stselfbot.command(aliases=['steal-profile'])
+async def stealprofile(ctx, user: discord.User):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Steal profile]''' + Fore.RESET)
+    if password == 'password-here':
+        print(f"{Fore.RED}[ERROR] {Fore.YELLOW}You didnt put your password in the config.json file" + Fore.RESET)
+    else:
+        with open('data/pfp.png', 'wb') as f:
+            r = requests.get(user.avatar, stream=True)
+            for block in r.iter_content(1024):
+                if not block:
+                    break
+                f.write(block)
+    try:
+        Image.open('data/pfp.png').convert('RGB')
+        with open('data/pfp.png', 'rb') as f:
+            await stselfbot.user.edit(password=password, username=user.name, avatar=f.read())
+    except discord.HTTPException as e:
+        print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)
+
+@stselfbot.command()
+async def saveprofile(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Save profile]''' + Fore.RESET)
+    with open('data/savedprofiles.json', 'r') as f:
+        data = json.load(f)
+    data['username'] = str(ctx.author.name)
+    with open('data/pfp.png', 'wb') as f:
+            r = requests.get(ctx.author.avatar, stream=True)
+            for block in r.iter_content(1024):
+                if not block:
+                    break
+                f.write(block)
+    with open('data/pfp.png', 'rb') as f:
+        files = {'files[]': f}
+        response = requests.post("https://up1.fileditch.com/upload.php", files=files).json()
+    data['avatar'] = str(response['files'][0]['url'])
+    with open('data/savedprofiles.json', 'w') as f:
+        json.dump(data, f)
+
+@stselfbot.command()
+async def animatedaboutme(ctx, *, args):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Animated about me]''' + Fore.RESET)
+    if password == 'password-here':
+        print(f"{Fore.RED}[ERROR] {Fore.YELLOW}You didnt put your password in the config.json file" + Fore.RESET)
+    else:
+        bioList = args.split(', ')
+        i = 0
+        while True:
+            bio = bioList[i]
+            await stselfbot.user.edit(password=password, bio=bio)
+            i += 1
+            if i > len(bioList) - 1:
+                i = 0
+            await asyncio.sleep(60)
+
+@stselfbot.command()
+async def animatedstatus(ctx, sleep: int = 30, *, args):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Animated status]''' + Fore.RESET)
+    if password == 'password-here':
+        print(f"{Fore.RED}[ERROR] {Fore.YELLOW}You didnt put your password in the config.json file" + Fore.RESET)
+    else:
+        bioList = args.split(', ')
+        i = 0
+        while True:
+            bio = bioList[i]
+            await stselfbot.change_presence(activity=discord.CustomActivity(name=bio))
+            i += 1
+            if i > len(bioList) - 1:
+                i = 0
+            await asyncio.sleep(sleep)
+
+@stselfbot.command()
+async def loadprofile(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Load profile]''' + Fore.RESET)
+    if password == 'password-here':
+        print(f"{Fore.RED}[ERROR] {Fore.YELLOW}You didnt put your password in the config.json file" + Fore.RESET)
+    else:
+        with open('data/savedprofiles.json', 'r') as q:
+            data = json.load(q)
+        with open('data/pfp.png', 'wb') as f:
+            r = requests.get(data['avatar'], stream=True)
+            for block in r.iter_content(1024):
+                if not block:
+                    break
+                f.write(block)
+    try:
+        Image.open('data/pfp.png').convert('RGB')
+        with open('data/pfp.png', 'rb') as f:
+            await stselfbot.user.edit(password=password, username=data['username'], avatar=f.read())
+    except discord.HTTPException as e:
+        print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)
 
 @stselfbot.command(aliases=['dong', 'penis'])
 async def dick(ctx, *, user: discord.User = None):  
@@ -1660,9 +2128,7 @@ async def dick(ctx, *, user: discord.User = None):
     dong = ""
     for _i in range(0, size):
         dong += "="
-    em = discord.Embed(title=f"{user}'s Dick size", description=f"8{dong}D", colour=0x0000)
-    await ctx.send(f"https://embed.rauf.workers.dev/?author=Dick%2520size&title=8{dong}D&color=00bfff {user}'s")
-
+    await ctx.send(await embedGen(ctx, f"{user.name}'s Dick size", f"8{dong}D", "st's cool selfbot :3!!", ""))
 
 @stselfbot.command(aliases=['changehypesquad'])
 async def hypesquad(ctx, house):  
@@ -1688,182 +2154,10 @@ async def hypesquad(ctx, house):
     except Exception as e:
         print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)
 
-
-@stselfbot.command(aliases=['tokenfucker', 'disable', 'crash'])
-async def tokenfuck(ctx, _token):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Tokenfuck]''' + Fore.RESET)
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.12) Gecko/20050915 Firefox/1.0.7',
-        'Content-Type': 'application/json',
-        'Authorization': _token,
-    }
-    request = requests.Session()
-    payload = {
-        'theme': "light",
-        'locale': "ja",
-        'message_display_compact': False,
-        'inline_embed_media': False,
-        'inline_attachment_media': False,
-        'gif_auto_play': False,
-        'render_embeds': False,
-        'render_reactions': False,
-        'animate_emoji': False,
-        'convert_emoticons': False,
-        'enable_tts_command': False,
-        'explicit_content_filter': '0',
-        'status': "invisible"
-    }
-    guild = {
-        'channels': None,
-        'icon': None,
-        'name': "STCOOL",
-        'region': "europe"
-    }
-    for _i in range(50):
-        requests.post('https://discordapp.com/api/v6/guilds', headers=headers, json=guild)
-    while True:
-        try:
-            request.patch("https://canary.discordapp.com/api/v6/users/@me/settings", headers=headers, json=payload)
-        except Exception as e:
-            print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)
-        else:
-            break
-    modes = cycle(["light", "dark"])
-    statuses = cycle(["online", "idle", "dnd", "invisible"])
-    while True:
-        setting = {
-            'theme': next(modes),
-            'locale': random.choice(locales),
-            'status': next(statuses)
-        }
-        while True:
-            try:
-                request.patch("https://canary.discordapp.com/api/v6/users/@me/settings", headers=headers, json=setting,
-                              timeout=10)
-            except Exception as e:
-                print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)
-            else:
-                break
-
-
 @stselfbot.command()
-async def masslogin(ctx, choice=None):  
+async def backupserver(ctx):  
     await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Masslogin]''' + Fore.RESET)
-    _masslogin(choice)
-
-
-@stselfbot.command()
-async def masscon(ctx, _type, amount: int, *, name=None):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Masscon]''' + Fore.RESET)
-    payload = {
-        'name': name,
-        'visibility': 1
-    }
-    headers = {
-        'Authorization': token,
-        'Content-Type': 'application/json',
-    }
-    avaliable = [
-        'battlenet',
-        'skype',
-        'leagueoflegends'
-    ]
-    if name is None:
-        name = 'about:blank'
-    elif _type not in avaliable:
-        print(f'Avaliable connections: {avaliable}')
-    for _i in range(amount):
-        try:
-            ID = random.randint(10000000, 90000000)
-            time.sleep(5)
-            r = requests.put(f'https://canary.discordapp.com/api/v6/users/@me/connections/{_type}/{ID}',
-                             data=json.dumps(payload), headers=headers)
-            if r.status_code == 200:
-                print(f"[{Fore.GREEN}+{Fore.RESET}] New connection added!")
-            else:
-                print(f"[{Fore.RED}-{Fore.RESET}] Couldnt add connection!");
-                break
-        except (Exception, ValueError) as e:
-            print(e);
-            break
-    print(f"[{Fore.GREEN}+{Fore.RESET}] Finished adding connections!")
-
-
-@stselfbot.command(aliases=['fakeconnection', 'spoofconnection'])
-async def fakenet(ctx, _type, *, name=None):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Fakenet]''' + Fore.RESET)
-    ID = random.randrange(10000000, 90000000)
-    avaliable = [
-        'battlenet',
-        'skype',
-        'leagueoflegends'
-    ]
-    payload = {
-        'name': name,
-        'visibility': 1
-    }
-    headers = {
-        'Authorization': token,
-        'Content-Type': 'application/json',
-    }
-    if name is None:
-        name = 'about:blank'
-    elif _type not in avaliable:
-        await ctx.send(f'Avaliable connections: `{avaliable}`', delete_after=3)
-    r = requests.put(f'https://canary.discordapp.com/api/v6/users/@me/connections/{_type}/{ID}',
-                     data=json.dumps(payload), headers=headers)
-    if r.status_code == 200:
-        await ctx.send(f"Added connection: `{type}` with Username: `{name}` and ID: `{ID}`", delete_after=3)
-    else:
-        await ctx.send('Some error has happened with the endpoint', delete_after=3)
-
-
-@stselfbot.command(aliases=['tokinfo', 'tdox'])
-async def tokeninfo(ctx, _token):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Tokeninfo]''' + Fore.RESET)
-    headers = {
-        'Authorization': _token,
-        'Content-Type': 'application/json'
-    }
-    try:
-        res = requests.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers)
-        res = res.json()
-        user_id = res['id']
-        locale = res['locale']
-        avatar_id = res['avatar']
-        language = languages.get(locale)
-        creation_date = datetime.datetime.utcfromtimestamp(((int(user_id) >> 22) + 1420070400000) / 1000).strftime(
-            '%d-%m-%Y %H:%M:%S UTC')
-    except KeyError:
-        print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}Invalid token" + Fore.RESET)
-    em = description=f"Name: `{res['username']}#{res['discriminator']}`\nID: `{res['id']}`\nEmail: `{res['email']}`\nCreation Date: `{creation_date}`\nProfile picture: [**Click here**](https://cdn.discordapp.com/avatars/{user_id}/{avatar_id})"
-    fields = [
-        {'name': 'Phone', 'value': res['phone']},
-        {'name': 'Flags', 'value': res['flags']},
-        {'name': 'Local language', 'value': res['locale'] + f"{language}"},
-        {'name': 'MFA?', 'value': res['mfa_enabled']},
-        {'name': 'Verified?', 'value': res['verified']},
-    ]
-    for field in fields:
-        if field['value']:
-            em.add_field(name=field['name'], value=field['value'], inline=False)
-            em.set_thumbnail(url=f"https://cdn.discordapp.com/avatars/{user_id}/{avatar_id}")
-    await ctx.send(em)
-    for field in fields:
-        if field['value']:
-            await ctx.send(field['name'], field['value'])
-    await ctx.send(f"https://cdn.discordapp.com/avatars/{user_id}/{avatar_id}")
-
-
-@stselfbot.command()
-async def copy(ctx):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Copy]''' + Fore.RESET)
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Backup server]''' + Fore.RESET)
     await stselfbot.create_guild(f'backup-{ctx.guild.name}')
     await asyncio.sleep(4)
     for g in stselfbot.guilds:
@@ -1871,6 +2165,7 @@ async def copy(ctx):
             for c in g.channels:
                 await c.delete()
             for cate in ctx.guild.categories:
+                await asyncio.sleep(3)
                 x = await g.create_category(f"{cate.name}")
                 for chann in cate.channels:
                     if isinstance(chann, discord.VoiceChannel):
@@ -1881,7 +2176,6 @@ async def copy(ctx):
         await g.edit(icon=ctx.guild.icon_url)
     except:
         pass
-
 
 @stselfbot.command()
 async def destroy(ctx):  
@@ -1912,11 +2206,10 @@ async def destroy(ctx):
         )
     except:
         pass
-    for _i in range(250):
+    for _i in range(50):
         await ctx.guild.create_text_channel(name=RandString())
-    for _i in range(250):
+    for _i in range(50):
         await ctx.guild.create_role(name=RandString(), color=RandomColor())
-
 
 @stselfbot.command()
 async def dmall(ctx, *, message):  
@@ -1929,7 +2222,6 @@ async def dmall(ctx, *, message):
         except:
             pass
 
-
 @stselfbot.command()
 async def massban(ctx):  
     await ctx.message.delete()
@@ -1939,7 +2231,6 @@ async def massban(ctx):
             await user.ban()
         except:
             pass
-
 
 @stselfbot.command()
 async def masskick(ctx):  
@@ -1951,7 +2242,6 @@ async def masskick(ctx):
         except:
             pass
 
-
 @stselfbot.command()
 async def massrole(ctx):  
     await ctx.message.delete()
@@ -1961,7 +2251,6 @@ async def massrole(ctx):
             await ctx.guild.create_role(name=RandString(), color=RandomColor())
         except:
             return
-
 
 @stselfbot.command()
 async def masschannel(ctx):  
@@ -1973,7 +2262,6 @@ async def masschannel(ctx):
         except:
             return
 
-
 @stselfbot.command()
 async def delchannels(ctx):  
     await ctx.message.delete()
@@ -1984,7 +2272,6 @@ async def delchannels(ctx):
         except:
             return
 
-
 @stselfbot.command()
 async def delroles(ctx):  
     await ctx.message.delete()
@@ -1994,7 +2281,6 @@ async def delroles(ctx):
             await role.delete()
         except:
             pass
-
 
 @stselfbot.command()
 async def massunban(ctx):  
@@ -2008,7 +2294,6 @@ async def massunban(ctx):
         except:
             pass
 
-
 @stselfbot.command()
 async def spam(ctx, amount: int, *, message):  
     await ctx.message.delete()
@@ -2016,21 +2301,21 @@ async def spam(ctx, amount: int, *, message):
     for _i in range(amount):
         await ctx.send(message)
 
-
 @stselfbot.command()
 async def dm(ctx, user: discord.User, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Dm]''' + Fore.RESET)
-    user = await stselfbot.fetch_user(user.id)
-    print(user)
-    if ctx.author.id == stselfbot.user.id:
-        return
-    else:
-        try:
-            await user.send(message)
-        except:
-            pass
+    try:
+        await user.send(message)
+    except:
+        pass
 
+@stselfbot.command()
+async def sessions(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Sessions]''' + Fore.RESET)
+    for Session in stselfbot.sessions:
+        print(f"Operating system of the session: {Session.os}, The client of the session {Session.client}")
 
 @stselfbot.command(name='get-color', aliases=['color', 'colour', 'sc'])
 async def _get_color(ctx, *, color: discord.Colour):  
@@ -2039,31 +2324,23 @@ async def _get_color(ctx, *, color: discord.Colour):
     file = io.BytesIO()
     Image.new('RGB', (200, 90), color.to_rgb()).save(file, format='PNG')
     file.seek(0)
-    em = discord.Embed(color=color, title=f'Showing Color: {str(color)}')
-    em.set_image(url='attachment://color.png')
-    await ctx.send(file=discord.File(file, 'color.png'), embed=em)
+    await ctx.send(file=discord.File(file, 'color.png'))
 
-
-@stselfbot.command()
-async def tinyurl(ctx, *, link):  
+@stselfbot.command(aliases=['shorten2'])
+async def tinyurl(ctx, *, link):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Tinyurl]''' + Fore.RESET)
     r = requests.get(f'http://tinyurl.com/api-create.php?url={link}').text
-    await ctx.send(f'Shortened link: {r}')
-
+    await ctx.send(f'shortened: {r}')
 
 @stselfbot.command(aliases=['rainbow-role'])
-async def rainbow(ctx, *, role):  
+async def rainbow(ctx, role: discord.Role):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Rainbow]''' + Fore.RESET)
-    role = discord.utils.get(ctx.guild.roles, name=role)
     while True:
-        try:
-            await role.edit(role=role, colour=RandomColor())
-            await asyncio.sleep(10)
-        except:
-            break
-
+        randcolor = RandomColor()
+        await role.edit(colour=randcolor)
+        await asyncio.sleep(10)
 
 @stselfbot.command(name='8ball')
 async def _ball(ctx, *, question):  
@@ -2079,25 +2356,17 @@ async def _ball(ctx, *, question):
         'There is a good chance'
     ]
     answer = random.choice(responses)
-    embed = discord.Embed()
-    embed.add_field(name="Question", value=question, inline=False)
-    embed.add_field(name="Answer", value=answer, inline=False)
-    embed.set_thumbnail(url="https://www.horoscope.com/images-US/games/game-magic-8-ball-no-text.png")
-    embed.set_footer(text=datetime.datetime.now())
-    ballcool = f'''
-    Question: {question}
-    Answer: {answer}
-    '''
-    await ctx.send(ballcool)
-    print(f'''{Fore.CYAN} {ballcool}''' + Fore.RESET)
+    url = await embedGen(ctx, f"8ball question: {question}", f"Answer: {answer}", "st's cool selfbot :3!!", "https://www.horoscope.com/images-US/games/game-magic-8-ball-no-text.png", "")
+    await ctx.send(url)
 
 @stselfbot.command(name='8balldiff')
-async def _balldiff(ctx, question):
+async def _balldiff(ctx, *question):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [8Ball different]''' + Fore.RESET)
+    question = " ".join(question)
     r = requests.get("https://api.catboys.com/8ball").json()
-    await ctx.send(f"Question: {question}, Answer: {r['response']}")
-    await ctx.send(r['url'])
+    url = await embedGen(ctx, f"8ball question: {question}", f"Answer: {r['response']}", "st's cool selfbot :3!!", r['url'], "")
+    await ctx.send(url)
 
 @stselfbot.command()
 async def dice(ctx):
@@ -2106,9 +2375,7 @@ async def dice(ctx):
     r = requests.get("https://api.catboys.com/dice").json()
     while r['url'] == None:
         r = requests.get("https://api.catboys.com/dice").json()
-    await ctx.send(f"Rolled a dice! Landed on {r['response']}")
-    await ctx.send(r['url'])
-
+    await ctx.send(await embedGen(ctx, f"Rolled a dice! Landed on {r['response']}", "", "st's cool selfbot :3!!", r['url']))
 
 @stselfbot.command(aliases=['slots', 'bet'])
 async def slot(ctx):  
@@ -2118,83 +2385,90 @@ async def slot(ctx):
     a = random.choice(emojis)
     b = random.choice(emojis)
     c = random.choice(emojis)
-    slotmachine = f"**[ {a} {b} {c} ]\n{ctx.author.name}**,"
+    slotmachine = f"{a} {b} {c}"
     if (a == b == c):
-        await ctx.send("Slot machine"
-        f"{slotmachine} All matchings, you won!")
-    elif (a == b) or (a == c) or (b == c):
-        await ctx.send("Slot machine"
-        f"{slotmachine} 2 in a row, you won!")
+        await ctx.send(await embedGen(ctx, f"Slot machine", f"{slotmachine} All matchings, you won, {ctx.author.name}!", "st's cool selfbot :3!!", ""))
+    elif (a == b) or (b == c):
+        await ctx.send(await embedGen(ctx, f"Slot machine", f"{slotmachine} 2 in a row, you won, {ctx.author.name}!", "st's cool selfbot :3!!", ""))
     else:
-        await ctx.send("Slot machine"
-        f"{slotmachine} No match, you lost")
-
+        await ctx.send(await embedGen(ctx, f"Slot machine", f"{slotmachine} No match, you lost, {ctx.author.name}!", "st's cool selfbot :3!!", ""))
 
 @stselfbot.command()
-async def joke(ctx):  
+async def joke(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Joke]''' + Fore.RESET)
     headers = {
         "Accept": "application/json"
     }
-    async with aiohttp.ClientSession() as session:
-        async with session.get("https://icanhazdadjoke.com", headers=headers) as req:
-            r = await req.json()
+    r = requests.get("https://icanhazdadjoke.com", headers=headers).json()
     await ctx.send(r["joke"])
 
-
 @stselfbot.command(name='auto-bump', aliases=['bump'])
-async def _auto_bump(ctx, channelid):  
+async def _auto_bump(ctx, ):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Autobump]''' + Fore.RESET)
     count = 0
     while True:
         try:
             count += 1
-            channel = stselfbot.get_channel(int(channelid))
-            await channel.send('!d bump')
-            print(f'{Fore.BLUE}[AUTO-BUMP] {Fore.GREEN}Bump number: {count} sent' + Fore.RESET)
-            await asyncio.sleep(7200)
+            channel = stselfbot.get_channel(ctx.channel.id)
+            async for command in channel.slash_commands(query="bump"):
+                if command.application.id == 302050872383242240:
+                    await command()
+            print(f'{Fore.BLUE}[AUTO-BUMP] {Fore.GREEN}Bump info: sent {count} bump so far' + Fore.RESET)
+            await asyncio.sleep(7230)
         except Exception as e:
-            print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)
-
+            print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)    
 
 @stselfbot.command()
-async def tts(ctx, *, message):  
+async def tts(ctx, *, message):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [tts]''' + Fore.RESET)
-    buff = await do_tts(message)
-    await ctx.send(file=discord.File(buff, f"{message}.wav"))
-
+    audio_data = await do_tts(message)
+    with io.BytesIO(audio_data) as f:
+        await ctx.send(file=discord.File(f, filename='tts.mp3'))
 
 @stselfbot.command()
-async def upper(ctx, *, message):  
+async def caps(ctx, *, message):
     await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Upper]''' + Fore.RESET)
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Caps]''' + Fore.RESET)
     message = message.upper()
     await ctx.send(message)
 
-
-@stselfbot.command(aliases=['guildpfp'])
-async def guildicon(ctx):  
+@stselfbot.command(aliases=['guildicon', 'servericon'])
+async def serverlogo(ctx, guildid = None):  
     await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Guildicon]''' + Fore.RESET)
-    await ctx.send("Guild icon: " + ctx.guild.icon_url)
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Server logo]''' + Fore.RESET)
+    if guildid == None:
+        guildid = ctx.guild.id
+    guild = stselfbot.get_guild(int(guildid))
+    await ctx.send(await embedGen(ctx, f"Server logo", "", "st's cool selfbot :3!!", guild.icon))
 
+@stselfbot.command(aliases=['guildbanner'])
+async def serverbanner(ctx, guildid = None):  
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Server banner]''' + Fore.RESET)
+    if guildid == None:
+        guildid = ctx.guild.id
+    guild = stselfbot.get_guild(int(guildid))
+    if guild.banner == None:
+        print(f'''{Fore.RED}[ERROR] {Fore.YELLOW}Server doesn't have a banner''' + Fore.RESET)
+        return
+    await ctx.send(await embedGen(ctx, f"Server banner", "", "st's cool selfbot :3!!", guild.banner))
 
 @stselfbot.command(name='backup-f', aliases=['friendbackup', 'friend-backup', 'backup-friends', 'backupf'])
 async def _backup_f(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Backup]''' + Fore.RESET)
-    for friend in stselfbot.user.friends:
-        friendlist = (friend.name) + '#' + (friend.discriminator)
-        with open('Backup/Friends.txt', 'a+') as f:
+    print(stselfbot.friends)
+    for friend in stselfbot.friends:
+        friendlist = (friend.user.name) + '#' + (friend.user.discriminator)
+        with open('data/Friends.txt', 'a+', encoding='utf-8') as f:
             f.write(friendlist + "\n")
-    for block in stselfbot.user.blocked:
-        blocklist = (block.name) + '#' + (block.discriminator)
-        with open('Backup/Blocked.txt', 'a+') as f:
+    for block in stselfbot.blocked:
+        blocklist = (block.user.name) + '#' + (block.user.discriminator)
+        with open('data/Blocked.txt', 'a+', encoding='utf-8') as f:
             f.write(blocklist + "\n")
-
 
 @stselfbot.command(name='first-message', aliases=['firstmsg', 'fm', 'firstmessage'])
 async def _first_message(ctx, channel: discord.TextChannel = None):  
@@ -2202,10 +2476,12 @@ async def _first_message(ctx, channel: discord.TextChannel = None):
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [First message]''' + Fore.RESET)
     if channel is None:
         channel = ctx.channel
-    first_message = (await channel.history(limit=1, oldest_first=True).flatten())[0]
+    async for message in channel.history(limit=1, oldest_first=True):
+        first_message = message
+        break
     embed = discord.Embed(description=first_message.content)
     embed.add_field(name="First Message", value=f"[Jump]({first_message.jump_url})")
-    await ctx.send("First Message - " + f"({first_message.jump_url})")
+    await ctx.send("first message - " + f"{first_message.jump_url}")
 
 @stselfbot.command()
 async def owofy(ctx, *args):
@@ -2214,31 +2490,6 @@ async def owofy(ctx, *args):
     string = ' '.join(args)
     owofiedString = humor_langs.owofy(string)
     await ctx.send(owofiedString)
-
-@stselfbot.command()
-async def mac(ctx, mac):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Mac]''' + Fore.RESET)
-    r = requests.get('http://api.macvendors.com/' + mac)
-    em = discord.Embed(title='MAC Lookup Result sts cool selfbot', description=r.text, colour=0xDEADBF)
-    em.set_author(name='MAC Finder',
-                  icon_url='https://regmedia.co.uk/2016/09/22/wifi_icon_shutterstock.jpg?x=1200&y=794')
-    macfind = "MAC Lookup Result | st's cool selfbot" + r.text
-    await ctx.send(macfind)
-
-
-@stselfbot.command()
-async def pp(ctx, *, user: discord.User = None):
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [PP]''' + Fore.RESET)
-    if user is None: user = ctx.author
-    size = random.randint(1, 25)
-    dong = ""
-    for _i in range(0, size):
-        dong += "="
-    em = f"{user}'s Dick size 8{dong}D"
-    await ctx.send(em)
-
 
 @stselfbot.command()
 async def abc(ctx):  
@@ -2252,7 +2503,6 @@ async def abc(ctx):
         await message.edit(content=_next)
         await asyncio.sleep(2)
 
-
 @stselfbot.command(aliases=['bitcoin'])
 async def btc(ctx):  
     await ctx.message.delete()
@@ -2261,9 +2511,7 @@ async def btc(ctx):
     r = r.json()
     usd = r['USD']
     eur = r['EUR']
-    em = f'Bitcoin Price:\nUSD: `{str(usd)}$`\nEUR: `{str(eur)}€`'
-    await ctx.send(em)
-
+    await ctx.send(await embedGen(ctx, f'Bitcoin Price:\nUSD: {str(usd)}$ \nEUR: {str(eur)}€', "", "st's cool selfbot :3!!", ""))
 
 @stselfbot.command(aliases=['ethereum'])
 async def eth(ctx):  
@@ -2273,9 +2521,7 @@ async def eth(ctx):
     r = r.json()
     usd = r['USD']
     eur = r['EUR']
-    em = f'Ethereum price\nUSD: `{str(usd)}$`\nEUR: `{str(eur)}€`'
-    await ctx.send(em)
-
+    await ctx.send(await embedGen(ctx, f'Ethereum Price:\nUSD: {str(usd)}$ \nEUR: {str(eur)}€', "", "st's cool selfbot :3!!", ""))
 
 @stselfbot.command()
 async def topic(ctx):  
@@ -2285,7 +2531,6 @@ async def topic(ctx):
     soup = bs4(r, 'html.parser')
     topic = soup.find(id="random").text
     await ctx.send(topic)
-
 
 @stselfbot.command(aliases=['wouldyourather', 'would-you-rather', 'wyrq'])
 async def wyr(ctx):  
@@ -2299,66 +2544,23 @@ async def wyr(ctx):
     em = f'Would you rather\n{qa}\n{qor}\n{qb}'
     await ctx.send(em)
 
-
 @stselfbot.command()
 async def hastebin(ctx, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Hastebin]''' + Fore.RESET)
     r = requests.post("https://hastebin.com/documents", data=message).json()
+    print(r)
     await ctx.send(f"<https://hastebin.com/{r['key']}>")
-
 
 @stselfbot.command()
 async def ascii(ctx, *, text):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Ascii]''' + Fore.RESET)
-    r = requests.get(f'http://artii.herokuapp.com/make?text={urllib.parse.quote_plus(text)}').text
+    r = art.text2art(text)
     if len('```' + r + '```') > 2000:
         return
     thingy = f"```{r}```"
-    await ctx.send("this command doesnt work")
-
-@stselfbot.command(aliases=['proxy'])
-async def proxies(ctx):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Proxies]''' + Fore.RESET)
-    file = open("Data/Http-proxies.txt", "a+")
-    res = requests.get('https://api.proxyscrape.com/?request=displayproxies&proxytype=http&timeout=1500')
-    proxies = []
-    for proxy in res.text.split('\n'):
-        proxy = proxy.strip()
-        if proxy:
-            proxies.append(proxy)
-    for p in proxies:
-        file.write((p) + "\n")
-    file = open("Data/Https-proxies.txt", "a+")
-    res = requests.get('https://api.proxyscrape.com/?request=displayproxies&proxytype=https&timeout=1500')
-    proxies = []
-    for proxy in res.text.split('\n'):
-        proxy = proxy.strip()
-        if proxy:
-            proxies.append(proxy)
-    for p in proxies:
-        file.write((p) + "\n")
-    file = open("Data/Socks4-proxies.txt", "a+")
-    res = requests.get('https://api.proxyscrape.com/?request=displayproxies&proxytype=socks4&timeout=1500')
-    proxies = []
-    for proxy in res.text.split('\n'):
-        proxy = proxy.strip()
-        if proxy:
-            proxies.append(proxy)
-    for p in proxies:
-        file.write((p) + "\n")
-    file = open("Data/Socks5-proxies.txt", "a+")
-    res = requests.get('https://api.proxyscrape.com/?request=displayproxies&proxytype=socks5&timeout=1500')
-    proxies = []
-    for proxy in res.text.split('\n'):
-        proxy = proxy.strip()
-        if proxy:
-            proxies.append(proxy)
-    for p in proxies:
-        file.write((p) + "\n")
-
+    await ctx.send(thingy)
 
 @stselfbot.command()
 async def uptime(ctx):  
@@ -2369,18 +2571,15 @@ async def uptime(ctx):
     print(f'''{Fore.CYAN} {uptime}''' + Fore.RESET)
     await ctx.send(f'`' + uptime + '`')
 
-
 @stselfbot.command()
-async def purge(ctx, amount: int):  
+async def purge(ctx, amount: int):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Purge]''' + Fore.RESET)
-    async for message in ctx.message.channel.history(limit=amount).filter(lambda m: m.author == stselfbot.user).map(
-            lambda m: m):
+    async for message in ctx.channel.history(limit=amount):
         try:
             await message.delete()
         except:
             pass
-
 
 @stselfbot.command(name='group-leaver', aliase=['leaveallgroups', 'leavegroup', 'leavegroups'])
 async def _group_leaver(ctx):  
@@ -2389,7 +2588,6 @@ async def _group_leaver(ctx):
     for channel in stselfbot.private_channels:
         if isinstance(channel, discord.GroupChannel):
             await channel.leave()
-
 
 @stselfbot.command(aliases=['cmds', 'commands'])
 async def help(ctx):
@@ -2400,241 +2598,217 @@ async def help(ctx):
 
 {Fore.YELLOW}General Commands
 
-{Fore.BLUE}logout {Fore.LIGHTBLACK_EX}- Logs you out the selfbot
-{Fore.BLUE}uptime {Fore.LIGHTBLACK_EX}- Shows how long the selfbot has been online and working
-{Fore.BLUE}pid {Fore.LIGHTBLACK_EX}- Sends Their ID In The Console
-{Fore.BLUE}help {Fore.LIGHTBLACK_EX}- Shows this
 {Fore.BLUE}cls {Fore.LIGHTBLACK_EX}- Clears console
+{Fore.BLUE}help {Fore.LIGHTBLACK_EX}- Shows this
+{Fore.BLUE}logout {Fore.LIGHTBLACK_EX}- Logs you out the selfbot
+{Fore.BLUE}id {Fore.LIGHTBLACK_EX}- Sends Their ID In The Console
+{Fore.BLUE}uptime {Fore.LIGHTBLACK_EX}- Shows how long the selfbot has been online and working
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 {Fore.YELLOW}Text Stuff
 
-{Fore.BLUE}dm (user) (message) {Fore.LIGHTBLACK_EX}- Sends a message to the specified user
-{Fore.BLUE}everyone {Fore.LIGHTBLACK_EX}- Glitched way to mention everyone in a server 
-{Fore.BLUE}empty {Fore.LIGHTBLACK_EX}- Sends a empty message
-{Fore.BLUE}get-hwid {Fore.LIGHTBLACK_EX}- Prints your hwid in the console
-{Fore.BLUE}secret {Fore.LIGHTBLACK_EX}- Returns the message but hidden ||hidden||
-{Fore.BLUE}bold {Fore.LIGHTBLACK_EX}- Returns the message but **bold** 
-{Fore.BLUE}unflip {Fore.LIGHTBLACK_EX}- Sends: ┬─┬ ノ( ゜-゜ノ)
-{Fore.BLUE}tableflip {Fore.LIGHTBLACK_EX}- Sends: (╯°□°）╯︵ ┻━┻
-{Fore.BLUE}lenny {Fore.LIGHTBLACK_EX}- Sends: ( ͡° ͜ʖ ͡°)
-{Fore.BLUE}shrug {Fore.LIGHTBLACK_EX}- Sends: ¯\_(ツ)_/¯
-{Fore.BLUE}reverse {Fore.LIGHTBLACK_EX}- Reverses ur message
-{Fore.BLUE}ascii {Fore.LIGHTBLACK_EX}- Makes your message ascii/fancy
-{Fore.BLUE}hastebin  {Fore.LIGHTBLACK_EX}- Saves your text/code to hastebin
-{Fore.BLUE}abc {Fore.LIGHTBLACK_EX}- Sends the whole abecedary in a single message 
-{Fore.BLUE}devowel {Fore.LIGHTBLACK_EX}- Devowels your message
 {Fore.BLUE}1337-speak {Fore.LIGHTBLACK_EX}- Translates your message to 1337 language
-{Fore.BLUE}spam {Fore.LIGHTBLACK_EX}- Sends the specified message that amount of times
+{Fore.BLUE}abc {Fore.LIGHTBLACK_EX}- Sends the whole abecedary in a single message
+{Fore.BLUE}ascii {Fore.LIGHTBLACK_EX}- Makes your message ascii/fancy
+{Fore.BLUE}decode {Fore.LIGHTBLACK_EX}- Decode a string from base64 to regular text
+{Fore.BLUE}encode {Fore.LIGHTBLACK_EX}- Encode a string to base64 ascii
+{Fore.BLUE}bold {Fore.LIGHTBLACK_EX}- Returns the message but **bold**
 {Fore.BLUE}clear {Fore.LIGHTBLACK_EX}- Spam the chat with invisible messages
-{Fore.BLUE}tts {Fore.LIGHTBLACK_EX}- Send that message in .wav format, like an audio
-{Fore.BLUE}upper {Fore.LIGHTBLACK_EX}- Make your message CAPS
-{Fore.BLUE}b64encode  {Fore.LIGHTBLACK_EX}- Encode a string to base64 ascii
-{Fore.BLUE}b64decode  {Fore.LIGHTBLACK_EX}- Decode a string from base64 to regular text
-{Fore.BLUE}rot13encode  {Fore.LIGHTBLACK_EX}- Encode a string to rot13 
-{Fore.BLUE}rot13decode  {Fore.LIGHTBLACK_EX}- Decode a string from rot13 to regular text
+{Fore.BLUE}devowel {Fore.LIGHTBLACK_EX}- Devowels your message
+{Fore.BLUE}dm (user) (message) {Fore.LIGHTBLACK_EX}- Sends a message to the specified user
 {Fore.BLUE}edit {Fore.LIGHTBLACK_EX}- edits all your messages
-{Fore.BLUE}textppl {Fore.LIGHTBLACK_EX}- Sends random messages to a channel for example while you're afk
+{Fore.BLUE}empty {Fore.LIGHTBLACK_EX}- Sends a empty message
+{Fore.BLUE}everyone {Fore.LIGHTBLACK_EX}- Glitched way to mention everyone in a server
+{Fore.BLUE}get-hwid {Fore.LIGHTBLACK_EX}- Prints your hwid in the console
+{Fore.BLUE}hastebin {Fore.LIGHTBLACK_EX}- Saves your text/code to hastebin
+{Fore.BLUE}lenny {Fore.LIGHTBLACK_EX}- Sends: ( ͡° ͜ʖ ͡°)
+{Fore.BLUE}reverse {Fore.LIGHTBLACK_EX}- Reverses ur message
+{Fore.BLUE}decrypt {Fore.LIGHTBLACK_EX}- Decrypt a string from rot13 to regular text
+{Fore.BLUE}encrypt {Fore.LIGHTBLACK_EX}- Encrypt a string to rot13
+{Fore.BLUE}secret {Fore.LIGHTBLACK_EX}- Returns the message but hidden ||hidden||
+{Fore.BLUE}shrug {Fore.LIGHTBLACK_EX}- Sends: ¯\_(ツ)_/¯
+{Fore.BLUE}spam {Fore.LIGHTBLACK_EX}- Sends the specified message that amount of times
 {Fore.BLUE}stoptextppl {Fore.LIGHTBLACK_EX}- Stops textppl
+{Fore.BLUE}tableflip {Fore.LIGHTBLACK_EX}- Sends: (╯°□°）╯︵ ┻━┻
+{Fore.BLUE}textppl {Fore.LIGHTBLACK_EX}- Sends random messages to a channel for example while you're afk
+{Fore.BLUE}tts {Fore.LIGHTBLACK_EX}- Send that message in .wav format, like an audio
+{Fore.BLUE}unflip {Fore.LIGHTBLACK_EX}- Sends: ┬─┬ ノ( ゜-゜ノ)
+{Fore.BLUE}caps {Fore.LIGHTBLACK_EX}- Make your message CAPS
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 {Fore.YELLOW}Guild, User Stuff
 
-{Fore.BLUE}first-message {Fore.LIGHTBLACK_EX}- Get the first message in that channel 
-{Fore.BLUE}read {Fore.LIGHTBLACK_EX}- Marks all your messages as read, except DM
-{Fore.BLUE}group-leaver {Fore.LIGHTBLACK_EX}- Leaves all the groups you're in
-{Fore.BLUE}purge {Fore.LIGHTBLACK_EX}- Deletes your messages based on the amount you specify
-{Fore.BLUE}genname {Fore.LIGHTBLACK_EX}- Generate a random name based on the server members
-{Fore.BLUE}roleinfo {Fore.LIGHTBLACK_EX}- Display some info about the specified role
-{Fore.BLUE}guildicon {Fore.LIGHTBLACK_EX}- Display guild icon 
-{Fore.BLUE}copy {Fore.LIGHTBLACK_EX}- Copies guild channels, categories, voice channels and makes them in a new one
-{Fore.BLUE}role-hexcode {Fore.LIGHTBLACK_EX}- Displays the hexcode of the specified role 
-{Fore.BLUE}combine {Fore.LIGHTBLACK_EX}- Combines the two names together
-{Fore.BLUE}set-pfp {Fore.LIGHTBLACK_EX}- Set the specified url as profile picture
 {Fore.BLUE}av {Fore.LIGHTBLACK_EX}- Shows Your or mentioned users Avatar!
-{Fore.BLUE}pfpsteal {Fore.LIGHTBLACK_EX}- Allows you to steal mentioned user profile picture
-{Fore.BLUE}revav {Fore.LIGHTBLACK_EX}- Reverse avatar the mentioned user profile picture  
 {Fore.BLUE}banner {Fore.LIGHTBLACK_EX}- Shows mentioned users banner
-{Fore.BLUE}whois {Fore.LIGHTBLACK_EX}- Displays discord information of the mentioned user 
 {Fore.BLUE}blank {Fore.LIGHTBLACK_EX}- Turns your name and profile picture blank
-{Fore.BLUE}steal-all-pfp {Fore.LIGHTBLACK_EX}- Steal all the pfps in the server
-{Fore.BLUE}fakenet {Fore.LIGHTBLACK_EX}- Allows you to spoof connections in your profile (ie: !fakenet skype st)
-{Fore.BLUE}masscon {Fore.LIGHTBLACK_EX}- Add a big amount of connections to your profile (ie: !masscon skype 5 st)
+{Fore.BLUE}combine {Fore.LIGHTBLACK_EX}- Combines the two names together
+{Fore.BLUE}backupserver {Fore.LIGHTBLACK_EX}- Copies guild channels, categories, voice channels and makes them in a new one (backs it up)
 {Fore.BLUE}dump {Fore.LIGHTBLACK_EX}- Dumps avatars of users in a guild into Images folder
-{Fore.BLUE}pingstreak {Fore.LIGHTBLACK_EX}- Pings mentioned user every 2-6 seconds
-{Fore.BLUE}stopstreak {Fore.LIGHTBLACK_EX}- Stops pinging mentioned user every 2-6 seconds
+{Fore.BLUE}fakenet {Fore.LIGHTBLACK_EX}- Allows you to spoof connections in your profile (ie: !fakenet skype st)
+{Fore.BLUE}first-message {Fore.LIGHTBLACK_EX}- Get the first message in that channel
+{Fore.BLUE}genname {Fore.LIGHTBLACK_EX}- Generate a random name based on the server members
+{Fore.BLUE}group-leaver {Fore.LIGHTBLACK_EX}- Leaves all the groups you're in
+{Fore.BLUE}guildicon {Fore.LIGHTBLACK_EX}- Display guild icon
+{Fore.BLUE}masscon {Fore.LIGHTBLACK_EX}- Add a big amount of connections to your profile (ie: !masscon skype 5 st)
+{Fore.BLUE}pfpsteal {Fore.LIGHTBLACK_EX}- Allows you to steal mentioned user profile picture
+{Fore.BLUE}purge {Fore.LIGHTBLACK_EX}- Deletes your messages based on the amount you specify
+{Fore.BLUE}read {Fore.LIGHTBLACK_EX}- Marks all your messages as read, except DM
+{Fore.BLUE}revav {Fore.LIGHTBLACK_EX}- Reverse avatar the mentioned user profile picture
+{Fore.BLUE}roleinfo {Fore.LIGHTBLACK_EX}- Display some info about the specified role
+{Fore.BLUE}role-hexcode {Fore.LIGHTBLACK_EX}- Displays the hexcode of the specified role
+{Fore.BLUE}set-pfp {Fore.LIGHTBLACK_EX}- Set the specified url as profile picture
+{Fore.BLUE}steal-all-pfp {Fore.LIGHTBLACK_EX}- Steal all the pfps in the server
+{Fore.BLUE}whois {Fore.LIGHTBLACK_EX}- Displays discord information of the mentioned user
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 {Fore.YELLOW}Fun Stuff
 
-{Fore.BLUE}lmgtfy {Fore.LIGHTBLACK_EX}- Use lmgtfy search engine to look-up something
-{Fore.BLUE}fox {Fore.LIGHTBLACK_EX}- Random fox image
-{Fore.BLUE}dog {Fore.LIGHTBLACK_EX}- Random dog image
-{Fore.BLUE}cat {Fore.LIGHTBLACK_EX}- Random cat image
-{Fore.BLUE}minesweeper {Fore.LIGHTBLACK_EX}- Play minesweeper in the discord chat
-{Fore.BLUE}dick {Fore.LIGHTBLACK_EX}- Display the mentioned user dick size
-{Fore.BLUE}rainbow {Fore.LIGHTBLACK_EX}- Cycle colors in the role you specify
 {Fore.BLUE}8ball {Fore.LIGHTBLACK_EX}- Answers your question
-{Fore.BLUE}joke {Fore.LIGHTBLACK_EX}- Drops a random joke in the chat
-{Fore.BLUE}slot	 {Fore.LIGHTBLACK_EX}- Play slot machine in the discord chat
-{Fore.BLUE}topic {Fore.LIGHTBLACK_EX}- Start a random topic to keep the chat going
-{Fore.BLUE}wyr {Fore.LIGHTBLACK_EX}- Start a 'what would you rather' topic in the chat
-{Fore.BLUE}ebay-view {Fore.LIGHTBLACK_EX}- Send views to a ebay product
-{Fore.BLUE}nitro {Fore.LIGHTBLACK_EX}- Generate a random nitro code
-{Fore.BLUE}bitly  {Fore.LIGHTBLACK_EX}- Shorten your link
-{Fore.BLUE}cuttly  {Fore.LIGHTBLACK_EX}- Shorten your link
-{Fore.BLUE}tinyurl  {Fore.LIGHTBLACK_EX}- Shorten your link 
-{Fore.BLUE}weather  {Fore.LIGHTBLACK_EX}- Lookup weather for the specified city
-{Fore.BLUE}backup-f (backup) {Fore.LIGHTBLACK_EX}- Backup your friends name and discrim
-{Fore.BLUE}auto-bump {Fore.LIGHTBLACK_EX}- Automatically bump server to disboard.org
-{Fore.BLUE}advice {Fore.LIGHTBLACK_EX}- gives advice
-{Fore.BLUE}junknick {Fore.LIGHTBLACK_EX}- long junk nickname
-{Fore.BLUE}pp(User) {Fore.LIGHTBLACK_EX}- Does a funny little pp length command
-{Fore.BLUE}rickroll {Fore.LIGHTBLACK_EX}- Sends An Hidden Link Of Rickroll
-{Fore.BLUE}pack {Fore.LIGHTBLACK_EX}- Funny message roasts haha
+{Fore.BLUE}8balldiff {Fore.LIGHTBLACK_EX}- Answers your question, but different...
 {Fore.BLUE}911 {Fore.LIGHTBLACK_EX}- Funny little animation haha
-{Fore.BLUE}jerkoff {Fore.LIGHTBLACK_EX}- Funny emoji man creaming haha
-{Fore.BLUE}tweet {Fore.LIGHTBLACK_EX}- Generates a tweet image (specify username and message in command) e. g. !tweet st hi
+{Fore.BLUE}advice {Fore.LIGHTBLACK_EX}- gives advice
+{Fore.BLUE}auto-bump {Fore.LIGHTBLACK_EX}- Automatically bump server to disboard.org
+{Fore.BLUE}backup-f (backup) {Fore.LIGHTBLACK_EX}- Backup your friends name and discrim
+{Fore.BLUE}cat {Fore.LIGHTBLACK_EX}- Random cat image
+{Fore.BLUE}cuttly {Fore.LIGHTBLACK_EX}- Shorten your link
+{Fore.BLUE}dice {Fore.LIGHTBLACK_EX}- Rolls a dice
+{Fore.BLUE}dick {Fore.LIGHTBLACK_EX}- Display the mentioned user dick size
+{Fore.BLUE}dog {Fore.LIGHTBLACK_EX}- Random dog image
+{Fore.BLUE}fox {Fore.LIGHTBLACK_EX}- Random fox image
 {Fore.BLUE}get-color {Fore.LIGHTBLACK_EX}- Generates an image of a color that you specify
-{Fore.BLUE}oneshot {Fore.LIGHTBLACK_EX}- Sends a line of lyrics one by one of One Shot by King Ferran
+{Fore.BLUE}jerkoff {Fore.LIGHTBLACK_EX}- Funny emoji man creaming haha
+{Fore.BLUE}joke {Fore.LIGHTBLACK_EX}- Drops a random joke in the chat
+{Fore.BLUE}junknick {Fore.LIGHTBLACK_EX}- long junk nickname
+{Fore.BLUE}google {Fore.LIGHTBLACK_EX}- Use google search engine to look up something
 {Fore.BLUE}milanaham {Fore.LIGHTBLACK_EX}- Sends a random picture of Milana Hametova from my WebAPI
+{Fore.BLUE}minesweeper {Fore.LIGHTBLACK_EX}- Play minesweeper in the discord chat
+{Fore.BLUE}nitro {Fore.LIGHTBLACK_EX}- Generate a random nitro code
+{Fore.BLUE}oneshot {Fore.LIGHTBLACK_EX}- Sends a line of lyrics one by one of One Shot by King Ferran
+{Fore.BLUE}pack {Fore.LIGHTBLACK_EX}- Funny message roasts haha
+{Fore.BLUE}pingstreak {Fore.LIGHTBLACK_EX}- Pings mentioned user every 2-6 seconds
+{Fore.BLUE}stopstreak {Fore.LIGHTBLACK_EX}- Stops pinging mentioned user every 2-6 seconds
+{Fore.BLUE}pp(User) {Fore.LIGHTBLACK_EX}- Does a funny little pp length command
+{Fore.BLUE}rainbow {Fore.LIGHTBLACK_EX}- Cycle colors in the role you specify
+{Fore.BLUE}rickroll {Fore.LIGHTBLACK_EX}- Sends An Hidden Link Of Rickroll
+{Fore.BLUE}slot {Fore.LIGHTBLACK_EX}- Play slot machine in the discord chat
+{Fore.BLUE}tinyurl {Fore.LIGHTBLACK_EX}- Shorten your link
+{Fore.BLUE}topic {Fore.LIGHTBLACK_EX}- Start a random topic to keep the chat going
+{Fore.BLUE}tweet {Fore.LIGHTBLACK_EX}- Generates a tweet image (specify username and message in command) e. g. !tweet st hi
+{Fore.BLUE}weather {Fore.LIGHTBLACK_EX}- Lookup weather for the specified city
+{Fore.BLUE}wyr {Fore.LIGHTBLACK_EX}- Start a 'what would you rather' topic in the chat
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 {Fore.YELLOW}Emotions
 
-{Fore.BLUE}feed {Fore.LIGHTBLACK_EX}- Random feeding gif
-{Fore.BLUE}tickle {Fore.LIGHTBLACK_EX}- Random tickling gif
-{Fore.BLUE}slap  {Fore.LIGHTBLACK_EX}- Random slapping gif
-{Fore.BLUE}hug {Fore.LIGHTBLACK_EX}- Random hugging gif
-{Fore.BLUE}smug {Fore.LIGHTBLACK_EX}- Random smug gif
-{Fore.BLUE}pat {Fore.LIGHTBLACK_EX}- Random pat gif
-{Fore.BLUE}kiss {Fore.LIGHTBLACK_EX}- Random kissing gif
-{Fore.BLUE}laugh {Fore.LIGHTBLACK_EX}- Random laughing gif
-{Fore.BLUE}poke {Fore.LIGHTBLACK_EX}- Random poking gif
-{Fore.BLUE}lick {Fore.LIGHTBLACK_EX}- Random licking gif
-{Fore.BLUE}wallpapers {Fore.LIGHTBLACK_EX}- Random wallpaper
-{Fore.BLUE}highfive {Fore.LIGHTBLACK_EX}- Random highfive gif
-{Fore.BLUE}happy {Fore.LIGHTBLACK_EX}- Random happy gif
-{Fore.BLUE}sleep {Fore.LIGHTBLACK_EX}- Random sleeping gif
-{Fore.BLUE}handhold {Fore.LIGHTBLACK_EX}- Random hand holding gif
+{Fore.BLUE}animalears {Fore.LIGHTBLACK_EX}- Random animalears [Anime]
+{Fore.BLUE}baka {Fore.LIGHTBLACK_EX}- Random baka [Anime]
 {Fore.BLUE}bite {Fore.LIGHTBLACK_EX}- Random biting gif
-{Fore.BLUE}wave {Fore.LIGHTBLACK_EX}- Random waving gif
-{Fore.BLUE}thumbsup {Fore.LIGHTBLACK_EX}- Random thumbsup gif
-{Fore.BLUE}stare {Fore.LIGHTBLACK_EX}- Random staring gif
 {Fore.BLUE}blush {Fore.LIGHTBLACK_EX}- Random blushing gif
-{Fore.BLUE}nom {Fore.LIGHTBLACK_EX}- Random nom gif
-{Fore.BLUE}think {Fore.LIGHTBLACK_EX}- Random thinking gif
-{Fore.BLUE}pout {Fore.LIGHTBLACK_EX}- Random pout gif
-{Fore.BLUE}facepalm {Fore.LIGHTBLACK_EX}- Random facepalming gif
-{Fore.BLUE}wink {Fore.LIGHTBLACK_EX}- Random winking gif
-{Fore.BLUE}shoot {Fore.LIGHTBLACK_EX}- Random shooting gif
-{Fore.BLUE}nope {Fore.LIGHTBLACK_EX}- Random nope gif
-{Fore.BLUE}nod {Fore.LIGHTBLACK_EX}- Random nodding gif
-{Fore.BLUE}punch {Fore.LIGHTBLACK_EX}- Random punching gif
-{Fore.BLUE}dance {Fore.LIGHTBLACK_EX}- Random dancing gif
-{Fore.BLUE}shruggif {Fore.LIGHTBLACK_EX}- Random shrugging gif
 {Fore.BLUE}bored {Fore.LIGHTBLACK_EX}- Random bored gif
-{Fore.BLUE}kick {Fore.LIGHTBLACK_EX}- Random kicking gif
-{Fore.BLUE}yeet {Fore.LIGHTBLACK_EX}- Random yeeting gif
+{Fore.BLUE}catboy {Fore.LIGHTBLACK_EX}- Random catboy img
+{Fore.BLUE}cuddle {Fore.LIGHTBLACK_EX}- Random cuddle gif
+{Fore.BLUE}dance {Fore.LIGHTBLACK_EX}- Random dancing gif
+{Fore.BLUE}facepalm {Fore.LIGHTBLACK_EX}- Random facepalming gif
+{Fore.BLUE}feed {Fore.LIGHTBLACK_EX}- Random feeding gif
+{Fore.BLUE}foxgirl {Fore.LIGHTBLACK_EX}- Random foxgirl [Anime]
+{Fore.BLUE}gasm {Fore.LIGHTBLACK_EX}- Random gasm [Anime]
+{Fore.BLUE}handhold {Fore.LIGHTBLACK_EX}- Random hand holding gif
+{Fore.BLUE}happy {Fore.LIGHTBLACK_EX}- Random happy gif
+{Fore.BLUE}highfive {Fore.LIGHTBLACK_EX}- Random highfive gif
+{Fore.BLUE}hug {Fore.LIGHTBLACK_EX}- Random hugging gif
 {Fore.BLUE}husbando {Fore.LIGHTBLACK_EX}- Random husbando gif
+{Fore.BLUE}kick {Fore.LIGHTBLACK_EX}- Random kicking gif
+{Fore.BLUE}kiss {Fore.LIGHTBLACK_EX}- Random kissing gif
 {Fore.BLUE}kitsune {Fore.LIGHTBLACK_EX}- Random kitsune gif
-{Fore.BLUE}gasm {Fore.LIGHTBLACK_EX}- Random gasm (non nsfw) [Anime]
-{Fore.BLUE}neko {Fore.LIGHTBLACK_EX}- Random neko (non nsfw) [Anime]
-{Fore.BLUE}waifu {Fore.LIGHTBLACK_EX}- Random waifu (non nsfw) [Anime]
-{Fore.BLUE}foxgirl {Fore.LIGHTBLACK_EX}- Random foxgirl (non nsfw) [Anime]
-{Fore.BLUE}animalears {Fore.LIGHTBLACK_EX}- Random animalears (non nsfw) [Anime]
-{Fore.BLUE}baka {Fore.LIGHTBLACK_EX}- Random baka (non nsfw) [Anime]
+{Fore.BLUE}laugh {Fore.LIGHTBLACK_EX}- Random laughing gif
+{Fore.BLUE}lick {Fore.LIGHTBLACK_EX}- Random licking gif
+{Fore.BLUE}neko {Fore.LIGHTBLACK_EX}- Random neko [Anime]
+{Fore.BLUE}nod {Fore.LIGHTBLACK_EX}- Random nodding gif
+{Fore.BLUE}nom {Fore.LIGHTBLACK_EX}- Random nom gif
+{Fore.BLUE}nope {Fore.LIGHTBLACK_EX}- Random nope gif
+{Fore.BLUE}pat {Fore.LIGHTBLACK_EX}- Random pat gif
+{Fore.BLUE}poke {Fore.LIGHTBLACK_EX}- Random poking gif
+{Fore.BLUE}pout {Fore.LIGHTBLACK_EX}- Random pout gif
+{Fore.BLUE}punch {Fore.LIGHTBLACK_EX}- Random punching gif
+{Fore.BLUE}shoot {Fore.LIGHTBLACK_EX}- Random shooting gif
+{Fore.BLUE}shruggif {Fore.LIGHTBLACK_EX}- Random shrugging gif
+{Fore.BLUE}slap {Fore.LIGHTBLACK_EX}- Random slapping gif
+{Fore.BLUE}sleep {Fore.LIGHTBLACK_EX}- Random sleeping gif
+{Fore.BLUE}smug {Fore.LIGHTBLACK_EX}- Random smug gif
+{Fore.BLUE}stare {Fore.LIGHTBLACK_EX}- Random staring gif
+{Fore.BLUE}think {Fore.LIGHTBLACK_EX}- Random thinking gif
+{Fore.BLUE}thumbsup {Fore.LIGHTBLACK_EX}- Random thumbsup gif
+{Fore.BLUE}tickle {Fore.LIGHTBLACK_EX}- Random tickling gif
+{Fore.BLUE}waifu {Fore.LIGHTBLACK_EX}- Random waifu [Anime]
+{Fore.BLUE}wallpapers {Fore.LIGHTBLACK_EX}- Random wallpaper
+{Fore.BLUE}wave {Fore.LIGHTBLACK_EX}- Random waving gif
+{Fore.BLUE}wink {Fore.LIGHTBLACK_EX}- Random winking gif
+{Fore.BLUE}yeet {Fore.LIGHTBLACK_EX}- Random yeeting gif
 
 {Fore.RED}NSFW Stuff
 
-{Fore.BLUE}lesbian {Fore.LIGHTBLACK_EX}- Random lesbian [Anime]
-{Fore.BLUE}lewd {Fore.LIGHTBLACK_EX}- Random lewd image [Anime] 
+{Fore.BLUE}anal {Fore.LIGHTBLACK_EX}- Random anal [Anime]
+{Fore.BLUE}belle {Fore.LIGHTBLACK_EX}- Random belle deplhine picture
+{Fore.BLUE}bellevid {Fore.LIGHTBLACK_EX}- Random belle delphine video
 {Fore.BLUE}blowjob, bj {Fore.LIGHTBLACK_EX}- Random blowjob gif [Anime]
 {Fore.BLUE}boobs {Fore.LIGHTBLACK_EX}- Random boobs [Anime]
-{Fore.BLUE}hentai {Fore.LIGHTBLACK_EX}- Random hentai [Anime]
-{Fore.BLUE}feet {Fore.LIGHTBLACK_EX}- Random feet [Anime]
-{Fore.BLUE}anal {Fore.LIGHTBLACK_EX}- Random anal [Anime]
-{Fore.BLUE}pussy {Fore.LIGHTBLACK_EX}- Random pussy gif [Anime]
-{Fore.BLUE}fourk, 4k {Fore.LIGHTBLACK_EX}- Random 4K image 
-{Fore.BLUE}bellevid {Fore.LIGHTBLACK_EX}- Random belle delphine video
-{Fore.BLUE}belle {Fore.LIGHTBLACK_EX}- Random belle deplhine picture
+{Fore.BLUE}catgirl {Fore.LIGHTBLACK_EX}- Random catgirl [Most likely not anime]
 {Fore.BLUE}cum {Fore.LIGHTBLACK_EX}- Random cum gif [Anime]
-{Fore.BLUE}spank {Fore.LIGHTBLACK_EX}- Random ass spanking gif [Anime]
+{Fore.BLUE}feet {Fore.LIGHTBLACK_EX}- Random feet [Anime]
+{Fore.BLUE}femboy {Fore.LIGHTBLACK_EX}- Random femboy [Anime]
+{Fore.BLUE}fourk, 4k {Fore.LIGHTBLACK_EX}- Random 4K image
+{Fore.BLUE}hentai {Fore.LIGHTBLACK_EX}- Random hentai [Anime]
 {Fore.BLUE}holo {Fore.LIGHTBLACK_EX}- Random holo [Anime]
+{Fore.BLUE}lesbian {Fore.LIGHTBLACK_EX}- Random lesbian [Anime]
+{Fore.BLUE}lewd {Fore.LIGHTBLACK_EX}- Random lewd image [Anime]
+{Fore.BLUE}pussy {Fore.LIGHTBLACK_EX}- Random pussy gif [Anime]
+{Fore.BLUE}spank {Fore.LIGHTBLACK_EX}- Random ass spanking gif [Anime]
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 {Fore.YELLOW}Doxxing stuff
 
+{Fore.BLUE}address {Fore.LIGHTBLACK_EX}- Generates fake address based on the text you specify
+{Fore.BLUE}geoip {Fore.LIGHTBLACK_EX}- Display various information about the IP
+{Fore.BLUE}mac {Fore.LIGHTBLACK_EX}- Lookup a bit of info about a MAC
 {Fore.BLUE}pingweb {Fore.LIGHTBLACK_EX}- Pings a website
-{Fore.BLUE}tokeninfo  {Fore.LIGHTBLACK_EX}- Display various information about the token
-{Fore.BLUE}tokenfuck  {Fore.LIGHTBLACK_EX}- Crash, glitch screen of a token, all in discord
-{Fore.BLUE}geoip  {Fore.LIGHTBLACK_EX}- Display various information about the IP
-{Fore.BLUE}gmail-bomb {Fore.LIGHTBLACK_EX}- Spam a gmail
 {Fore.BLUE}proxies {Fore.LIGHTBLACK_EX}- Scraps HTTP/HTTPS/SOCKS4/SOCKS5 proxies
-{Fore.BLUE}address  {Fore.LIGHTBLACK_EX}- Generates fake address based on the text you specify
-{Fore.BLUE}masslogin  {Fore.LIGHTBLACK_EX}- Allows you to mass-login in bot/user tokens
-{Fore.BLUE}login  {Fore.LIGHTBLACK_EX}- Logs in with a token
-{Fore.BLUE}botlogin  {Fore.LIGHTBLACK_EX}- Logs in with a bot token
-{Fore.BLUE}mac  {Fore.LIGHTBLACK_EX}- Lookup a bit of info about a MAC 
+{Fore.BLUE}tokenfuck {Fore.LIGHTBLACK_EX}- Crash, glitch screen of a token, all in discord
+{Fore.BLUE}tokeninfo {Fore.LIGHTBLACK_EX}- Display various information about the token
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 {Fore.YELLOW}Streaming
 
-{Fore.BLUE}btcstream {Fore.LIGHTBLACK_EX}- Stream current btc price
-{Fore.BLUE}hypesquad {Fore.LIGHTBLACK_EX}- Allows you to change your hypesquad 
-{Fore.BLUE}stream {Fore.LIGHTBLACK_EX}- Stream that message in your profile
-{Fore.BLUE}watching {Fore.LIGHTBLACK_EX}- Add a watching status with that message in your profile
-{Fore.BLUE}listening {Fore.LIGHTBLACK_EX}-Add a listening status with that message in your profile
-{Fore.BLUE}game {Fore.LIGHTBLACK_EX}- Add a game status with that message in your profile
 {Fore.BLUE}btc {Fore.LIGHTBLACK_EX}- Display current Bitcoin price
+{Fore.BLUE}btcstream {Fore.LIGHTBLACK_EX}- Stream current btc price
 {Fore.BLUE}eth {Fore.LIGHTBLACK_EX}- Display current Ethereum price
-{Fore.BLUE}stopactivity {Fore.LIGHTBLACK_EX}- Stops All The Streams, Plays And Listen Activities
+{Fore.BLUE}game {Fore.LIGHTBLACK_EX}- Add a game status with that message in your profile
+{Fore.BLUE}hypesquad {Fore.LIGHTBLACK_EX}- Allows you to change your hypesquad
+{Fore.BLUE}stopactivity {Fore.LIGHTBLACK_EX}- Stops all the streams, plays and listen activities
+{Fore.BLUE}changeactivity [name (streaming, watching, listening)] [text to say] {Fore.LIGHTBLACK_EX}-Adds an activity that you specify with that message onto your profile
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 {Fore.YELLOW}Nuking
 
-{Fore.BLUE}dmall  {Fore.LIGHTBLACK_EX}- Messages every user in that guild
+{Fore.BLUE}delchannels {Fore.LIGHTBLACK_EX}- Delete all the channels
+{Fore.BLUE}delroles {Fore.LIGHTBLACK_EX}- Delete all the roles
 {Fore.BLUE}destroy {Fore.LIGHTBLACK_EX}- Ban, delete roles, delete channels, edit guild info, mass create channels All in one!
+{Fore.BLUE}dmall {Fore.LIGHTBLACK_EX}- Messages every user in that guild
 {Fore.BLUE}massban {Fore.LIGHTBLACK_EX}- Ban all the users in that guild
+{Fore.BLUE}masschannel {Fore.LIGHTBLACK_EX}- Mass create channels
 {Fore.BLUE}masskick {Fore.LIGHTBLACK_EX}- Kick all the users in that guild
 {Fore.BLUE}massrole {Fore.LIGHTBLACK_EX}- Mass create role
-{Fore.BLUE}masschannel {Fore.LIGHTBLACK_EX}- Mass create channels
-{Fore.BLUE}delroles {Fore.LIGHTBLACK_EX}- Delete all the roles
-{Fore.BLUE}delchannels {Fore.LIGHTBLACK_EX}- Delete all the channels
 {Fore.BLUE}massunban {Fore.LIGHTBLACK_EX}- Unban every member
 ''')
 
-
 @stselfbot.command()
-async def stream(ctx, *, message):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Stream]''' + Fore.RESET)
-    stream = discord.Streaming(
-        name=message,
-        url=stream_url,
-    )
-    await stselfbot.change_presence(activity=stream)
-
-
-@stselfbot.command()
-async def game(ctx, *, message):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Game]''' + Fore.RESET)
-    game = discord.Game(
-        name=message
-    )
-    await stselfbot.change_presence(activity=game)
-
-
-@stselfbot.command()
-async def oneshot(ctx):  # b'\xdc'
+async def oneshot(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [One Shot]''' + Fore.RESET)
     lyrics = ["lets go",
@@ -2735,29 +2909,6 @@ async def oneshot(ctx):  # b'\xdc'
     for i in lyrics:
         await ctx.send(i)
         await asyncio.sleep(2)
-
-
-@stselfbot.command()
-async def listening(ctx, *, message):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Listening]''' + Fore.RESET)
-    await stselfbot.change_presence(
-        activity=discord.Activity(
-            type=discord.ActivityType.listening,
-            name=message,
-        ))
-
-
-@stselfbot.command()
-async def watching(ctx, *, message):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Watching]''' + Fore.RESET)
-    await stselfbot.change_presence(
-        activity=discord.Activity(
-            type=discord.ActivityType.watching,
-            name=message
-        ))
-
 
 @stselfbot.command()
 async def pack(ctx):
@@ -2870,18 +3021,6 @@ async def pack(ctx):
         "Nigga you literally have a signiature move in competitive pac-man tournaments boyand all you do is move your joy stick up and down 4 times and your pac-man justturns into a Pac-woman boy you dumb as fuck stop talking to meNo boy you literally have a special ability to control the temperature of tap waterjust by making contact with yo uvula nigga you're weird as fuck stop talking to meNigga you got hired to work with the teen titans just because you had the ultimateability to not shed tears when you cut onions nigga and they use you to makespecial meals nigga your retarded as shitNigga what you literally grew an instant boner when you was walking around in anabandoned jungle because yo horny ass thought the branches on the trees looked likeHorrible nigga that's why you and ya long lost puppy finally reunited witheachother for the first time in 6 years because you sold yo soul to the slender mandumb ass boy what are you talking about niggaNigga huh you just mad because the niggas that constructed your house were idiotsboy and they built a stair case in yo kitchen that went all the way through yo roofand into the clouds my nigga you dumb as shit you just mad cuz you aint got thestamina to climb that shit boyWhat boy you literally don't even drink Lemon-aid anymore because you deadassthought it was gonna give you lemon flavoured aids nigga you're actually dumb asfuck stop talking to meNigga you literally have a modded version of GTA 5 and whenever you get intoarguments with citizens boy ya character just start using shadow clone jutsuwithout using any hand signs boy you ugly as fuckNigga your family got mad and disowned you because you instantly win Monopolymatches because your negotiating skills are just too great boy what are you talkingaboutYou literally got hired by NASA because you had a special disease that allowed youto breath in space boy and 2 years later you took a DNA test and when you looked atthe feedback all you seen was you being 45.89% alien nigga")
     await asyncio.sleep(1)
 
-
-@stselfbot.command()
-async def backup(ctx):
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Backup]''' + Fore.RESET)
-    for user in stselfbot.user.friends:
-        try:
-            with open('Backup\Friends.txt', 'a+') as f:
-                f.write(f"{user.name}#{user.discriminator}" + "\n")
-        except:
-            pass
-
 @stselfbot.command(aliases=["stopstream", "stopplay", "stoplisten"])
 async def stopactivity(ctx):
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Stopactivity]''' + Fore.RESET)
@@ -2946,7 +3085,7 @@ async def jerkoff(ctx):
              :trumpet:      :eggplant:    
              ''')
     await asyncio.sleep(0.5)
-    await message.edit(contnet='''
+    await message.edit(content='''
                        :ok_hand:            :weary:
    :eggplant: :zzz: :necktie: :eggplant: 
                    :oil:     :nose:
@@ -2969,7 +3108,6 @@ async def jerkoff(ctx):
                  :zap: 8==:punch:D :sweat_drops:
              :trumpet:      :eggplant:                 :sweat_drops:
      ''')
-
 
 @stselfbot.command(name='911')
 async def _f_funny(ctx):
@@ -3004,7 +3142,6 @@ async def _f_funny(ctx):
         :exploding_head::skull::fire::fire_extinguisher:
         ''')
 
-
 @stselfbot.command()
 async def minesweeper(ctx, size: int = 5):
     await ctx.message.delete()
@@ -3031,12 +3168,14 @@ async def minesweeper(ctx, size: int = 5):
     await ctx.send(message)
 
 @stselfbot.command()
-async def pid(ctx):
+async def id(ctx, user: discord.User = None):
     await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Pid]''' + Fore.RESET)
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Id]''' + Fore.RESET)
+    if user is None:
+        user = ctx.author
     print(
-        f'''[K]{Fore.BLUE} {ctx.message.mentions[0]} user id is {ctx.message.mentions[0].id}, copied user id to your keyboard!''' + Fore.RESET)
-    pyperclip.copy(f'''{ctx.message.mentions[0].id}''')
+        f'''[K]{Fore.BLUE} {user.name} user id is {user.id}, copied user id to your keyboard!''' + Fore.RESET)
+    pyperclip.copy(f'''{user.id}''')
 
 @stselfbot.command()
 async def reverse(ctx, *, message):  
@@ -3045,14 +3184,12 @@ async def reverse(ctx, *, message):
     message = message[::-1]
     await ctx.send(message)
 
-
 @stselfbot.command()
 async def shrug(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Shrug]''' + Fore.RESET)
     shrug = r'¯\_(ツ)_/¯'
     await ctx.send(shrug)
-
 
 @stselfbot.command()
 async def lenny(ctx):  
@@ -3061,14 +3198,12 @@ async def lenny(ctx):
     lenny = '( ͡° ͜ʖ ͡°)'
     await ctx.send(lenny)
 
-
 @stselfbot.command()
 async def tableflip(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Tableflip]''' + Fore.RESET)
     tableflip = '(╯°□°）╯︵ ┻━┻'
     await ctx.send(tableflip)
-
 
 @stselfbot.command()
 async def unflip(ctx):  
@@ -3077,13 +3212,11 @@ async def unflip(ctx):
     unflip = '┬─┬ ノ( ゜-゜ノ)'
     await ctx.send(unflip)
 
-
 @stselfbot.command()
 async def bold(ctx, *, message):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Bold]''' + Fore.RESET)
     await ctx.send('**' + message + '**')
-
 
 @stselfbot.command()
 async def secret(ctx, *, message):  
@@ -3091,13 +3224,11 @@ async def secret(ctx, *, message):
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Secret]''' + Fore.RESET)
     await ctx.send('||' + message + '||')
 
-
 @stselfbot.command(name='role-hexcode', aliases=['rolecolor'])
 async def _role_hexcode(ctx, *, role: discord.Role):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Rolehexcode]''' + Fore.RESET)
     await ctx.send(f"{role.name} : {role.color}")
-
 
 @stselfbot.command(name='get-hwid', aliases=['hwid', 'gethwid', 'hwidget'])
 async def _get_hwid(ctx):  
@@ -3105,20 +3236,17 @@ async def _get_hwid(ctx):
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Gethwid]''' + Fore.RESET)
     print(f"HWID: {Fore.YELLOW}{hwid}" + Fore.RESET)
 
-
 @stselfbot.command()
 async def empty(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Empty]''' + Fore.RESET)
     await ctx.send(chr(173))
 
-
 @stselfbot.command()
 async def everyone(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Everyone]''' + Fore.RESET)
-    await ctx.send('https://@everyone@google.com')
-
+    await ctx.send('hey||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​|| _ _ _ _ @everyone')
 
 @stselfbot.command()
 async def logout(ctx):  
@@ -3126,20 +3254,17 @@ async def logout(ctx):
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Logout]''' + Fore.RESET)
     await stselfbot.logout()
 
-
 @stselfbot.command(aliases=['btc-stream', 'streambtc', 'stream-btc', 'btcstatus'])
 async def btcstream(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Btcstream]''' + Fore.RESET)
     btc_status.start()
 
-
 @stselfbot.command(name='steal-all-pfp', aliases=['steal-all-pfps', 'stealallpfps'])
 async def _steal_all_pfp(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Stealallpfp]''' + Fore.RESET)
     Dump(ctx)
-
 
 @stselfbot.command(aliases=['clearconsole', 'consoleclear'])
 async def cls(ctx):  
@@ -3148,6 +3273,47 @@ async def cls(ctx):
     Clear()
     startprint()
 
+@stselfbot.command(aliases=['markasread', 'ackall'])
+async def readall(ctx):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Read all]''' + Fore.RESET)
+    for UserGuild in stselfbot.guilds:
+        readBool = False
+        while not readBool:
+            try:
+                await UserGuild.ack()
+                print(f"read all messages in {UserGuild.name}")
+                await asyncio.sleep(10)
+                readBool = True
+            except:
+                print("couldnt read due to rate limits")
+                await asyncio.sleep(60)
+
+@stselfbot.command()
+async def changeactivity(ctx, typeOfIt, *text):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Change activity]''' + Fore.RESET)
+    activityText = ' '.join(text)
+    if typeOfIt.lower() == "streaming":
+        theActivity = discord.Streaming(
+            name=f"{activityText}",
+            url="https://www.twitch.tv/imstcool",
+        )
+    elif typeOfIt.lower() == "playing":
+        theActivity = discord.Game(
+            name=f"{activityText}"
+        )
+    elif typeOfIt.lower() == "listening":
+        theActivity = discord.Activity(
+            type=discord.ActivityType.listening,
+            name=f"{activityText}"
+        )
+    elif typeOfIt.lower() == "listening":
+        theActivity = discord.Activity(
+            type=discord.ActivityType.watching,
+            name=f"{activityText}"
+        )    
+    await stselfbot.change_presence(activity=theActivity)
 
 @stselfbot.command()
 async def nitro(ctx):  
@@ -3173,19 +3339,14 @@ async def realnitro(ctx):
     await ctx.send(random.choice(realNitro))
 
 @stselfbot.command()
-async def edit(ctx, *textInput, amount):
+async def edit(ctx, amount, *, textInput):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Edit]''' + Fore.RESET)
-    channel_id = ctx.message.channel.id
-    text = ' '.join(textInput)
-    cid = await stselfbot.fetch_channel(int(channel_id))
-    async for msg in cid.history(limit=amount).filter(lambda m: m.author == stselfbot.user).map(lambda m: m):
+    async for message in ctx.channel.history(limit=int(amount)):
         try:
-            await msg.edit(content=text)
-            amount += 1
-        except Exception:
+            await message.edit(content=textInput)
+        except:
             pass
-
 
 @stselfbot.command()
 async def banner(ctx, user: discord.User):
@@ -3193,19 +3354,17 @@ async def banner(ctx, user: discord.User):
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Banner]''' + Fore.RESET)
     if user == None:
         user = ctx.author
-    req = await stselfbot.http.request(discord.http.Route("GET", "/users/{uid}", uid=user.id))
-    banner_id = req["banner"]
-    if banner_id:
-        banner_url = f"https://cdn.discordapp.com/banners/{user.id}/{banner_id}?size=1024"
-    else:
-        print("User doesn't have a banner.")
-    await ctx.send(f"{banner_url}")
+    user = await stselfbot.fetch_user(user.id)
+    banner_url = user.banner
+    if banner_url == None:
+        print(f"{Fore.RED}[ERROR] {Fore.WHITE}User has no banner!" + Fore.RESET)
+        return
+    await ctx.send(await embedGen(ctx, f"{user.name}'s banner", "", "st's cool selfbot :3!!", banner_url))
 
 @stselfbot.command()
 async def stoptextppl(ctx):
     stoptextppl.has_been_called = True
-    pass
-    await ctx.message.delete
+    await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Stop texting]''' + Fore.RESET)
 
 stoptextppl.has_been_called = False
@@ -3235,9 +3394,7 @@ async def stopstreak(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Stopstreak]''' + Fore.RESET)
 
-
 stopstreak.has_been_called = False
-
 
 @stselfbot.command()
 async def pingstreak(ctx, user: discord.User):
@@ -3247,31 +3404,9 @@ async def pingstreak(ctx, user: discord.User):
         timetosend = random.randint(3, 6)
         await ctx.send(user.mention)
         await asyncio.sleep(timetosend)
-        print("sent in", timetosend, "seconds")
+        print("sent ping in", timetosend, "seconds")
         if stopstreak.has_been_called:
             break
-
-
-@stselfbot.command()
-async def junknick(ctx):
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Junknick]''' + Fore.RESET)
-    try:
-        name = 'ðﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫðﾒﾐðﾒﾐﾫðﾒﾐﾫðﾒﾐﾫ'
-        await ctx.author.edit(nick=name)
-        await ctx.author.edit(nick=name)
-    except Exception as e:
-        try:
-            await ctx.send(f"Error: {e}")
-        finally:
-            e = None
-            del e
-
-@stselfbot.command(name='gmail-bomb', aliases=['gmail-bomber', 'gmailbomb', 'email-bomber', 'emailbomber'])
-async def _gmail_bomb(ctx):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Gmailbomb]''' + Fore.RESET)
-    GmailBomber()
 
 @stselfbot.command()
 async def restart(ctx):
