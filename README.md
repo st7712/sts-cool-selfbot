@@ -1,20 +1,22 @@
-nitro sniper works & checks automatically, but that can break so I wouldn't fully rely on that. I'll update the readme file and do a full revamp later. I'm also compltely redoing the whole code rn so it will all take some time.
+nitro sniper works & checks automatically, but that can break so I wouldn't fully rely on that. I'll update the readme file and make a website for this soon.
 
 # Intial Setup
 
  - just set it up as a normal selfbot
- - https://www.youtube.com/watch?v=xv9etIEAb08 use this video
  - run the install.bat file
- - you also need to have python 3.8+ installed to PATH!
+ - you also need to have python 3.8 installed to PATH! - [download](https://www.python.org/downloads/release/python-3810)
  - and you also need an internet connection
+
+ - will make a setup thing on the site later ok
 
 # Config File Setup
  - config keys:
-  - bitly key - https://bitly.com
   - cat key - https://thecatapi.com/
   - weather key - https://openweathermap.org/
   - cuttly key - https://cutt.ly/
   - ip key - https://extreme-ip-lookup.com/
+
+  - tts_language - language of the tts in the tts command
 
 #
 
