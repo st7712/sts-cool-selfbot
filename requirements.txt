@@ -14,3 +14,6 @@ httpx
 pyperclip
 Pillow
 humor-langs
+asyncpraw
+nekos.py
+art
