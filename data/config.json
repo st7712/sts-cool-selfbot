@@ -12,8 +12,7 @@
     "slotbot_sniper": false,
     "message_logger": {
         "message_logger": false,
-        "say_in_chat": false,
-        "save_to_file": false
+        "say_in_chat": false
     },
     "respond_hi": false,
     "ping_back": false,
