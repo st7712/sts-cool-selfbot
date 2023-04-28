@@ -2,7 +2,6 @@ class SELFBOT():
     __linecount__ = 3602
     __version__ = 3.1
 
-
 import discord, subprocess, sys, time, os, colorama, base64, codecs, datetime, io, random, numpy, datetime, smtplib, string, ctypes, codecs, webbrowser, re, humor_langs, asyncpraw, urllib.parse, urllib.request, re, json, requests, webbrowser, aiohttp, asyncio, functools, logging, nekos, art, concurrent.futures
 
 from discord.ext import (
@@ -2575,6 +2574,7 @@ async def _group_leaver(ctx):
 @stselfbot.command(aliases=['cmds', 'commands'])
 async def help(ctx):
     await ctx.message.delete()
+    webbrowser.open("https://stiscool.cu.ma/selfbot/cmds.html")
     print(f'''
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
