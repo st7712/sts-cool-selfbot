@@ -1,4 +1,6 @@
-nitro sniper works & checks automatically, but that can break so I wouldn't fully rely on that. I'll update the readme file and make a website for this soon.
+https://stiscool.cu.ma/selfbot/main.html
+
+[website guys lol](https://stiscool.cu.ma/selfbot/main.html)
 
 # Intial Setup
 
