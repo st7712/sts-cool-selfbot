@@ -1,9 +1,9 @@
 class SELFBOT():
-    __linecount__ = 3425
-    __version__ = 3.0
+    __linecount__ = 3602
+    __version__ = 3.1
 
 
-import discord, subprocess, sys, time, os, colorama, base64, codecs, datetime, io, random, numpy, datetime, smtplib, string, ctypes, codecs, webbrowser, re, humor_langs, asyncpraw, urllib.parse, urllib.request, re, json, requests, webbrowser, aiohttp, asyncio, functools, logging, nekos, art
+import discord, subprocess, sys, time, os, colorama, base64, codecs, datetime, io, random, numpy, datetime, smtplib, string, ctypes, codecs, webbrowser, re, humor_langs, asyncpraw, urllib.parse, urllib.request, re, json, requests, webbrowser, aiohttp, asyncio, functools, logging, nekos, art, concurrent.futures
 
 from discord.ext import (
     commands,
@@ -11,20 +11,14 @@ from discord.ext import (
 )
 from bs4 import BeautifulSoup as bs4
 from urllib.parse import urlencode
-from pymongo import MongoClient
-from selenium import webdriver
-from threading import Thread
-from subprocess import call
-from itertools import cycle
 from colorama import Fore
-from sys import platform
 from PIL import Image
 import pyPrivnote as pn
 from gtts import gTTS
-from random import randint
 import random
 import pyperclip
 from urllib.parse import quote
+from decimal import Decimal, getcontext
 
 ctypes.windll.kernel32.SetConsoleTitleW(f"[ST'S COOL SELFBOT v{SELFBOT.__version__}]")
 
@@ -42,13 +36,11 @@ open_in_browser = config['nitro_sniper']['open_in_browser']
 send_in_channel = config['nitro_sniper']['send_in_channel']
 message_logger = config['message_logger']['message_logger']
 say_in_chat = config['message_logger']['say_in_chat']
-save_to_file = config['message_logger']['save_to_file']
 respond_hi = config['respond_hi']
 ping_back = config['ping_back']
 repeat_message = config['repeat_message']['repeat_message']
 repeat_commands = config['repeat_message']['repeat_commands']
 
-stream_url = config['stream_url']
 tts_language = config['tts_language']
 cat_key = config['cat_key']
 weather_key = config['weather_key']
@@ -153,7 +145,7 @@ def startprint():
 {Fore.CYAN}! Thank you for using st's cool selfbot v{SELFBOT.__version__} 
 {Fore.CYAN}! Logged in as: {Fore.WHITE} {stselfbot.user.name}#{stselfbot.user.discriminator} {Fore.CYAN} ID: {Fore.WHITE}{stselfbot.user.id}   
 {Fore.CYAN}! Prefix: {Fore.WHITE}{prefix}
-{Fore.CYAN}! Commands: {Fore.WHITE}244 + some features!
+{Fore.CYAN}! Commands: {Fore.WHITE}247 + some features!
 
 {Fore.CYAN}! Giveaway sniper: {Fore.WHITE}{giveaway}
 {Fore.CYAN}! Nitro sniper: {Fore.WHITE}{nitro}
@@ -198,12 +190,10 @@ async def do_tts(text):
         audio_data = f.read()
     return audio_data
 
-
 def Dump(ctx):
     for member in ctx.guild.members:
-        f = open(f'Images/{ctx.guild.id}-Dump.txt', 'a+')
+        f = open(f'data/{ctx.guild.id}-Dump.txt', 'a+')
         f.write(str(member.avatar) + '\n')
-
 
 def Nitro():
     code = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
@@ -1145,7 +1135,7 @@ async def paizuri(ctx):
     await ctx.send(str(r['message']))
 
 @stselfbot.command()
-async def fox(ctx):  
+async def fox(ctx):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Fox]''' + Fore.RESET)
     r = requests.get('https://randomfox.ca/floof/').json()
@@ -1377,13 +1367,13 @@ async def lied(ctx, user: discord.User = None):
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Lied]''' + Fore.RESET)
     if user is None:
         user = ctx.author
-    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/bisexual?avatar={user.avatar}?username={user.name}'))
+    await ctx.send(f'https://some-random-api.ml/canvas/misc/lied?avatar={user.avatar}&username={user.name}')
 
 @stselfbot.command()
 async def noblank(ctx, *, text: str):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [No blank?]''' + Fore.RESET)
-    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/nobitches?no={quote(text)}'))
+    await ctx.send(f"https://some-random-api.ml/canvas/misc/nobitches?no=no%20{quote(text)}%3F")
 
 @stselfbot.command()
 async def nonbinaryborder(ctx, user: discord.User = None):
@@ -1442,12 +1432,12 @@ async def transborder(ctx, user: discord.User = None):
     await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/transgender?avatar={user.avatar}'))
 
 @stselfbot.command()
-async def youtubecomment(ctx, user: discord.User = None, *, text: str):
+async def youtubecomment(ctx, user: discord.User, *, text: str):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Youtube comment]''' + Fore.RESET)
     if user is None:
         user = ctx.author
-    await ctx.send(await embedGen(ctx, "st's cool selfbot :3!!!", "", "", f'https://some-random-api.ml/canvas/misc/youtube-comment?username={user.name}?avatar={user.avatar}?comment={quote(text)}'))
+    await ctx.send(f"https://some-random-api.ml/canvas/misc/youtube-comment?username={user.name}&avatar={user.avatar}&comment={quote(text)}")
 
 @stselfbot.command()
 async def comrade(ctx, user: discord.User = None):
@@ -2404,7 +2394,7 @@ async def joke(ctx):
     await ctx.send(r["joke"])
 
 @stselfbot.command(name='auto-bump', aliases=['bump'])
-async def _auto_bump(ctx, ):  
+async def _auto_bump(ctx):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Autobump]''' + Fore.RESET)
     count = 0
@@ -2415,7 +2405,7 @@ async def _auto_bump(ctx, ):
             async for command in channel.slash_commands(query="bump"):
                 if command.application.id == 302050872383242240:
                     await command()
-            print(f'{Fore.BLUE}[AUTO-BUMP] {Fore.GREEN}Bump info: sent {count} bump so far' + Fore.RESET)
+            print(f'{Fore.BLUE}[AUTO-BUMP] {Fore.GREEN}Bump info: sent {count} bump(s) so far' + Fore.RESET)
             await asyncio.sleep(7230)
         except Exception as e:
             print(f"{Fore.RED}[ERROR]: {Fore.YELLOW}{e}" + Fore.RESET)    
@@ -2545,19 +2535,12 @@ async def wyr(ctx):
     await ctx.send(em)
 
 @stselfbot.command()
-async def hastebin(ctx, *, message):  
-    await ctx.message.delete()
-    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Hastebin]''' + Fore.RESET)
-    r = requests.post("https://hastebin.com/documents", data=message).json()
-    print(r)
-    await ctx.send(f"<https://hastebin.com/{r['key']}>")
-
-@stselfbot.command()
 async def ascii(ctx, *, text):  
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Ascii]''' + Fore.RESET)
     r = art.text2art(text)
     if len('```' + r + '```') > 2000:
+        print("Generated ascii text is too long to send!")
         return
     thingy = f"```{r}```"
     await ctx.send(thingy)
@@ -2600,8 +2583,9 @@ async def help(ctx):
 
 {Fore.BLUE}cls {Fore.LIGHTBLACK_EX}- Clears console
 {Fore.BLUE}help {Fore.LIGHTBLACK_EX}- Shows this
-{Fore.BLUE}logout {Fore.LIGHTBLACK_EX}- Logs you out the selfbot
 {Fore.BLUE}id {Fore.LIGHTBLACK_EX}- Sends Their ID In The Console
+{Fore.BLUE}logout {Fore.LIGHTBLACK_EX}- Logs you out the selfbot
+{Fore.BLUE}restart {Fore.LIGHTBLACK_EX}- Restarts the selfbot
 {Fore.BLUE}uptime {Fore.LIGHTBLACK_EX}- Shows how long the selfbot has been online and working
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
@@ -2611,21 +2595,21 @@ async def help(ctx):
 {Fore.BLUE}1337-speak {Fore.LIGHTBLACK_EX}- Translates your message to 1337 language
 {Fore.BLUE}abc {Fore.LIGHTBLACK_EX}- Sends the whole abecedary in a single message
 {Fore.BLUE}ascii {Fore.LIGHTBLACK_EX}- Makes your message ascii/fancy
-{Fore.BLUE}decode {Fore.LIGHTBLACK_EX}- Decode a string from base64 to regular text
-{Fore.BLUE}encode {Fore.LIGHTBLACK_EX}- Encode a string to base64 ascii
 {Fore.BLUE}bold {Fore.LIGHTBLACK_EX}- Returns the message but **bold**
+{Fore.BLUE}caps {Fore.LIGHTBLACK_EX}- Make your message CAPS
 {Fore.BLUE}clear {Fore.LIGHTBLACK_EX}- Spam the chat with invisible messages
+{Fore.BLUE}decode {Fore.LIGHTBLACK_EX}- Decode a string from base64 to regular text
+{Fore.BLUE}decrypt {Fore.LIGHTBLACK_EX}- Decrypt a string from rot13 to regular text
 {Fore.BLUE}devowel {Fore.LIGHTBLACK_EX}- Devowels your message
 {Fore.BLUE}dm (user) (message) {Fore.LIGHTBLACK_EX}- Sends a message to the specified user
 {Fore.BLUE}edit {Fore.LIGHTBLACK_EX}- edits all your messages
 {Fore.BLUE}empty {Fore.LIGHTBLACK_EX}- Sends a empty message
+{Fore.BLUE}encode {Fore.LIGHTBLACK_EX}- Encode a string to base64 ascii
+{Fore.BLUE}encrypt {Fore.LIGHTBLACK_EX}- Encrypt a string to rot13
 {Fore.BLUE}everyone {Fore.LIGHTBLACK_EX}- Glitched way to mention everyone in a server
 {Fore.BLUE}get-hwid {Fore.LIGHTBLACK_EX}- Prints your hwid in the console
-{Fore.BLUE}hastebin {Fore.LIGHTBLACK_EX}- Saves your text/code to hastebin
 {Fore.BLUE}lenny {Fore.LIGHTBLACK_EX}- Sends: ( ͡° ͜ʖ ͡°)
 {Fore.BLUE}reverse {Fore.LIGHTBLACK_EX}- Reverses ur message
-{Fore.BLUE}decrypt {Fore.LIGHTBLACK_EX}- Decrypt a string from rot13 to regular text
-{Fore.BLUE}encrypt {Fore.LIGHTBLACK_EX}- Encrypt a string to rot13
 {Fore.BLUE}secret {Fore.LIGHTBLACK_EX}- Returns the message but hidden ||hidden||
 {Fore.BLUE}shrug {Fore.LIGHTBLACK_EX}- Sends: ¯\_(ツ)_/¯
 {Fore.BLUE}spam {Fore.LIGHTBLACK_EX}- Sends the specified message that amount of times
@@ -2634,32 +2618,34 @@ async def help(ctx):
 {Fore.BLUE}textppl {Fore.LIGHTBLACK_EX}- Sends random messages to a channel for example while you're afk
 {Fore.BLUE}tts {Fore.LIGHTBLACK_EX}- Send that message in .wav format, like an audio
 {Fore.BLUE}unflip {Fore.LIGHTBLACK_EX}- Sends: ┬─┬ ノ( ゜-゜ノ)
-{Fore.BLUE}caps {Fore.LIGHTBLACK_EX}- Make your message CAPS
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
 {Fore.YELLOW}Guild, User Stuff
 
+{Fore.BLUE}animatedaboutme {Fore.LIGHTBLACK_EX}- Cycles through specified about me's in your about me (can be buggy and slow), split the about me's with a comma
+{Fore.BLUE}animatedstatus {Fore.LIGHTBLACK_EX}- Cycles through specified statuses in your status, split the statuses with a comma
 {Fore.BLUE}av {Fore.LIGHTBLACK_EX}- Shows Your or mentioned users Avatar!
+{Fore.BLUE}backupserver {Fore.LIGHTBLACK_EX}- Copies guild channels, categories, voice channels and makes them in a new one (backs it up)
 {Fore.BLUE}banner {Fore.LIGHTBLACK_EX}- Shows mentioned users banner
 {Fore.BLUE}blank {Fore.LIGHTBLACK_EX}- Turns your name and profile picture blank
-{Fore.BLUE}combine {Fore.LIGHTBLACK_EX}- Combines the two names together
-{Fore.BLUE}backupserver {Fore.LIGHTBLACK_EX}- Copies guild channels, categories, voice channels and makes them in a new one (backs it up)
-{Fore.BLUE}dump {Fore.LIGHTBLACK_EX}- Dumps avatars of users in a guild into Images folder
-{Fore.BLUE}fakenet {Fore.LIGHTBLACK_EX}- Allows you to spoof connections in your profile (ie: !fakenet skype st)
 {Fore.BLUE}first-message {Fore.LIGHTBLACK_EX}- Get the first message in that channel
 {Fore.BLUE}genname {Fore.LIGHTBLACK_EX}- Generate a random name based on the server members
 {Fore.BLUE}group-leaver {Fore.LIGHTBLACK_EX}- Leaves all the groups you're in
-{Fore.BLUE}guildicon {Fore.LIGHTBLACK_EX}- Display guild icon
-{Fore.BLUE}masscon {Fore.LIGHTBLACK_EX}- Add a big amount of connections to your profile (ie: !masscon skype 5 st)
 {Fore.BLUE}pfpsteal {Fore.LIGHTBLACK_EX}- Allows you to steal mentioned user profile picture
 {Fore.BLUE}purge {Fore.LIGHTBLACK_EX}- Deletes your messages based on the amount you specify
-{Fore.BLUE}read {Fore.LIGHTBLACK_EX}- Marks all your messages as read, except DM
+{Fore.BLUE}readall {Fore.LIGHTBLACK_EX}- Marks all your messages as read, except DM
 {Fore.BLUE}revav {Fore.LIGHTBLACK_EX}- Reverse avatar the mentioned user profile picture
-{Fore.BLUE}roleinfo {Fore.LIGHTBLACK_EX}- Display some info about the specified role
 {Fore.BLUE}role-hexcode {Fore.LIGHTBLACK_EX}- Displays the hexcode of the specified role
-{Fore.BLUE}set-pfp {Fore.LIGHTBLACK_EX}- Set the specified url as profile picture
+{Fore.BLUE}roleinfo {Fore.LIGHTBLACK_EX}- Display some info about the specified role
+{Fore.BLUE}saveprofile {Fore.LIGHTBLACK_EX}- Saves a currently used profile picture and username
+{Fore.BLUE}loadprofile {Fore.LIGHTBLACK_EX}- Loads a saved profile picture and username
+{Fore.BLUE}serverbanner {Fore.LIGHTBLACK_EX}- Sends the server banner
+{Fore.BLUE}serverlogo {Fore.LIGHTBLACK_EX}- Sends the server logo
+{Fore.BLUE}sessions {Fore.LIGHTBLACK_EX}- Shows your accounts running sessions
+{Fore.BLUE}setpfp {Fore.LIGHTBLACK_EX}- Set the specified url as profile picture
 {Fore.BLUE}steal-all-pfp {Fore.LIGHTBLACK_EX}- Steal all the pfps in the server
+{Fore.BLUE}stealprofile {Fore.LIGHTBLACK_EX}- Steals a users pfp and username
 {Fore.BLUE}whois {Fore.LIGHTBLACK_EX}- Displays discord information of the mentioned user
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
@@ -2669,36 +2655,115 @@ async def help(ctx):
 {Fore.BLUE}8ball {Fore.LIGHTBLACK_EX}- Answers your question
 {Fore.BLUE}8balldiff {Fore.LIGHTBLACK_EX}- Answers your question, but different...
 {Fore.BLUE}911 {Fore.LIGHTBLACK_EX}- Funny little animation haha
-{Fore.BLUE}advice {Fore.LIGHTBLACK_EX}- gives advice
 {Fore.BLUE}auto-bump {Fore.LIGHTBLACK_EX}- Automatically bump server to disboard.org
-{Fore.BLUE}backup-f (backup) {Fore.LIGHTBLACK_EX}- Backup your friends name and discrim
-{Fore.BLUE}cat {Fore.LIGHTBLACK_EX}- Random cat image
+{Fore.BLUE}backupf {Fore.LIGHTBLACK_EX}- Backup your friends and blocked users name and discrim
+{Fore.BLUE}calcpi {Fore.LIGHTBLACK_EX}- Calculates the value of pi to the specified amount of decimal places
+{Fore.BLUE}calcprime {Fore.LIGHTBLACK_EX}- Calculates the value of primes up to the specified number
+{Fore.BLUE}combine {Fore.LIGHTBLACK_EX}- Combines the two names together
 {Fore.BLUE}cuttly {Fore.LIGHTBLACK_EX}- Shorten your link
 {Fore.BLUE}dice {Fore.LIGHTBLACK_EX}- Rolls a dice
 {Fore.BLUE}dick {Fore.LIGHTBLACK_EX}- Display the mentioned user dick size
-{Fore.BLUE}dog {Fore.LIGHTBLACK_EX}- Random dog image
-{Fore.BLUE}fox {Fore.LIGHTBLACK_EX}- Random fox image
 {Fore.BLUE}get-color {Fore.LIGHTBLACK_EX}- Generates an image of a color that you specify
-{Fore.BLUE}jerkoff {Fore.LIGHTBLACK_EX}- Funny emoji man creaming haha
-{Fore.BLUE}joke {Fore.LIGHTBLACK_EX}- Drops a random joke in the chat
-{Fore.BLUE}junknick {Fore.LIGHTBLACK_EX}- long junk nickname
 {Fore.BLUE}google {Fore.LIGHTBLACK_EX}- Use google search engine to look up something
-{Fore.BLUE}milanaham {Fore.LIGHTBLACK_EX}- Sends a random picture of Milana Hametova from my WebAPI
+{Fore.BLUE}img {Fore.LIGHTBLACK_EX}- Searches for an image on yandex
+{Fore.BLUE}jerkoff {Fore.LIGHTBLACK_EX}- Funny emoji man creaming haha
+{Fore.BLUE}junknick {Fore.LIGHTBLACK_EX}- long junk nickname
 {Fore.BLUE}minesweeper {Fore.LIGHTBLACK_EX}- Play minesweeper in the discord chat
 {Fore.BLUE}nitro {Fore.LIGHTBLACK_EX}- Generate a random nitro code
-{Fore.BLUE}oneshot {Fore.LIGHTBLACK_EX}- Sends a line of lyrics one by one of One Shot by King Ferran
-{Fore.BLUE}pack {Fore.LIGHTBLACK_EX}- Funny message roasts haha
 {Fore.BLUE}pingstreak {Fore.LIGHTBLACK_EX}- Pings mentioned user every 2-6 seconds
-{Fore.BLUE}stopstreak {Fore.LIGHTBLACK_EX}- Stops pinging mentioned user every 2-6 seconds
 {Fore.BLUE}pp(User) {Fore.LIGHTBLACK_EX}- Does a funny little pp length command
+{Fore.BLUE}qrcode {Fore.LIGHTBLACK_EX}- Generates a qr code from text
 {Fore.BLUE}rainbow {Fore.LIGHTBLACK_EX}- Cycle colors in the role you specify
-{Fore.BLUE}rickroll {Fore.LIGHTBLACK_EX}- Sends An Hidden Link Of Rickroll
+{Fore.BLUE}randomaddress {Fore.LIGHTBLACK_EX}- Generates a random address
 {Fore.BLUE}slot {Fore.LIGHTBLACK_EX}- Play slot machine in the discord chat
+{Fore.BLUE}stopstreak {Fore.LIGHTBLACK_EX}- Stops pinging mentioned user every 2-6 seconds
 {Fore.BLUE}tinyurl {Fore.LIGHTBLACK_EX}- Shorten your link
-{Fore.BLUE}topic {Fore.LIGHTBLACK_EX}- Start a random topic to keep the chat going
-{Fore.BLUE}tweet {Fore.LIGHTBLACK_EX}- Generates a tweet image (specify username and message in command) e. g. !tweet st hi
 {Fore.BLUE}weather {Fore.LIGHTBLACK_EX}- Lookup weather for the specified city
+
+{Fore.YELLOW}Text Stuff
+
+{Fore.BLUE}advice {Fore.LIGHTBLACK_EX}- Gives advice
+{Fore.BLUE}animequote {Fore.LIGHTBLACK_EX}- Sends a random quote from an anime
+{Fore.BLUE}joke {Fore.LIGHTBLACK_EX}- Drops a random joke in the chat
+{Fore.BLUE}lyrics {Fore.LIGHTBLACK_EX}- Send lyrics of a song in the chat
+{Fore.BLUE}oneshot {Fore.LIGHTBLACK_EX}- Sends a line of lyrics one by one of One Shot by King Ferran
+{Fore.BLUE}owofy {Fore.LIGHTBLACK_EX}- Owofies your message
+{Fore.BLUE}pack {Fore.LIGHTBLACK_EX}- Funny message roasts haha
+{Fore.BLUE}topic {Fore.LIGHTBLACK_EX}- Start a random topic to keep the chat going
 {Fore.BLUE}wyr {Fore.LIGHTBLACK_EX}- Start a 'what would you rather' topic in the chat
+
+{Fore.YELLOW}Image Stuff
+
+{Fore.BLUE}awooify {Fore.LIGHTBLACK_EX}- Puts a users pfp on a catgirls face
+{Fore.BLUE}bird {Fore.LIGHTBLACK_EX}- Random bird image
+{Fore.BLUE}bisexualborder {Fore.LIGHTBLACK_EX}- Add a bisexual flag border to a users pfp
+{Fore.BLUE}blue {Fore.LIGHTBLACK_EX}- Make a users pfp blue
+{Fore.BLUE}blur {Fore.LIGHTBLACK_EX}- Make a users pfp blurred
+{Fore.BLUE}blurpify {Fore.LIGHTBLACK_EX}- Blurpifies a users pfp
+{Fore.BLUE}blurple {Fore.LIGHTBLACK_EX}- Make a users pfp blurple
+{Fore.BLUE}blurple2 {Fore.LIGHTBLACK_EX}- Make a users pfp blurple
+{Fore.BLUE}brightness {Fore.LIGHTBLACK_EX}- Make a users pfp brighter
+{Fore.BLUE}captcha {Fore.LIGHTBLACK_EX}- Puts a users pfp on a captcha
+{Fore.BLUE}cat {Fore.LIGHTBLACK_EX}- Random cat image
+{Fore.BLUE}changemymind {Fore.LIGHTBLACK_EX}- Generates a change my mind image with text
+{Fore.BLUE}circle {Fore.LIGHTBLACK_EX}- Make a users pfp circular
+{Fore.BLUE}clyde {Fore.LIGHTBLACK_EX}- Generates a clyde message image
+{Fore.BLUE}comrade {Fore.LIGHTBLACK_EX}- Put a communism scythe and hammer overlay on a users pfp
+{Fore.BLUE}deepfry {Fore.LIGHTBLACK_EX}- Deepfries a users pfp
+{Fore.BLUE}dog {Fore.LIGHTBLACK_EX}- Random dog image
+{Fore.BLUE}drake {Fore.LIGHTBLACK_EX}- Generates a drake good or bad image
+{Fore.BLUE}fact {Fore.LIGHTBLACK_EX}- Generates an image of the fact on a paper getting held
+{Fore.BLUE}fox {Fore.LIGHTBLACK_EX}- Random fox image
+{Fore.BLUE}glass {Fore.LIGHTBLACK_EX}- Put a glass overlay on a users pfp
+{Fore.BLUE}green {Fore.LIGHTBLACK_EX}- Make a users pfp green
+{Fore.BLUE}greyscale {Fore.LIGHTBLACK_EX}- Make a users pfp grey
+{Fore.BLUE}heart {Fore.LIGHTBLACK_EX}- Make a users pfp a heart
+{Fore.BLUE}horny {Fore.LIGHTBLACK_EX}- Put users pfp on a horny ID card image thing funny haha
+{Fore.BLUE}invergreyscale {Fore.LIGHTBLACK_EX}- Make a users pfp inverted grey
+{Fore.BLUE}iphonex {Fore.LIGHTBLACK_EX}- Puts a users pfp on an iphone x screen
+{Fore.BLUE}itssostupid {Fore.LIGHTBLACK_EX}- Put users pfp on a it's stupid meme
+{Fore.BLUE}jail {Fore.LIGHTBLACK_EX}- Put a jail overlay on a users pfp
+{Fore.BLUE}jpg {Fore.LIGHTBLACK_EX}- Convert a users pfp to a jpg
+{Fore.BLUE}kangaroo {Fore.LIGHTBLACK_EX}- Random kangaroo image
+{Fore.BLUE}kannafy {Fore.LIGHTBLACK_EX}- Generates a kanna image with the text
+{Fore.BLUE}koala {Fore.LIGHTBLACK_EX}- Random koala image
+{Fore.BLUE}lesbianborder {Fore.LIGHTBLACK_EX}- Put a lesbian flag border to a users pfp
+{Fore.BLUE}lgbtborder {Fore.LIGHTBLACK_EX}- Put an lgbt flag border to a users pfp
+{Fore.BLUE}lied {Fore.LIGHTBLACK_EX}- Put a users pfp and name on some lied thing idk
+{Fore.BLUE}lolice {Fore.LIGHTBLACK_EX}- Puts a users pfp on a lolice chef saying something
+{Fore.BLUE}magik {Fore.LIGHTBLACK_EX}- Adds a magik effect to a users pfp
+{Fore.BLUE}milanaham {Fore.LIGHTBLACK_EX}- Sends a random picture of Milana Hametova from my WebAPI
+{Fore.BLUE}noblank {Fore.LIGHTBLACK_EX}- Sends a no bitches meme thing where you can edit "bitches" to anything you want
+{Fore.BLUE}nonbinaryborder {Fore.LIGHTBLACK_EX}- Put a nonbinary flag border to a users pfp
+{Fore.BLUE}panda {Fore.LIGHTBLACK_EX}- Random panda image
+{Fore.BLUE}pansexualborder {Fore.LIGHTBLACK_EX}- Put a pansexual flag border to a users pfp
+{Fore.BLUE}passed {Fore.LIGHTBLACK_EX}- Put a mission passed overlay on a users pfp
+{Fore.BLUE}phcomment {Fore.LIGHTBLACK_EX}- Generates a pornhub comment with a users pfp and name and defined text
+{Fore.BLUE}pixelate {Fore.LIGHTBLACK_EX}- Pixelate a users pfp
+{Fore.BLUE}pornhub {Fore.LIGHTBLACK_EX}- Generates a pornhub logo image with left and right text
+{Fore.BLUE}pride {Fore.LIGHTBLACK_EX}- Put a pride flag overlay on a users pfp
+{Fore.BLUE}putin {Fore.LIGHTBLACK_EX}- Generates a putin top bottom text image
+{Fore.BLUE}raccoon {Fore.LIGHTBLACK_EX}- Random raccoon image
+{Fore.BLUE}red {Fore.LIGHTBLACK_EX}- Make a users pfp red
+{Fore.BLUE}redpanda {Fore.LIGHTBLACK_EX}- Random redpanda image
+{Fore.BLUE}sepia {Fore.LIGHTBLACK_EX}- Add a sepia effect to a users pfp
+{Fore.BLUE}ship {Fore.LIGHTBLACK_EX}- Generates a ship image with two pfps
+{Fore.BLUE}simpcard {Fore.LIGHTBLACK_EX}- Put a users pfp on a simp card
+{Fore.BLUE}spin {Fore.LIGHTBLACK_EX}- Make a users pfp spin
+{Fore.BLUE}spongebobsad {Fore.LIGHTBLACK_EX}- Generates a spongebob sad in a cafe top bottom text image
+{Fore.BLUE}stickbug {Fore.LIGHTBLACK_EX}- Generates a stickbug video from a users pfp
+{Fore.BLUE}threshold {Fore.LIGHTBLACK_EX}- Add a threshold effect to a users pfp
+{Fore.BLUE}tonikawa {Fore.LIGHTBLACK_EX}- Put a users pfp on a thing tonikawa is holding
+{Fore.BLUE}transborder {Fore.LIGHTBLACK_EX}- Put a transgender flag border to a users pfp
+{Fore.BLUE}trap {Fore.LIGHTBLACK_EX}- Generates a trap card with the users pfp
+{Fore.BLUE}trash {Fore.LIGHTBLACK_EX}- Generates a trash anime girl Japan meme with a users pfp
+{Fore.BLUE}triggered {Fore.LIGHTBLACK_EX}- Put a triggered overlay on a users pfp
+{Fore.BLUE}trumptweet {Fore.LIGHTBLACK_EX}- Generates a trump tweet image
+{Fore.BLUE}tweet {Fore.LIGHTBLACK_EX}- Generates a tweet image
+{Fore.BLUE}wasted {Fore.LIGHTBLACK_EX}- Put a wasted overlay on a users pfp
+{Fore.BLUE}whale {Fore.LIGHTBLACK_EX}- Random whale image
+{Fore.BLUE}whowouldwin {Fore.LIGHTBLACK_EX}- Generates a who would win meme image with two pfps
+{Fore.BLUE}youtubecomment {Fore.LIGHTBLACK_EX}- Make a fake youtube comment
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
@@ -2710,6 +2775,7 @@ async def help(ctx):
 {Fore.BLUE}blush {Fore.LIGHTBLACK_EX}- Random blushing gif
 {Fore.BLUE}bored {Fore.LIGHTBLACK_EX}- Random bored gif
 {Fore.BLUE}catboy {Fore.LIGHTBLACK_EX}- Random catboy img
+{Fore.BLUE}cry {Fore.LIGHTBLACK_EX}- Random crying gif
 {Fore.BLUE}cuddle {Fore.LIGHTBLACK_EX}- Random cuddle gif
 {Fore.BLUE}dance {Fore.LIGHTBLACK_EX}- Random dancing gif
 {Fore.BLUE}facepalm {Fore.LIGHTBLACK_EX}- Random facepalming gif
@@ -2761,12 +2827,16 @@ async def help(ctx):
 {Fore.BLUE}feet {Fore.LIGHTBLACK_EX}- Random feet [Anime]
 {Fore.BLUE}femboy {Fore.LIGHTBLACK_EX}- Random femboy [Anime]
 {Fore.BLUE}fourk, 4k {Fore.LIGHTBLACK_EX}- Random 4K image
+{Fore.BLUE}gif {Fore.LIGHTBLACK_EX}- Random NSFW gif
 {Fore.BLUE}hentai {Fore.LIGHTBLACK_EX}- Random hentai [Anime]
+{Fore.BLUE}hneko {Fore.LIGHTBLACK_EX}- Random hentai neko [Anime]
 {Fore.BLUE}holo {Fore.LIGHTBLACK_EX}- Random holo [Anime]
 {Fore.BLUE}lesbian {Fore.LIGHTBLACK_EX}- Random lesbian [Anime]
 {Fore.BLUE}lewd {Fore.LIGHTBLACK_EX}- Random lewd image [Anime]
+{Fore.BLUE}paizuri {Fore.LIGHTBLACK_EX}- Random paizuri gif/image [Anime]
 {Fore.BLUE}pussy {Fore.LIGHTBLACK_EX}- Random pussy gif [Anime]
 {Fore.BLUE}spank {Fore.LIGHTBLACK_EX}- Random ass spanking gif [Anime]
+{Fore.BLUE}yaoi {Fore.LIGHTBLACK_EX}- Random yaoi gif/image [Anime]
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
@@ -2774,11 +2844,7 @@ async def help(ctx):
 
 {Fore.BLUE}address {Fore.LIGHTBLACK_EX}- Generates fake address based on the text you specify
 {Fore.BLUE}geoip {Fore.LIGHTBLACK_EX}- Display various information about the IP
-{Fore.BLUE}mac {Fore.LIGHTBLACK_EX}- Lookup a bit of info about a MAC
 {Fore.BLUE}pingweb {Fore.LIGHTBLACK_EX}- Pings a website
-{Fore.BLUE}proxies {Fore.LIGHTBLACK_EX}- Scraps HTTP/HTTPS/SOCKS4/SOCKS5 proxies
-{Fore.BLUE}tokenfuck {Fore.LIGHTBLACK_EX}- Crash, glitch screen of a token, all in discord
-{Fore.BLUE}tokeninfo {Fore.LIGHTBLACK_EX}- Display various information about the token
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
@@ -2786,11 +2852,10 @@ async def help(ctx):
 
 {Fore.BLUE}btc {Fore.LIGHTBLACK_EX}- Display current Bitcoin price
 {Fore.BLUE}btcstream {Fore.LIGHTBLACK_EX}- Stream current btc price
+{Fore.BLUE}changeactivity [name (streaming, watching, listening)] [text to say] {Fore.LIGHTBLACK_EX}-Adds an activity that you specify with that message onto your profile
 {Fore.BLUE}eth {Fore.LIGHTBLACK_EX}- Display current Ethereum price
-{Fore.BLUE}game {Fore.LIGHTBLACK_EX}- Add a game status with that message in your profile
 {Fore.BLUE}hypesquad {Fore.LIGHTBLACK_EX}- Allows you to change your hypesquad
 {Fore.BLUE}stopactivity {Fore.LIGHTBLACK_EX}- Stops all the streams, plays and listen activities
-{Fore.BLUE}changeactivity [name (streaming, watching, listening)] [text to say] {Fore.LIGHTBLACK_EX}-Adds an activity that you specify with that message onto your profile
 
 ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
@@ -3273,6 +3338,118 @@ async def cls(ctx):
     Clear()
     startprint()
 
+def time_convert(sec):
+  sec = sec * 100000
+  sec = round(sec)
+  sec = sec / 100000
+  ms = sec ** 100
+  ms = ms % 100
+  mins = sec // 60
+  sec = sec % 60
+  mins = mins % 60
+  return (f"{int(mins)} minute(s) and {round(sec)} second(s) and {ms} miliseconds")
+
+def calculate_pi(precision):
+        getcontext().prec = precision
+        res = Decimal(0)
+        for i in range(precision):
+            a = Decimal(1) / (16**i)
+            b = Decimal(4) / (8 * i + 1)
+            c = Decimal(2) / (8 * i + 4)
+            d = Decimal(1) / (8 * i + 5)
+            e = Decimal(1) / (8 * i + 6)
+            r = a * (b - c - d - e)
+            res += r
+        return res
+
+@stselfbot.command(aliases=['picalc', 'pi'])
+async def calcpi(ctx, precision: int):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Calcpi]''' + Fore.RESET)
+    if precision > 10000:
+        precision = 10000
+    elif precision == 1:
+        await ctx.send("PI is 3")
+        return
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Calculating pi, it will take a while.''' + Fore.RESET)
+    t1 = time.time()
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        future = executor.submit(calculate_pi, precision)
+        while not future.done():
+            await asyncio.sleep(1)
+        res = future.result()
+    dt = time.time() - t1
+    endTime = time_convert(dt)
+    res = str(res)
+    stringLength = len(res)
+    if stringLength <= 1999:
+        await ctx.send(f"PI calculation took {endTime} and pi is {res}")
+    else:
+        max_index = 1800
+        firstStringToSend = res[0:max_index]
+        await ctx.send(f"PI calculation took {endTime} and pi is {firstStringToSend}")
+        index = max_index
+        while index < (stringLength - max_index): 
+            secondIndex = index + max_index
+            posted_string = res[index:secondIndex]
+            await ctx.send(posted_string)
+            index = index + max_index
+        posted_string = res[index:stringLength]
+        await ctx.send(posted_string)
+    print(f"PI is {res}")
+
+def primes_sieve(n):
+    is_prime = [True] * (n + 1)
+    is_prime[0] = is_prime[1] = False
+    for i in range(2, int(n ** 0.5) + 1):
+        if is_prime[i]:
+            for j in range(i * i, n + 1, i):
+                is_prime[j] = False
+    return [i for i in range(n + 1) if is_prime[i]]
+
+@stselfbot.command(aliases=['primecalc', 'primes'])
+async def calcprime(ctx, amount: int):
+    await ctx.message.delete()
+    print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Calcprime]''' + Fore.RESET)
+    t1 = time.time()
+    q = ""
+    for a in primes_sieve(int(amount)):
+        q += f"{str(a)}, "
+    dt = time.time() - t1
+    print(q)
+    print(f"Prime calculation took {time_convert(dt)}")
+    stringLength = len(q)
+    if stringLength <= 1999:
+        await ctx.send(f"Prime calculation took {time_convert(dt)} and numbers are {q}")
+    else:
+        max_index = 1800
+        firstStringToSend = q[0:max_index]
+        await ctx.send(f"Prime calculation took {time_convert(dt)} and numbers are {firstStringToSend}")
+        index = max_index
+        while index < (stringLength - max_index): 
+            secondIndex = index + max_index
+            posted_string = q[index:secondIndex]
+            await ctx.send(posted_string)
+            index = index + max_index
+        posted_string = q[index:stringLength]
+        await ctx.send(posted_string)
+
+@stselfbot.command()
+async def youngsexy(ctx):
+    young_dudes = [
+    "https://tenor.com/view/hi-selfie-old-man-stare-serious-face-gif-17346629",
+    "https://tenor.com/view/front-camera-selfie-what-old-man-gif-16684902",
+    "https://tenor.com/view/tempranito-old-man-staring-gif-7973272",
+    "https://tenor.com/view/old-man-front-cam-open-me-myself-and-i-black-and-white-gif-16411023",
+    "https://tenor.com/view/black-gif-21508623",
+    "https://tenor.com/view/black-gif-21481235",
+    "https://tenor.com/view/black-man-staring-gif-22222579",
+    "https://tenor.com/view/indian-man-rolls-eyes-funny-gorilla-gif-21725477",
+    "https://cdn.discordapp.com/attachments/737379472625369169/1094020868432220220/image.png",
+    "https://media.discordapp.net/attachments/570686290799099920/1094543031031562300/monkey.mp4"
+    ]
+    await ctx.send(random.choice(young_dudes))
+
 @stselfbot.command(aliases=['markasread', 'ackall'])
 async def readall(ctx):
     await ctx.message.delete()
@@ -3349,7 +3526,7 @@ async def edit(ctx, amount, *, textInput):
             pass
 
 @stselfbot.command()
-async def banner(ctx, user: discord.User):
+async def banner(ctx, user: discord.User = None):
     await ctx.message.delete()
     print(f'''{Fore.BLUE}[LOG] {Fore.WHITE}Command ran [Banner]''' + Fore.RESET)
     if user == None:
