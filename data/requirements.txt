@@ -4,15 +4,10 @@ numpy
 requests
 aiohttp
 bs4
-pymongo
-selenium
 pyPrivnote
 gtts
-dnspython
 image
-httpx
 pyperclip
-Pillow
 humor-langs
 asyncpraw
 nekos.py
