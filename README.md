@@ -4,7 +4,7 @@ https://stiscool.cu.ma/selfbot/main.html
 
 if that one doesnt work then
 
-https://st7712.github.io/sts-cool-selfbot
+https://st7712.github.io/sts-cool-selfbot 
 
 # Intial Setup
 
