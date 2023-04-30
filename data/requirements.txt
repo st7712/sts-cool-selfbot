@@ -2,7 +2,6 @@ discord.py-self
 colorama
 numpy
 requests
-aiohttp
 bs4
 pyPrivnote
 gtts
