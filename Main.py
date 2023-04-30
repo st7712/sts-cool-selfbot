@@ -1,8 +1,9 @@
 class SELFBOT():
-    __linecount__ = 3602
-    __version__ = 3.1
+    __linecount__ = 3587
+    __version__ = 3.2
 
-import discord, subprocess, sys, time, os, colorama, base64, codecs, datetime, io, random, numpy, datetime, smtplib, string, ctypes, codecs, webbrowser, re, humor_langs, asyncpraw, urllib.parse, urllib.request, re, json, requests, webbrowser, aiohttp, asyncio, functools, logging, nekos, art, concurrent.futures
+
+import discord, subprocess, sys, time, os, colorama, base64, codecs, datetime, io, random, numpy, datetime, string, ctypes, codecs, webbrowser, re, humor_langs, asyncpraw, re, json, requests, webbrowser, asyncio, nekos, art, concurrent.futures
 
 from discord.ext import (
     commands,
@@ -151,10 +152,8 @@ def startprint():
 {Fore.CYAN}! Slotbot sniper: {Fore.WHITE}{slotbot}
     ''' + Fore.RESET)
 
-
 def Clear():
     os.system('cls')
-
 
 Clear()
 
@@ -170,17 +169,6 @@ def Init():
         except discord.errors.LoginFailure:
             print(f"{Fore.RED}[ERROR] {Fore.YELLOW}Improper token has been passed" + Fore.RESET)
             os.system('pause >NUL')
-
-def async_executor():
-    def outer(func):
-        @functools.wraps(func)
-        def inner(*args, **kwargs):
-            thing = functools.partial(func, *args, **kwargs)
-            return loop.run_in_executor(None, thing)
-
-        return inner
-
-    return outer
 
 async def do_tts(text):
     tts = gTTS(text, lang='en')
@@ -225,7 +213,6 @@ async def getPost(ctx, subredditName, tempList):
         await ctx.send(randUrl)
         return tempList
 
-
 colorama.init()
 stselfbot = commands.Bot(command_prefix=prefix, self_bot=True)
 stselfbot.remove_command('help')
@@ -237,10 +224,9 @@ async def btc_status():
     await asyncio.sleep(3)
     btc_stream = discord.Streaming(
         name="Current BTC price: " + value + "$ USD",
-        url="https://www.twitch.tv/imstcool",
+        url="https://stiscool.cu.ma/selfbot/main.html",
     )
     await stselfbot.change_presence(activity=btc_stream)
-
 
 @stselfbot.event
 async def on_command_error(ctx, error):
@@ -3474,7 +3460,7 @@ async def changeactivity(ctx, typeOfIt, *text):
     if typeOfIt.lower() == "streaming":
         theActivity = discord.Streaming(
             name=f"{activityText}",
-            url="https://www.twitch.tv/imstcool",
+            url="https://stiscool.cu.ma/selfbot/main.html",
         )
     elif typeOfIt.lower() == "playing":
         theActivity = discord.Game(
