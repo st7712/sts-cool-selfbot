@@ -2,6 +2,10 @@ https://stiscool.cu.ma/selfbot/main.html
 
 [website guys lol](https://stiscool.cu.ma/selfbot/main.html)
 
+if that one doesnt work then
+
+https://st7712.github.io/sts-cool-selfbot
+
 # Intial Setup
 
  - just set it up as a normal selfbot
