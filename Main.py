@@ -3405,7 +3405,7 @@ async def calcprime(ctx, amount: int):
     print(q)
     print(f"Prime calculation took {time_convert(dt)}")
     stringLength = len(q)
-    if stringLength <= 1999:
+    if stringLength <= 1800:
         await ctx.send(f"Prime calculation took {time_convert(dt)} and numbers are {q}")
     else:
         max_index = 1800
