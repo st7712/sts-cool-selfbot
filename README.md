@@ -10,7 +10,7 @@ https://st7712.github.io/sts-cool-selfbot
 
  - just set it up as a normal selfbot
  - run the install.bat file
- - you also need to have python 3.8 installed to PATH! - [download](https://www.python.org/downloads/release/python-3810)
+ - you also need to have python 3.11.3 installed to PATH! - [download](https://www.python.org/downloads/release/python-3113/)
  - and you also need an internet connection
 
  - will make a setup thing on the site later ok
