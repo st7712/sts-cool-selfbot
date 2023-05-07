@@ -6,6 +6,8 @@ if that one doesnt work then
 
 https://st7712.github.io/sts-cool-selfbot 
 
+# this readme file is old and it's not up to date at all so please just use the website above, prefferably the first one, if that ones down then the github.io one, thanks.
+
 # Intial Setup
 
  - just set it up as a normal selfbot
