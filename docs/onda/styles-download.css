@@ -1,0 +1,321 @@
+body {
+    background-color: #18171C ;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    font-family: "Quicksand";
+    font-weight: bolder;
+    color: white;
+    scroll-behavior: smooth;
+}
+
+.main-container {
+    position: relative;
+    top: 130px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 900px ; 
+    background-color: #24222A;
+    height: 1400px;  
+    border-radius: 8px;
+}
+
+.title-card {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 780px;
+    height: 250px;
+    border-radius: 8px;
+    background-color: #302E38;
+}
+
+.line-hr {
+    width: 780px;
+    left: 60px;
+    top: 375px;
+    font-weight: lighter;
+    color: #494554;
+    position: absolute;
+    opacity: 0.5;
+}
+
+.line-hr2 {
+    width: 780px;
+    left: 60px;
+    top: 980px;
+    font-weight: lighter;
+    color: #494554;
+    position: absolute;
+    opacity: 0.5;
+}
+
+.all-btn {
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 860px;
+    height: 290px;
+    position: absolute;
+    top: 1060px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+
+.video-card {
+    position: absolute;
+    top: 445px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 780px;
+    height: 480px;
+    border-radius: 8px;
+    background-color: #302E38;
+}
+
+.text-container-download {
+    top: 80px;
+    left: 50px;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px ;
+    width: 650px;
+    height: 130px;
+    font-size: 20px;
+}
+
+.card-title {
+    position: absolute;
+    top: 25px;
+    left: 35px;
+    font-size: 35px;
+    margin: 0;
+}
+
+.video {
+    border-radius: 10px;
+    position: absolute;
+    border: none;
+    top: 90px;
+    left: 35px;
+}
+
+#header {
+    background-color: #24222A;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    height: 70px;
+    gap: 20px;
+    top: -70px;
+    position: fixed;
+    transition: 0.4s;
+    font-size: 20px;
+}
+
+.osu-logo {
+    width: 50px;
+    height: 50px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.header-nav-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    width: 270px;
+    height: 70px;
+}
+
+.nav-hover {
+    transition: 0.2s;
+}
+
+.nav-hover:hover {
+    transform: scale(110%);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.download-btns1 {
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    /* position: absolute; */
+    align-items: center;
+    /* top: 1050px;
+    left: 60px; */
+    height: 290px;
+    width: 360px;
+    background-color: #302E38 ;
+    font-size: 25px;
+    flex-direction: column;
+}
+
+.download-btns2 {
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    /* position: absolute; */
+    align-items: center;
+    /* top: 1050px;
+    left: 480px; */
+    height: 290px;
+    width: 360px;
+    background-color: #302E38 ;
+    flex-direction: column;
+    font-size: 25px;
+    
+}
+
+.download-btn-style {
+    letter-spacing: 2px;
+    position: absolute;
+    font-family: "Quicksand";
+    font-weight: bold;
+    font-size: 32px;
+    padding: 15px;
+    padding-left: 50px;
+    padding-right: 50px;
+    border-radius: 10px;
+    color: white;
+    border: none;
+    margin: 0;
+    background-color: #24222A;
+    transition: 0.25s;
+}
+
+.download-btn-style:hover {
+    transform: scale(105%);
+    cursor: pointer;
+}
+
+.item-top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 330px;
+    height: 90px;
+}
+
+.item-middle {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    width: 330px;
+    height: 90px;
+}
+
+.osu-logo-download {
+    width: 70px;
+    height: 70px;
+}
+
+.item-bottom {
+    display: flex;
+    justify-content: center;
+    width: 330px;
+    height: 90px;
+}
+
+.item-bottom:hover {
+    animation: pulse 0.5s ease-in-out;
+    animation-iteration-count: infinite;
+}
+
+#item-middle-text {
+    width: 190px;
+}
+
+#item-top-text {
+    width: 300px;
+    margin-left: 15px;
+}
+
+p {
+    margin: 0;
+}
+
+.footer {
+    background-color:#24222A ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 90px;
+    position: absolute;
+    bottom: -750px;
+}
+
+#footer-text {
+    opacity: 0.9;
+    color: rgba(128, 128, 128, 0.644);
+    font-size: 9px;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    60% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 900px) {
+    .main-container {
+        border-radius: 0;
+        width: 100%;
+    }
+    .footer {
+        opacity: 0;
+    }
+    .line-hr  {
+        visibility: hidden;
+    }
+    .line-hr2 {
+        visibility: hidden;
+    }
+    .title-card {
+        width: 100%;
+        border-radius: 0;
+    }
+    .video-card {
+        width: 100%;
+        border-radius: 0;
+    }
+    .video {
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+    }
+    .all-btn {
+        width: 100%;
+    }
+    #header {
+        position: absolute;
+    }
+}

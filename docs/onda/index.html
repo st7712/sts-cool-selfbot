@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to osu!</title>
+
+    <link rel="stylesheet" href="styles-main.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+
+</head>
+
+<body class="background" background="obrazky, ikonky, materialy\menu-background-2.jpg" >
+    <main class="container">
+        <article class="navbar-container">
+            <div id="pulse" class="item">
+                <img src="obrazky, ikonky, materialy\lazer-logo2.png" alt="">
+            </div>
+            <section class="nav-btn-container">
+                <a class="nav-btn" id="violet">Modes
+                    <img onclick="window.location.href = 'features-page.html';" id="btn-violet" class="logo-nav" src="obrazky, ikonky, materialy\play.png" alt="">
+                </a>
+                <a class="nav-btn" id="yellow">Gameplay
+                    <img onclick="window.location.href = 'gameplay-page.html';"  id="btn-yellow" class="logo-nav" src="obrazky, ikonky, materialy\gameplay-a.png" alt="">
+                </a>
+                <a class="nav-btn" id="pink">Download 
+                    <img onclick="window.location.href = 'download-page.html';" id="btn-pink" class="logo-nav" src="obrazky, ikonky, materialy\online.png" alt="">
+                </a>
+            </section>
+        </article>
+    </main>
+
+    <script>
+        let pulseAnimation = document.getElementById("pulse")
+
+        pulseAnimation.addEventListener('mouseover', function() {
+            pulseAnimation.classList.add('pulse');
+        }, false) 
+
+        pulseAnimation.addEventListener('mouseout', function() {
+            pulseAnimation.classList.remove('pulse');
+        }, false)
+    </script>
+
+</body>
+
+</html>

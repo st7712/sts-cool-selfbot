@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features</title>
+
+    <link rel="stylesheet" href="styles-features.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+
+
+</head>
+<body>
+    <header id="header">
+        <div class="osu-logo">
+            <img src="obrazky, ikonky, materialy\Osu!_Logo_2016.svg" alt="">
+        </div>
+        <div class="header-nav-container">
+            <a class="nav-hover" onclick="window.location.href = 'index.html';" id="nav-home">Home</a>
+            <a class="nav-hover" onclick="window.location.href = 'gameplay-page.html';" id="nav-gameplay">Gameplay</a>
+            <a class="nav-hover" onclick="window.location.href = 'download-page.html';" id="nav-modes">Download</a>
+        </div>
+        <div class="header-socials-container">
+
+        </div>
+    </header>
+    <main class="main-container">
+        <article class="title-card">
+            <p class="card-title">Game modes</p>
+            <section class="text-container">
+                <p id="">osu! has four mechanicaly different game modes, each offering a unique game experience</p>
+            </section>
+            <section class="text-list">
+                <ul>
+                    <li><a href="">osu! standart</a>
+                        <img id="osu" src="obrazky, ikonky, materialy\mode-osu-small.png" alt="">
+                    </li>
+                    <li><a href="">osu! mania</a>
+                        <img id="mania" src="obrazky, ikonky, materialy\mode-mania-small.png" alt="">
+                    </li>
+                    <li><a href="">osu! catch</a>
+                        <img id="catch" src="obrazky, ikonky, materialy\mode-fruits-small.png" alt="">
+                    </li>
+                    <li><a href="">osu! taiko</a>
+                        <img id="taiko" src="obrazky, ikonky, materialy\mode-taiko-small.png" alt="">
+                    </li>
+                </ul>
+            </section>
+        </article>
+        <hr class="line-hr">
+        <article class="video-card">
+            <section> 
+                <p class="card-title">osu! standart</p>
+                <article id="osu-standart" class="items-container">osu! is the default mode, where players are expected to tap circles, hold sliders, and spin spinners to the beat of the music. It is based on the original iNiS' rhythm game Osu! Tatakae! Ouendan.
+                    <img class="showcase-img" src="obrazky, ikonky, materialy\gameplay-osu.png" alt=""> 
+                </article>
+            </section>                                           
+        </article>
+        <hr id="middle1-line" class="line-hr">
+        <article id="middle1" class="video-card">
+            <section>
+                <p class="card-title">osu! mania</p>  
+                <article id="osu-standart" class="items-container">osu!mania is a vertical scrolling rhythm game (VSRG) mode designed as a piano simulator. It was chiefly introduced and implemented by woc2006, and is based on a variety of conveyor-type rhythm games (namely Dance Dance Revolution and Beatmania).
+                    <img class="showcase-img" src="obrazky, ikonky, materialy\osu-mani-showcase.png" alt=""> 
+                </article>
+            </section>                                                                            
+        </article>
+        <hr id="middle2-line" class="line-hr">
+        <article id="middle2" class="video-card">
+            <section>
+                <p class="card-title">osu! catch</p>  
+                <article id="osu-standart" class="items-container">In osu!catch, fruits of differing varieties fall from the top of the screen, and the player must catch them to the beat. To this end they control a catcher with a plate atop their head for catching said fruits. 
+                    <img class="showcase-img" src="obrazky, ikonky, materialy\catch-show.png" alt=""> 
+                </article>
+            </section>                                                                            
+        </article>
+        <hr id="bottom-line" class="line-hr">
+        <article id="bottom" class="video-card">
+            <section>
+                <p class="card-title">osu! taiko</p>  
+                <article id="osu-standart" class="items-container">osu!taiko simulates the process of playing a real drum, where players make use of a keyboard or drum kit to hit differently-coloured circles on a single conveyor. It is based on the Taiko no Tatsujin game series produced by Bandai Namco Entertainment.
+                    <img class="showcase-img" src="obrazky, ikonky, materialy\taiko-show.png" alt=""> 
+                </article>
+            </section>                                                                            
+        </article>
+    </main>
+    <footer class="footer">
+        <p id="footer-text">Ondřej Kůrka - SSPŠ 2024</p>
+    </footer>
+    <script>
+        window.onscroll = function() {navbarScroll()};
+
+        function navbarScroll() {
+            if (document.body.scrollTop > 90 || document.documentElement.scrollTop > 90) {
+            document.getElementById("header").style.top = "-70px";
+            } else {
+            document.getElementById("header").style.top = "0px";
+            }
+        }
+    </script>
+</body>
+</html>

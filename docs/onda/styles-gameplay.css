@@ -1,0 +1,186 @@
+body {
+    background-color: #18171C ;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    font-family: "Quicksand";
+    font-weight: bolder;
+    color: white;
+}
+
+.main-container {
+    position: relative;
+    top: 130px;
+    width: 900px ; 
+    background-color: #24222A;
+    height: 1600px;  
+    border-radius: 8px;
+}
+
+.title-card {
+    position: absolute;
+    top: 60px;
+    left: 60px;
+    width: 780px;
+    height: 350px;
+    border-radius: 8px;
+    background-color: #302E38;
+}
+
+.line-hr {
+    width: 780px;
+    left: 60px;
+    top: 460px;
+    font-weight: lighter;
+    color: #494554;
+    position: absolute;
+    opacity: 0.5;
+}
+
+.video-card {
+    position: absolute;
+    top: 520px;
+    left: 60px;
+    width: 780px;
+    height: 450px;
+    border-radius: 8px;
+    background-color: #302E38;
+}
+
+#middle1 {
+    top: 1080px;
+}
+
+#middle1-line {
+    top: 1017px;
+}
+
+.showcase-img {
+    width: 520px; 
+    height: 290px; 
+    border-radius: 10px;
+}
+
+.text-container {
+    position: absolute;
+    left: 35px;
+    top: 80px;
+    width: 500px;
+    height: 250px;
+    font-size: 20px;
+}
+
+.items-container {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    flex-direction: column;
+    width: auto;
+    margin: 35px;
+    margin-top: 70px;
+    height: 350px;
+    font-size: 16px;
+}
+
+.card-title {
+    position: absolute;
+    top: 25px;
+    left: 35px;
+    font-size: 35px;
+    margin: 0;
+}
+
+.footer {
+    background-color:#24222A ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 90px;
+    position: absolute;
+    bottom: -950px;
+}
+
+#footer-text {
+    opacity: 0.9;
+    color: rgba(128, 128, 128, 0.644);
+    font-size: 9px;
+}
+
+.video {
+    border-radius: 10px;
+    position: absolute;
+    border: none;
+    top: 90px;
+    left: 35px;
+}
+
+#header {
+    background-color: #24222A;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    height: 70px;
+    gap: 20px;
+    top: -70px;
+    position: fixed;
+    transition: 0.4s;
+    font-size: 20px;
+}
+
+.osu-logo {
+    width: 50px;
+    height: 50px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.header-nav-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    width: 270px;
+    height: 70px;
+}
+
+.nav-hover {
+    transition: 0.2s;
+}
+
+.nav-hover:hover {
+    transform: scale(110%);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+#small-text {
+    font-size: 8px;
+    opacity: 0.5;
+    color: gray;
+}
+
+@media (max-width: 842px) {
+    .main-container {
+        width: 100%;
+    }
+    .title-card {
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .video-card {
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .footer {
+        visibility: hidden;
+    }
+}

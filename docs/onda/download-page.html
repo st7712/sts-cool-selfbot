@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download osu!</title>
+
+    <link rel="stylesheet" href="styles-download.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+
+
+
+
+</head>
+<body>
+    <header id="header">
+        <div class="osu-logo">
+            <img src="obrazky, ikonky, materialy\Osu!_Logo_2016.svg" alt="">
+        </div>
+        <div class="header-nav-container">
+            <a class="nav-hover" onclick="window.location.href = 'index.html';" id="nav-home">Home</a>
+            <a class="nav-hover" onclick="window.location.href = 'gameplay-page.html';" id="nav-gameplay">Gameplay</a>
+            <a class="nav-hover" onclick="window.location.href = 'features-page.html';" id="nav-modes">Modes</a>
+        </div>
+        <div class="header-socials-container">
+
+        </div>
+    </header>
+    <main class="main-container">
+        <article class="title-card">
+            <p class="card-title">Welcome to osu!</p>
+            <section class="text-container-download">
+                <p>Here are some tips to get you started:</p>
+                <p>1.
+                    Install the game
+                </p>
+                <p>2.
+                    Make an account
+                </p>
+                <p>3.
+                    Download beatmaps
+                </p>
+            </section>
+        </article>
+        <hr class="line-hr">
+        <article class="video-card">
+            <section>
+                <p class="card-title">osu! download guide</p>                                                                              
+                <iframe class="video" width="710" height="350" src="https://www.youtube.com/embed/0V5GwzmMhpU?si=bjKtlRfYtIhUpuWO&amp;start=22" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </section>
+        </article>
+        <hr class="line-hr2">
+        <article class="all-btn">
+            <section class="download-btns1">
+                <article class="item-top">
+                    <a id="item-top-text">Download osu! standart</a>
+                </article>
+                <article class="item-middle">
+                    <a id="item-middle-text">Click here to download!</a>
+                    <a ><img class="osu-logo-download" src="obrazky, ikonky, materialy\Osu!_Logo_2016.svg" alt="">
+                    </a>
+                </article>
+                <article class="item-bottom">
+                    <button class="download-btn-style" type="button">osu! v17.9.2</button>
+                </article>
+            </section>
+            <section class="download-btns2">
+                <article class="item-top">
+                    <a id="item-top-text">Download osu! lazer</a>
+                </article>
+                <article class="item-middle">
+                    <a id="item-middle-text">Click here to download!</a>
+                    <a ><img class="osu-logo-download" src="obrazky, ikonky, materialy\Osu!_Logo_2016.svg" alt="">
+                    </a>
+                </article>
+                <article class="item-bottom">
+                    <button class="download-btn-style" type="button">osu! lazer</button>
+                </article>
+            </section>
+        </article>
+    </main>
+    <footer class="footer">
+        <p id="footer-text">Ondřej Kůrka - SSPŠ 2024</p>
+    </footer>
+    <script>
+        window.onscroll = function() {navbarScroll()};
+
+        function navbarScroll() {
+            if (document.body.scrollTop > 90 || document.documentElement.scrollTop > 90) {
+            document.getElementById("header").style.top = "-70px";
+            } else {
+            document.getElementById("header").style.top = "0px";
+            }
+        }
+    </script>
+</body>
+</html>

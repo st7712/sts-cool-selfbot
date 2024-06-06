@@ -1,0 +1,265 @@
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Quicksand";
+    color: white;
+}
+
+.item {
+    left: 400px;
+    position: absolute;
+    z-index: 1;
+    display: flex;
+    height: 460px;
+    width: 460px;
+    padding: 0;
+    border-radius: 300px;
+    
+}
+
+.item:hover {
+    cursor: pointer;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 500px;
+}
+
+.background {
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+}
+
+.navbar-container {
+    position: absolute;
+    height: 160px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #323232;
+    box-shadow: 0px 0px 5px 3px  rgba(0, 0, 0, 0.267);
+}
+
+.nav-btn-container {
+    left: 780px;
+    /* right: 200px; */
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: none;
+    height: 160px;
+    padding: 0;
+    font-size: 20px;
+}
+
+li {
+    color: white;
+    font-size: 30px;
+}
+
+.nav-btn {
+    padding-top: 25px;
+    /* padding-left: 30px;
+    padding-right: 30px; */
+    transform: skew(-10deg);
+    height: 135px;
+    width: 250px;
+    display: flex;
+    align-items: normal;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.logo-nav {
+    position: absolute;
+    top: 70px;
+    width: 70px;
+}
+
+#violet {
+    background-color: #6644CC;
+    padding-left: 30px;
+}
+
+#yellow {
+    background-color: #EEAA00;
+}
+
+#pink {
+    background-color: #EE3399;
+}
+
+#btn-pink:hover {
+    cursor: pointer;
+}
+
+#btn-yellow:hover {
+    cursor: pointer;
+}
+
+#btn-violet:hover {
+    cursor: pointer;
+}
+
+.pulse {
+    animation: pulse 0.3s;
+    animation-iteration-count: infinite;
+    animation-fill-mode: forwards;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    60% {
+        transform: scale(1.03);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 1560px) {
+
+    .nav-btn-container {
+        right: 50px;
+        left: auto;
+    }
+
+    #violet {
+        padding-left: 50px;
+    }
+
+    .item {
+        right: 730px;
+        left: auto;
+    }
+
+    
+}
+
+@media (max-width: 1185px) {
+    .nav-btn-container {
+        right: 0;
+    }
+    .item {
+        right: 700px;
+    } 
+    .nav-btn {
+        transform: none;
+    }
+    #violet {
+        padding-left: 30px;
+    }
+   
+}
+
+@media (max-width: 1137px) {
+    .item {
+        width: 350px;
+        height: 350px;
+    }
+    .navbar-container {
+        box-shadow: none;
+        height: 150px;
+    }
+    .nav-btn-container {
+        height: 150px;
+
+    }
+    
+    .nav-btn {
+        height: 125px;
+        width: 200px;
+        font-size: 18px;
+    }
+    .logo-nav {
+        width:50px ;
+    }
+}
+
+@media (max-width:1033px) {
+    .item {
+        right: 560px;
+    }
+}
+
+@media (max-width: 892px) {
+    #violet {
+        padding-left: 0;
+    }
+    .item {
+        width: 250px;
+        height: 250px;
+    }
+    .navbar-container {
+        height: 120px;
+    }
+    .nav-btn-container {
+        height: 120px;
+
+    }
+    .nav-btn {
+        height: 100px;
+        width: 170px;
+        padding-bottom: 10px;
+        padding-top: 10px;
+    }
+    .logo-nav {
+        top: 50px;
+    }
+}
+
+@media (max-width: 798px) {
+    .item {
+        right: 470px;
+    }
+}
+
+@media (max-width: 707px) {
+    .item {
+        bottom: 335px;
+        right: 0;
+        left: 0;
+        margin-left: auto;
+        margin-right: auto;
+        width: 150px;
+        height: 150px;
+    }
+
+    .nav-btn-container {
+        height: 120px;
+        width: 100%;
+        flex-direction: column;
+    }
+    .navbar-container {
+        height: 305px;
+    }
+    .nav-btn {
+        position: absolute;
+        width: 100%;
+    }
+    #yellow {
+        top: 0;
+    }
+    #pink {
+        top: 120px;
+    }
+    #violet {
+        top: -120px;
+    }
+}
+
+@media (max-height: 650px) {
+    .item {
+        visibility: hidden;
+    }
+}

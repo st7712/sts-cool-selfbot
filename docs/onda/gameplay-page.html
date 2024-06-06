@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gameplay</title>
+
+    <link rel="stylesheet" href="styles-gameplay.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <header id="header">
+        <div class="osu-logo">
+            <img src="obrazky, ikonky, materialy\Osu!_Logo_2016.svg" alt="">
+        </div>
+        <div class="header-nav-container">
+            <a class="nav-hover" onclick="window.location.href = 'index.html';" id="nav-home">Home</a>
+            <a class="nav-hover" onclick="window.location.href = 'features-page.html';" id="nav-gameplay">Modes</a>
+            <a class="nav-hover" onclick="window.location.href = 'download-page.html';" id="nav-modes">Download</a>
+        </div>
+    </header>
+    <main class="main-container">
+        <article class="title-card">
+            <p class="card-title">Gameplay</p>
+            <section class="text-container">
+                <p>osu! gameplay is very simple, yet very fun to play! Click and aim circles to the beat of your favorite song. Sounds pretty easy right?  Down below are examples of osu! skillgap between the average player and #1 player in the world. This shows the skill potential that makes this game unique and very hard.</p>
+            </section>
+        </article>
+        <hr class="line-hr">
+        <article class="video-card">
+            <section> 
+                <p class="card-title">Rank #200k global</p>
+                <article id="osu-standart" class="items-container">
+                    <img class="showcase-img" src="obrazky, ikonky, materialy\2024-05-0717-50-31-ezgif.com-video-to-gif-converter.gif" alt=""> 
+                </article>
+            </section>  
+        </article>
+        <hr id="middle1-line" class="line-hr">
+        <article id="middle1" class="video-card">
+            <section> 
+                <p class="card-title">Rank #1 global</p>
+                <article id="osu-standart" class="items-container">
+                    <img class="showcase-img" src="obrazky, ikonky, materialy\BESTSCOREINTHEGAMEMUSTWATCH-ezgif.com-video-to-gif-converter.gif" alt=""> 
+                    <p id="small-text">(could be you one day)</p>
+                </article>
+            </section>  
+        </article>
+    </main>
+    <footer class="footer">
+        <p id="footer-text">Ondřej Kůrka - SSPŠ 2024</p>
+    </footer>
+    <script>
+        window.onscroll = function() {navbarScroll()};
+
+        function navbarScroll() {
+            if (document.body.scrollTop > 90 || document.documentElement.scrollTop > 90) {
+            document.getElementById("header").style.top = "-70px";
+            } else {
+            document.getElementById("header").style.top = "0px";
+            }
+        }
+    </script>
+</body>
+</html>
